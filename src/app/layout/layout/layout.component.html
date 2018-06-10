@@ -1,0 +1,8 @@
+<app-toolbar>
+    <kendo-menu [items]="items" (select)="onSelect($event)"></kendo-menu>
+    <kendo-menu [items]="userMenu" (select)="onSelectUserMenu($event)"></kendo-menu>
+</app-toolbar>
+
+<br>
+
+<router-outlet></router-outlet>

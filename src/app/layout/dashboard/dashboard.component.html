@@ -1,0 +1,27 @@
+<kendo-grid
+    height="540"
+    [loading]="loading"
+    [data]="gridData | async"
+    [pageSize]="state.take"
+    [skip]="state.skip"
+    [sort]="state.sort"
+    [filter]="state.filter"
+    [sortable]="true"
+    [pageable]="true"
+    [filterable]="true"
+    [selectable]="true"
+    (dataStateChange)="dataStateChange($event)"
+>
+    <kendo-grid-column field="id" title="ID" width="40" [filterable]="false" [sortable]="false"></kendo-grid-column>
+    <kendo-grid-column field="reason" title="Reason" [sortable]="false"></kendo-grid-column>
+    <kendo-grid-column field="cost" title="Withdrawal" width="120" format="{0:c}" [filterable]="false"></kendo-grid-column>
+    <kendo-grid-column field="income" title="Deposit" width="120" format="{0:c}" [filterable]="false"></kendo-grid-column>
+    <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}" width="250"  filter="date" format="{0:MMMM d, y}"></kendo-grid-column>
+    <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="130" [filterable]="false"></kendo-grid-column>
+    <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="130" [filterable]="false"></kendo-grid-column>
+    <kendo-grid-column field="isTest" title="Test" width="80" [filterable]="false">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <input type="checkbox" [checked]="dataItem.isTest" disabled/>
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>

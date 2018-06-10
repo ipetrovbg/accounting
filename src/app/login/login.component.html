@@ -1,0 +1,22 @@
+<div class="card login-card">
+  <div class="card-block">
+      <form class="k-form" [formGroup]="form" (ngSubmit)="login()">
+          <fieldset>
+              <legend>Login Credentials</legend>
+              <label class="k-form-field">
+                  <span>Email</span>
+                  <input class="k-textbox" type="email" placeholder="Your Email" formControlName="email" />
+              </label>
+              <label class="k-form-field">
+                <span>Password</span>
+                <input type="password" class="k-textbox" formControlName="password" placeholder="Your password"/>
+            </label>
+          </fieldset>
+
+          <div class="text-right">
+            <button type="button" class="k-button">Cancel</button>
+            <button type="submit" class="k-button k-primary">Submit</button>
+          </div>
+      </form>
+  </div>
+</div>
