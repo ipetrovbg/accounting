@@ -1,3 +1,5 @@
+import { TransactionState } from './../../store/states/transaction.state';
+import { State as AppState } from './../../store/accounting.state';
 import { Observable } from 'rxjs/Observable';
 import { TransactionService } from '../../transaction/transaction.service';
 import { CoreService } from '../../core/core/core.service';
@@ -9,6 +11,8 @@ import { tap } from 'rxjs/operators/tap';
 import { DataStateChangeEvent } from '@progress/kendo-angular-grid';
 import { State, process } from '@progress/kendo-data-query';
 import { BehaviorSubject } from 'rxjs';
+import { selectAllTransactionsSelector, selectTotalTransactionsSelector } from '../../store/reducers/transaction.reducer';
+import { Store } from '@ngrx/store';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -25,10 +29,17 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private core: CoreService,
-    private transaction: TransactionService
+    private transaction: TransactionService,
+    private store: Store<AppState>
   ) {}
 
   ngOnInit() {
+
+    const transactions$ = this.store.select(selectAllTransactionsSelector);
+    this.store.select(selectTotalTransactionsSelector).subscribe(data => console.log(data));
+
+    transactions$.subscribe(transactions => console.log(transactions));
+
     this.loading = true;
     const dates = this.core.startEndWorkMonth(5);
     this.transaction.fetch(dates.start, dates.end).subscribe(data => {

@@ -1,3 +1,4 @@
+import { AccountingStoreModule } from './store/accounting-store.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { SharedModule } from './shared/shared.module';
 import { BrowserModule } from '@angular/platform-browser';
@@ -31,7 +32,8 @@ export const appRoutes: Routes = [
     BrowserAnimationsModule,
     SharedModule,
     TransactionModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    AccountingStoreModule
   ],
   providers: [],
   bootstrap: [AppComponent]
