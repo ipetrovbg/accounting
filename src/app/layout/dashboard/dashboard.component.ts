@@ -33,9 +33,9 @@ export class DashboardComponent implements OnInit {
     const dates = this.core.startEndWorkMonth(5);
     this.transaction.fetch(dates.start, dates.end).subscribe(data => {
       this.data = data;
-      this.loading = false
+      this.loading = false;
       this.gridData.next(process(this.data, this.state));
-    }); 
+    });
   }
 
   public dataStateChange(state: DataStateChangeEvent) {
@@ -43,5 +43,5 @@ export class DashboardComponent implements OnInit {
     this.gridData.next(process(this.data, this.state));
   }
 
-  
+
 }

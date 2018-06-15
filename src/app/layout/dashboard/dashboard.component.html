@@ -8,7 +8,7 @@
     [filter]="state.filter"
     [sortable]="true"
     [pageable]="true"
-    [filterable]="true"
+    filterable="menu"
     [selectable]="true"
     (dataStateChange)="dataStateChange($event)"
 >
@@ -16,7 +16,15 @@
     <kendo-grid-column field="reason" title="Reason" [sortable]="false"></kendo-grid-column>
     <kendo-grid-column field="cost" title="Withdrawal" width="120" format="{0:c}" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="income" title="Deposit" width="120" format="{0:c}" [filterable]="false"></kendo-grid-column>
-    <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}" width="250"  filter="date" format="{0:MMMM d, y}"></kendo-grid-column>
+    <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}">
+      <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
+        <app-date-range-filter
+          [field]="column.field"
+          [filter]="filter"
+          [filterService]="filterService">
+        </app-date-range-filter>
+      </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="130" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="130" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="isTest" title="Test" width="80" [filterable]="false">

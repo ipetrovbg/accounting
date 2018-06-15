@@ -7,20 +7,30 @@ import { ToolBarModule } from '@progress/kendo-angular-toolbar';
 import { MenuModule } from '@progress/kendo-angular-menu';
 import { GridModule } from '@progress/kendo-angular-grid';
 import { ChartsModule } from '@progress/kendo-angular-charts';
-import { ReactiveFormsModule } from '@angular/forms';
+
+import {
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
+
+import { DateRangeFilterComponent } from './date-range-filter/date-range-filter.component';
+import { DatePickerModule } from '@progress/kendo-angular-dateinputs';
 
 const kendo = [
   ToolBarModule,
   MenuModule,
   GridModule,
-  ChartsModule
+  ChartsModule,
+  DatePickerModule
 ];
 const modules = [
   ReactiveFormsModule,
-  HttpClientModule
+  HttpClientModule,
+  FormsModule
 ];
 const components = [
-  AppToolbarComponent
+  AppToolbarComponent,
+  DateRangeFilterComponent
 ];
 
 const forExports = [
