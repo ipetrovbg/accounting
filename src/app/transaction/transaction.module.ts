@@ -2,7 +2,8 @@ import { SharedModule } from './../shared/shared.module';
 import { TransactionService } from './transaction.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AuthInterceptorService } from '../layout/auth-interceptor.service';
 
 @NgModule({
   imports: [
@@ -11,7 +12,12 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   declarations: [],
   providers: [
-    TransactionService
+    TransactionService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true
+    }
   ]
 })
 export class TransactionModule { }

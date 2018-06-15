@@ -26,6 +26,9 @@ export function transactionReducer(state: TransactionState = initialState, actio
         case TransactionActionTypes.DELETE_ONE:
           return transactionAdapter.removeOne(action.id, state);
 
+      case TransactionActionTypes.DELETE_ALL:
+        return transactionAdapter.removeAll(state);
+
         case TransactionActionTypes.GET_ALL:
           return transactionAdapter.addAll(action.books, state);
 

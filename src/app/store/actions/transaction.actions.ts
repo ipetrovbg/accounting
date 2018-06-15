@@ -1,14 +1,21 @@
 import { Transaction } from './../../transaction/transaction.model';
-import { Action } from "@ngrx/store";
+import { Action } from '@ngrx/store';
 
 export enum TransactionActionTypes {
     GET_ONE = '[Transaction] Get One',
     ADD_ONE = '[Transaction] Add One',
     UPDATE_ONE = '[Transaction] Update One',
     DELETE_ONE = '[Transaction] Delete One',
+    DELETE_ALL = '[Transaction] Delete All',
     GET_ALL = '[Transaction] Get All',
-    ADD_MANY = '[Transaction] Add Many'
+    ADD_MANY = '[Transaction] Add Many',
+    FETCH = '[Transaction] Fetch'
   }
+  export class Fetch implements Action {
+    public readonly type: TransactionActionTypes.FETCH = TransactionActionTypes.FETCH;
+    constructor( public from: Date, public to: Date ) {}
+  }
+
   export class AddOne implements Action {
     public readonly type: TransactionActionTypes.ADD_ONE = TransactionActionTypes.ADD_ONE;
 
@@ -34,6 +41,11 @@ export enum TransactionActionTypes {
     readonly type: TransactionActionTypes.DELETE_ONE = TransactionActionTypes.DELETE_ONE;
     constructor(public id: string) { }
   }
+
+  export class DeleteAll implements Action {
+    readonly type: TransactionActionTypes.DELETE_ALL = TransactionActionTypes.DELETE_ALL;
+  }
+
   export class GetAll implements Action {
     readonly type: TransactionActionTypes.GET_ALL = TransactionActionTypes.GET_ALL;
     constructor(public books: Transaction[]) { }
@@ -43,4 +55,5 @@ export enum TransactionActionTypes {
     readonly type: TransactionActionTypes.GET_ONE = TransactionActionTypes.GET_ONE;
     constructor(public id: string) { }
   }
-  export type TransactionsActions = AddOne | GetOne | UpdateOne | DeleteOne | GetAll | AddMany;
+
+  export type TransactionsActions = AddOne | GetOne | UpdateOne | DeleteOne | GetAll | AddMany | Fetch | DeleteAll;

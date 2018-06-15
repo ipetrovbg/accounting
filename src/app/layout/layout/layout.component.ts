@@ -1,5 +1,10 @@
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
+import { State } from '../../store/accounting.state';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { Logout } from '../../store/actions/user.actions';
+import { DeleteAll } from '../../store/actions/transaction.actions';
 
 @Component({
   selector: 'app-layout',
@@ -8,33 +13,38 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LayoutComponent implements OnInit {
   public items: Array<any> = [];
-  public user: string = ''
+  public user: Observable<string>;
   public userMenu = [];
-  
+
 constructor(
-  private router: Router
+  private router: Router,
+  private store: Store<State>
 ) {
   this.items = this.mapItems();
 }
 
 public ngOnInit() {
-  this.user = localStorage.getItem('username');
-  this.userMenu = [
-    {
-      text: this.user,
-      path: null,
-      items: [
-        { text: 'Logout', path: '/login' }
-      ]
-    }
-  ]
+  this.user = this.store.select(state => state.user.name);
+
+  this.user.subscribe(name => {
+    this.userMenu = [
+      {
+        text: name,
+        path: null,
+        items: [
+          { text: 'Logout', path: '/login' }
+        ]
+      }
+    ];
+  });
+
 }
 
 public onSelectUserMenu({ item }) {
   if (item.text === 'Logout') {
     localStorage.removeItem('token');
-    localStorage.removeItem('email');
-    localStorage.removeItem('username');
+    this.store.dispatch(new Logout());
+    this.store.dispatch(new DeleteAll());
     this.router.navigate([ item.path ]);
   }
 }
@@ -42,18 +52,18 @@ public onSelectUserMenu({ item }) {
 public onSelect({ item }): void {
   if (item.path) {
     this.router.navigate([ item.path ]);
-  }  
+  }
 }
 
 private mapItems(): any[] {
   return [
     { text: 'Home', path: '/home' },
-    { text: 'Login', path: '/login' },
-    { text: 'Dashboard', path: null, items: [
-      { text: 'Dashboard', path: '/dashboard/dashboard' },
-      { text: 'Transactions Graph', path: '/dashboard/transactions-graph' }
-      
-    ] }
+    { text: 'Dashboard', path: null,
+      items: [
+        { text: 'Dashboard', path: '/dashboard/dashboard' },
+        { text: 'Transactions Graph', path: '/dashboard/transactions-graph' }
+      ]
+    }
   ];
 }
 

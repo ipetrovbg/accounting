@@ -1,7 +1,7 @@
 export interface Transaction {
     id: string;
     reason: string;
-    withdrawaw: number;
+    withdrawal: number;
     deposit: number;
     date: Date;
     updatedAt: Date;

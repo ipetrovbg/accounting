@@ -14,6 +14,7 @@ import 'hammerjs';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 
 export const appRoutes: Routes = [
@@ -36,9 +37,9 @@ export const appRoutes: Routes = [
     TransactionModule,
     RouterModule.forRoot(appRoutes),
     AccountingStoreModule,
-    DateInputsModule
+    DateInputsModule,
+    AuthenticationModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

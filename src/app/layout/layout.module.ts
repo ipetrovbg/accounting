@@ -5,12 +5,14 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LayoutComponent } from './layout/layout.component';
 import { routing } from './layout.routes';
 import { TransactionsGraphComponent } from './transactions-graph/transactions-graph.component';
+import { AuthenticationModule } from '../authentication/authentication.module';
 
 @NgModule({
   imports: [
     CommonModule,
     routing,
-    SharedModule
+    SharedModule,
+    AuthenticationModule
   ],
   declarations: [DashboardComponent, LayoutComponent, TransactionsGraphComponent]
 })
