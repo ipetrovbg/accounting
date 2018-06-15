@@ -42,8 +42,13 @@ export class TransactionService {
     if (transaction.createdAt) {
       transaction.createdAt  = new Date(transaction.createdAt);
     }
-    transaction.deposit       = +transaction.deposit;
-    transaction.withdrawal       = +transaction.withdrawal;
+    if (transaction.deposit) {
+      transaction.deposit       = +transaction.deposit;
+    }
+    if (transaction.withdrawal) {
+      transaction.withdrawal       = +transaction.withdrawal;
+    }
+    
 
     return transaction;
   }
@@ -52,7 +57,7 @@ export class TransactionService {
     const url = `${from.getFullYear()}-${from.getMonth() + 1}-${from.getDate()}/${to.getFullYear()}-${to.getMonth() + 1 }-${to.getDate()}`;
 
     return this.store.select(state => state.user.token)
-      .switchMap(token => this.http.post(`${this.core.api}/transaction`, { token }))
+      .switchMap(token => this.http.post(`${this.core.api}/transaction`, { token, from, to }))
       .map(this.mapTransactions.bind(this));
   }
 

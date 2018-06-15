@@ -33,20 +33,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const transactions$ = this.store.select(selectAllTransactionsSelector);
     this.loading = true;
+    const transactions$ = this.store.select(selectAllTransactionsSelector);
 
     this.subscription.add(
       transactions$
-        .pipe(tap(() => this.loading = false))
         .subscribe(transactions => {
+          this.loading = false;
           this.data = transactions;
           this.gridData.next(process(this.data, this.state));
         })
     );
 
     const dates = this.core.startEndWorkMonth(5);
-    this.store.dispatch(new Fetch(dates.start, dates.end));
+    this.store.select(state => state.user.token)
+      .subscribe(token => {
+        this.loading = true
+        if (token) {
+          this.store.dispatch(new Fetch(dates.start, dates.end));
+        }
+      })
   }
 
   public dataStateChange(state: DataStateChangeEvent) {
