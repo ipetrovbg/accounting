@@ -1,3 +1,4 @@
+import { CoreService } from './../core/core/core.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
@@ -15,11 +16,12 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private core: CoreService
   ) { }
 
   ngOnInit() {
-    this.http.get('https://ancient-fjord-87958.herokuapp.com/api/v1/authenticate/' + localStorage.getItem('token'))
+    this.http.get(`${this.core.api}/authenticate/${localStorage.getItem('token')}`)
     .subscribe((login: any) => {
       if (login.token) {
         this.router.navigate(['/dashboard']);
@@ -33,7 +35,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.http
-    .post(`https://ancient-fjord-87958.herokuapp.com/api/v1/authenticate`, this.form.value)
+    .post(`${this.core.api}/authenticate`, this.form.value)
     .subscribe((login: any) => {
       if (login.success) {
         localStorage.setItem('token', login.token);

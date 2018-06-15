@@ -1,3 +1,4 @@
+import { AccountingStoreModule } from './store/accounting-store.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { SharedModule } from './shared/shared.module';
 import { BrowserModule } from '@angular/platform-browser';
@@ -34,6 +35,7 @@ export const appRoutes: Routes = [
     SharedModule,
     TransactionModule,
     RouterModule.forRoot(appRoutes),
+    AccountingStoreModule,
     DateInputsModule
   ],
   providers: [],

@@ -7,6 +7,10 @@ import * as moment from 'moment';
 })
 export class CoreService {
 
+  apiEndpoint: string = 'https://ancient-fjord-87958.herokuapp.com/api';
+  vertion: string     = '/v1';
+  api: string         = `${this.apiEndpoint}${this.vertion}`;
+
   constructor() { }
 
   startEndWorkMonth( payDay ):{ start: Date, end: Date } {
