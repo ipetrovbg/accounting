@@ -2,22 +2,22 @@ import { SharedModule } from './../shared/shared.module';
 import { TransactionService } from './transaction.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthInterceptorService } from '../layout/auth-interceptor.service';
+import { HttpClientModule } from '@angular/common/http';
+import { DialogTransactionComponent } from './dialog-transaction/dialog-transaction.component';
 
 @NgModule({
   imports: [
     CommonModule,
     SharedModule
   ],
-  declarations: [],
+  declarations: [
+    DialogTransactionComponent
+  ],
   providers: [
     TransactionService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
-      multi: true
-    }
+  ],
+  entryComponents: [
+    DialogTransactionComponent
   ]
 })
 export class TransactionModule { }

@@ -17,6 +17,7 @@ import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { AuthenticationModule } from './authentication/authentication.module';
 
 
+
 export const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },

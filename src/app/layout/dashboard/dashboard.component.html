@@ -11,7 +11,15 @@
     filterable="menu"
     [selectable]="true"
     (dataStateChange)="dataStateChange($event)"
+    (edit)="editHandler($event)"
+    (cancel)="cancelHandler($event)"
+    (save)="saveHandler($event)"
+    (remove)="removeHandler($event)"
+    (add)="addHandler($event)"
 >
+    <ng-template kendoGridToolbarTemplate position="top">
+        <button kendoGridAddCommand kendoButton [primary]="true">New</button>
+    </ng-template>
     <!--<kendo-grid-column field="incomeId" title="Deposit ID" width="100" [filterable]="false" [sortable]="false"></kendo-grid-column>
     <kendo-grid-column field="costId" title="Withdrawal ID" width="115" [filterable]="false" [sortable]="false"></kendo-grid-column>-->
     <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}" width="150">
@@ -34,4 +42,16 @@
             <input type="checkbox" [checked]="dataItem.isTest" disabled/>
         </ng-template>
     </kendo-grid-column>
+
+    <kendo-grid-command-column title="command" width="220">
+        <ng-template kendoGridCellTemplate let-isNew="isNew">
+            <button kendoGridEditCommand [primary]="true">Edit</button>
+            <button kendoGridRemoveCommand>Remove</button>
+            <button kendoGridSaveCommand [disabled]="formGroup?.invalid">{{ isNew ? 'Add' : 'Update' }}</button>
+            <button kendoGridCancelCommand>{{ isNew ? 'Discard changes' : 'Cancel' }}</button>
+        </ng-template>
+    </kendo-grid-command-column>
+
 </kendo-grid>
+
+<div kendoDialogContainer></div>

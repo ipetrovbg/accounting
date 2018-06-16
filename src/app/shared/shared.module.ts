@@ -7,6 +7,8 @@ import { ToolBarModule } from '@progress/kendo-angular-toolbar';
 import { MenuModule } from '@progress/kendo-angular-menu';
 import { GridModule } from '@progress/kendo-angular-grid';
 import { ChartsModule } from '@progress/kendo-angular-charts';
+import { ButtonsModule } from '@progress/kendo-angular-buttons';
+import { DialogsModule } from '@progress/kendo-angular-dialog';
 
 import {
   FormsModule,
@@ -21,7 +23,9 @@ const kendo = [
   MenuModule,
   GridModule,
   ChartsModule,
-  DatePickerModule
+  DatePickerModule,
+  ButtonsModule,
+  DialogsModule
 ];
 const modules = [
   ReactiveFormsModule,
