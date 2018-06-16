@@ -18,7 +18,12 @@
     (add)="addHandler($event)"
 >
     <ng-template kendoGridToolbarTemplate position="top">
-        <button kendoGridAddCommand kendoButton [primary]="true">New</button>
+        <!-- <button kendoGridAddCommand kendoButton ></button> -->
+        <div>
+            <kendo-splitbutton [data]="menuData">
+                    New
+            </kendo-splitbutton>
+        </div>
     </ng-template>
     <!--<kendo-grid-column field="incomeId" title="Deposit ID" width="100" [filterable]="false" [sortable]="false"></kendo-grid-column>
     <kendo-grid-column field="costId" title="Withdrawal ID" width="115" [filterable]="false" [sortable]="false"></kendo-grid-column>-->

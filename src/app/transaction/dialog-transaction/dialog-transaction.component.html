@@ -1,3 +1,13 @@
-<p>
-  new-transaction works!
-</p>
+<pre>
+  {{ form.value | json }}
+</pre>
+<form [formGroup]="form" class="k-form">
+    <label class="k-form-field">
+        <span>Transaction Date:</span>
+        <kendo-datepicker formControlName="date" required></kendo-datepicker>
+    </label>
+    <label class="k-form-field">
+        <span>First Name</span>
+        <input class="k-textbox" placeholder="Your Name" />
+    </label>
+</form>

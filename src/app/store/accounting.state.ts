@@ -1,7 +1,9 @@
+import { Store } from '@ngrx/store';
 import { TransactionManageState } from './states/transaction-manage.state';
 import { Transaction } from './../transaction/transaction.model';
 import { TransactionState } from './states/transaction.state';
 import { UserState } from './states/user.state';
+import 'rxjs-compat/add/operator/take';
 
 
 export interface State {
@@ -33,3 +35,10 @@ export const initialState: State = {
     name: ''
   }
 };
+
+
+export function getState(store: Store<State>) {
+  let o: State;
+  store.select(state => state).take(1).subscribe(state => o = state);
+  return o;
+}

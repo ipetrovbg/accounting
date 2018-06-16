@@ -1,7 +1,7 @@
 import { TransactionManageState } from './../../store/states/transaction-manage.state';
 import { DialogTransactionComponent } from './../../transaction/dialog-transaction/dialog-transaction.component';
 import { TransactionState } from './../../store/states/transaction.state';
-import { State as AppState } from './../../store/accounting.state';
+import { State as AppState, getState } from './../../store/accounting.state';
 import { Observable } from 'rxjs/Observable';
 import { TransactionService } from '../../transaction/transaction.service';
 import { CoreService } from '../../core/core/core.service';
@@ -30,6 +30,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public state: State = { skip: 0, take: 100 };
   public loading: boolean;
   public subscription: Subscription = new Subscription();
+  public menuData: Array<any> = [{
+    text: 'Withdrawal',
+    click: () => this.addHandler({ action: 'new', state: 'withdrawal' })
+}, {
+    text: 'Deposit',
+    click: () => this.addHandler({ action: 'new', state: 'deposit' })
+}];
 
   constructor(private core: CoreService,
               private transaction: TransactionService,
@@ -64,7 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new Load({ withdrawal: null, deposit: null, id: null, reason: '', date: null, createdAt: null, updatedAt: null, isTest: false }));
 
-    this.openDialog(e.action);
+    this.openDialog(e.action, e.state);
   }
 
   public removeHandler(e) {
@@ -78,7 +85,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     dataItem.id = costId || incomeId;
 
     this.store.dispatch(new Load(dataItem));
-    this.openDialog(e.action);
+    this.openDialog(e.action, costId ? 'withdrawal' : 'deposit' );
   }
 
   public dataStateChange(state: DataStateChangeEvent) {
@@ -91,23 +98,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteAll());
   }
 
-  private openDialog(state: 'add' | 'edit') {
+  private openDialog(state: 'new' | 'edit', transactionState: 'deposit' | 'withdrawal') {
 
     const dialog: DialogRef = this.dialogService.open({
-      title: `${state[0].toUpperCase() + state.substring(1)} transaction`,
+      title: `${state[0].toUpperCase() + state.substring(1)} ${transactionState[0].toUpperCase() + transactionState.substring(1)}`,
       content: DialogTransactionComponent,
       actions: [
           { text: 'Cancel' },
           { text: 'Save', primary: true }
       ],
-      width: 450,
-      height: 200,
+      width: 850,
+      height: 400,
       minWidth: 250
   });
 
+  const dialogTransactionComponent = dialog.content.instance;
+  dialogTransactionComponent.state = state;
+  dialogTransactionComponent.transactionState = transactionState;
+
   dialog.result.subscribe((result) => {
       if (!(result instanceof DialogCloseResult) && result.primary) {
-        console.log(result);
+        console.log(getState(this.store).transactionManage);
       }
   });
   }
