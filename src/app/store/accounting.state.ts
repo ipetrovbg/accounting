@@ -29,6 +29,7 @@ export const initialState: State = {
     isTest: false
   },
   user: {
+    id: null,
     email: '',
     password: '',
     token: '',

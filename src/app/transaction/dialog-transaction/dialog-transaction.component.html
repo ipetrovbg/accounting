@@ -1,13 +1,78 @@
-<pre>
-  {{ form.value | json }}
-</pre>
-<form [formGroup]="form" class="k-form">
-    <label class="k-form-field">
-        <span>Transaction Date:</span>
-        <kendo-datepicker formControlName="date" required></kendo-datepicker>
-    </label>
-    <label class="k-form-field">
-        <span>First Name</span>
-        <input class="k-textbox" placeholder="Your Name" />
-    </label>
+<form [formGroup]="form" class="form k-form-inline" kendoTooltip>
+        <kendo-splitter style="height: 235px;">
+            <kendo-splitter-pane size="49.5%" min="40%">
+                <div class="padding">
+                    <label class="k-form-field">
+                        <span class="k-field-info">Reason
+                            <span class="k-required">* </span>
+                            <span
+                                class="k-icon k-i-information k-i-info"
+                                title="Describe what's the reason for this {{ transactionState === 'withdrawal' ? 'Withdrawal' : 'Deposit' }}"
+                            ></span>
+                        </span>
+                        <textarea kendoTextArea formControlName="reason" style="width: 100%;" rows="7" class=full-width></textarea>
+                    </label>
+                </div>
+            </kendo-splitter-pane>
+            <kendo-splitter-pane>
+                <div class="padding">
+                    <label class="k-form-field">
+                        <span class="k-field-info">Transaction Type: <span class="k-required">*</span></span>
+                        <kendo-dropdownlist
+                            class="full-with"
+                            [disabled]="state === 'edit'"                            
+                            [data]="transactionStateList"
+                            [value]="transactionState[0].toUpperCase() + transactionState.substring(1)"
+                            (valueChange)="handleStateChange($event)"
+                        >
+                        </kendo-dropdownlist>
+                    </label>
+                    <div>
+                        <div class="half-with float-left">
+                            <label class="k-form-field">
+                                <span class="k-field-info">Transaction Date: <span class="k-required">* </span>
+                                <span
+                                    class="k-icon k-i-information k-i-info"
+                                    title="When this transaction was made"
+                                ></span>
+                                </span>
+                                    <kendo-datepicker class="full-with" formControlName="date" required></kendo-datepicker>
+                            </label>
+                        </div>
+                        <div class="half-with float-left">
+                            <label class="k-form-field">
+                                <span class="k-field-info">Amount
+                                    <span class="k-required">* </span>
+                                    <span
+                                        class="k-icon k-i-information k-i-info"
+                                        title="The amount in BGN"
+                                    ></span>
+                                </span>
+                                <kendo-numerictextbox *ngIf="transactionState === 'withdrawal'" class="full-width" placeholder="Amount" formControlName="withdrawal"></kendo-numerictextbox>
+                                <kendo-numerictextbox *ngIf="transactionState === 'deposit'" class="full-width" placeholder="Amount" formControlName="deposit"></kendo-numerictextbox>
+                            </label>
+                        </div>
+                    </div>
+                    <label class="k-form-field">
+                        <span class="full-width k-field-info">Simulation 
+                            <span
+                                class="k-icon k-i-information k-i-info"
+                                title="If it's used for simulation. It's not real {{ transactionState === 'withdrawal' ? 'Withdrawal' : 'Deposit' }}"
+                            ></span>
+                        </span>
+                        <kendo-switch
+                        formControlName="isTest"
+                        onLabel="Yes"
+                        offLabel="No"
+                        ></kendo-switch>                        
+                    </label>
+                </div>
+            </kendo-splitter-pane>  
+        </kendo-splitter>
+    <!-- <div class="half-with float-left">
+            
+        </div>
+    <div class="half-with float-left">
+        
+    </div> -->
 </form>

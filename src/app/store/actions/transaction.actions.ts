@@ -19,7 +19,7 @@ export enum TransactionActionTypes {
   export class AddOne implements Action {
     public readonly type: TransactionActionTypes.ADD_ONE = TransactionActionTypes.ADD_ONE;
 
-    constructor( public book: Transaction ) { }
+    constructor( public transaction: Transaction ) { }
   }
 
   export class AddMany implements Action {
@@ -48,7 +48,7 @@ export enum TransactionActionTypes {
 
   export class GetAll implements Action {
     readonly type: TransactionActionTypes.GET_ALL = TransactionActionTypes.GET_ALL;
-    constructor(public books: Transaction[]) { }
+    constructor(public transactions: Transaction[]) { }
   }
 
   export class GetOne implements Action {

@@ -15,7 +15,7 @@ export function transactionReducer(state: TransactionState = initialState, actio
     switch (action.type) {
 
         case TransactionActionTypes.ADD_ONE:
-          return transactionAdapter.addOne(action.book, state);
+          return transactionAdapter.addOne(action.transaction, state);
 
         case TransactionActionTypes.ADD_MANY:
           return transactionAdapter.addMany(action.transactions, state);
@@ -30,7 +30,7 @@ export function transactionReducer(state: TransactionState = initialState, actio
         return transactionAdapter.removeAll(state);
 
         case TransactionActionTypes.GET_ALL:
-          return transactionAdapter.addAll(action.books, state);
+          return transactionAdapter.addAll(action.transactions, state);
 
         default:
           return state;

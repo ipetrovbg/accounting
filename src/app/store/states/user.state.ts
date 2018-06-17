@@ -3,4 +3,5 @@ export interface UserState {
   password: string;
   token: string;
   name: string;
+  id: number;
 }

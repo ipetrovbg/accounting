@@ -9,6 +9,10 @@ import { GridModule } from '@progress/kendo-angular-grid';
 import { ChartsModule } from '@progress/kendo-angular-charts';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import { DialogsModule } from '@progress/kendo-angular-dialog';
+import { InputsModule } from '@progress/kendo-angular-inputs';
+import { LayoutModule } from '@progress/kendo-angular-layout';
+import { TooltipModule } from '@progress/kendo-angular-tooltip';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 
 import {
   FormsModule,
@@ -25,7 +29,11 @@ const kendo = [
   ChartsModule,
   DatePickerModule,
   ButtonsModule,
-  DialogsModule
+  DialogsModule,
+  InputsModule,
+  LayoutModule,
+  TooltipModule,
+  DropDownsModule
 ];
 const modules = [
   ReactiveFormsModule,

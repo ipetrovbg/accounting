@@ -1,6 +1,6 @@
 <kendo-grid
     height="540"
-    [loading]="loading"
+    [loading]="loading | async"
     [data]="gridData | async"
     [pageSize]="state.take"
     [skip]="state.skip"
@@ -20,7 +20,7 @@
     <ng-template kendoGridToolbarTemplate position="top">
         <!-- <button kendoGridAddCommand kendoButton ></button> -->
         <div>
-            <kendo-splitbutton [data]="menuData">
+            <kendo-splitbutton [data]="menuData" (buttonClick)="addHandler({ action: 'new', state: 'withdrawal' })">
                     New
             </kendo-splitbutton>
         </div>
@@ -48,7 +48,7 @@
         </ng-template>
     </kendo-grid-column>
 
-    <kendo-grid-command-column title="command" width="220">
+    <kendo-grid-command-column title="Actions" width="150">
         <ng-template kendoGridCellTemplate let-isNew="isNew">
             <button kendoGridEditCommand [primary]="true">Edit</button>
             <button kendoGridRemoveCommand>Remove</button>

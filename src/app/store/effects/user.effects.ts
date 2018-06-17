@@ -22,13 +22,14 @@ export class UserEffects {
         this.router.navigate(['/dashboard']);
 
         return new Update({
+          id: response.user.id,
           token: response.token,
           email: response.user.email,
           name: response.user.name,
           password: ''
         });
       } else {
-        return new Update({ name: '', email: '', password: '', token: '' });
+        return new Update({ name: '', email: '', password: '', token: '', id: null });
       }
     });
 }

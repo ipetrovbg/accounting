@@ -1,0 +1,29 @@
+::ng-deep .full-width {
+    width: 100%!important;
+}
+::ng-deep kendo-datepicker, kendo-combobox, kendo-dropdownlist {
+    width: 100%!important;
+}
+.k-form-inline .k-form-field {
+    display: block;
+    & > span {
+        display: block;
+        text-align: left;
+        width: 100%;
+        & > span {
+            display: inline;
+        }
+    }
+}
+.form {
+    padding: 0;
+    .k-form-field {
+        // display: block!important;
+        margin: 5px;
+        padding: 5px;
+        p {
+            padding: 0;
+            margin: 0;
+        }
+    }
+}

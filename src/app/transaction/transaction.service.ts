@@ -1,3 +1,4 @@
+import { TransactionManageState } from './../store/states/transaction-manage.state';
 import { CoreService } from './../core/core/core.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -5,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/skipWhile';
 import { Store } from '@ngrx/store';
-import { State } from '../store/accounting.state';
+import { State, getState } from '../store/accounting.state';
 import { Transaction } from './transaction.model';
 import { Observable } from 'rxjs';
 import 'rxjs-compat/add/operator/switchMap';
@@ -19,21 +20,88 @@ export class TransactionService {
     private store: Store<State>
   ) { }
 
-  private static UUID(): string {
-    let d = new Date().getTime();
-    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      // tslint:disable-next-line:no-bitwise
-      const r = ( d + Math.random() * 16 ) % 16 | 0;
-      d = Math.floor(d / 16 );
-      // tslint:disable-next-line:no-bitwise
-      return (c === 'x' ? r : ( r & 0x3 | 0x8 )).toString(16);
-    });
-    return uuid;
+  fetch(from: Date = new Date(), to: Date = new Date()): Observable<Transaction[]> {
+    const url = `${from.getFullYear()}-${from.getMonth() + 1}-${from.getDate()}/${to.getFullYear()}-${to.getMonth() + 1 }-${to.getDate()}`;
+
+    return this.store.select(state => state.user.token)
+      .switchMap(token => this.http.post(`${this.core.api}/transaction`, { token, from, to }))
+      .map(this.mapTransactions.bind(this));
   }
 
-  private static puryFyTransactions(transaction: Transaction): Transaction {
+  update(transaction: Transaction, type: 'withdrawal' | 'deposit'): Observable<any> {
+    transaction.userId = getState(this.store).user.id;
+    if (type === 'deposit') {
+      return this.updateDeposit(transaction);
+    } else {
+      return this.updateWithdrawal(transaction);
+    }
+  }
+
+  add(transaction: Transaction, type: 'withdrawal' | 'deposit'): Observable<any> {
+    console.log(type);
+    transaction.userId = getState(this.store).user.id;
+    if (type === 'deposit') {
+      return this.addDeposit(transaction);
+    } else {
+      return this.addWithdrawal(transaction);
+    }
+  }
+
+  delete(id: number, type: 'withdrawal' | 'deposit'): Observable<any> {
+
+    const user = getState(this.store).user;
+    let url = this.core.api;
+
+    if (type === 'deposit') {
+      url += '/income/';
+    } else {
+      url += '/cost/';
+    }
+
+    return this.http.request('delete', `${url}${id}`, { body: { token: user.token  } });
+  }
+
+  updateWithdrawal(transaction: Transaction) {
+    const user = getState(this.store).user;
+    transaction.cost = transaction.withdrawal;
+    return this.http
+           .put(`${this.core.api}/cost/${transaction.id}`, { token: user.token, cost: JSON.stringify(transaction)});
+  }
+
+  updateDeposit(transaction: Transaction) {
+    transaction.income = transaction.deposit;
+    return this.http
+          .put(`${this.core.api}/income/${transaction.id}`, {
+            income: JSON.stringify(transaction),
+            token: getState(this.store).user.token
+          });
+  }
+
+  addWithdrawal(transaction: Transaction) {
+    transaction.cost = transaction.withdrawal;
+    return this.http.post(`${this.core.api}/cost`,
+      { token: getState(this.store).user.token, cost: JSON.stringify(transaction)}
+    );
+  }
+
+  addDeposit(transaction: Transaction) {
+    transaction.income = transaction.deposit;
+    return this.http.post(`${this.core.api}/income`, {
+      income: JSON.stringify(transaction),
+      token: getState(this.store).user.token
+    });
+  }
+
+  private mapTransactions(response: Transaction[]) {
+    if (!response) {
+      return [];
+    }
+    return response.map(this.puryFyTransactions.bind(this));
+  }
+
+  private puryFyTransactions(transaction: Transaction): Transaction {
     transaction.date       = new Date(transaction.date);
-    transaction.id         = TransactionService.UUID();
+    transaction.id         = this.core.UUID();
 
     if (transaction.updatedAt) {
       transaction.updatedAt  = new Date(transaction.updatedAt);
@@ -51,20 +119,5 @@ export class TransactionService {
     
 
     return transaction;
-  }
-
-  fetch(from: Date = new Date(), to: Date = new Date()): Observable<Transaction[]> {
-    const url = `${from.getFullYear()}-${from.getMonth() + 1}-${from.getDate()}/${to.getFullYear()}-${to.getMonth() + 1 }-${to.getDate()}`;
-
-    return this.store.select(state => state.user.token)
-      .switchMap(token => this.http.post(`${this.core.api}/transaction`, { token, from, to }))
-      .map(this.mapTransactions.bind(this));
-  }
-
-  private mapTransactions(response: Transaction[]) {
-    if (!response) {
-      return [];
-    }
-    return response.map(TransactionService.puryFyTransactions.bind(this));
   }
 }

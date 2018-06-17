@@ -7,7 +7,7 @@ export function userReducer(state: UserState = initialState.user, action: UserAc
     case UserActionTypes.UPDATE:
       return { ...state, ...action.user };
     case UserActionTypes.LOGOUT:
-      return { ...state,  email: '', token: '', name: '', password: '' };
+      return { ...state,  email: '', token: '', name: '', password: '', id: null };
     default:
       return state;
   }

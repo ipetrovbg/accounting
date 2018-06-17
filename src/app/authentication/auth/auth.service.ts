@@ -54,7 +54,8 @@ export class AuthService {
         token: login.token,
         email: login.user.email,
         name: login.user.name,
-        password: ''
+        password: '',
+        id: login.user.id
       }));
 
       localStorage.setItem('token', login.token);
