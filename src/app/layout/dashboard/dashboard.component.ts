@@ -20,6 +20,7 @@ import { DeleteAll, Fetch } from '../../store/actions/transaction.actions';
 import { DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-angular-dialog';
 import { Load } from '../../store/actions/transaction-manage.action';
 import { removeDebugNodeFromIndex } from '@angular/core/src/debug/debug_node';
+import 'rxjs-compat/add/operator/do';
 
 @Component({
   selector: 'app-dashboard',
@@ -50,23 +51,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loading.next(true);
     const transactions$ = this.store.select(selectAllTransactionsSelector);
 
-    this.subscription.add(
-      transactions$
-        .subscribe(transactions => {
-          setTimeout(() => this.loading.next(false), 300);
-          this.data = transactions;
-          this.gridData.next(process(this.data, this.state));
-        })
-    );
-
     const dates = this.core.startEndWorkMonth(5);
     this.store.select(state => state.user.token)
       .subscribe(token => {
-        this.loading.next(true);
         if (token) {
           this.store.dispatch(new Fetch(dates.start, dates.end));
         }
-      })
+      });
+
+    this.subscription.add(
+      transactions$
+        .do(() => setTimeout(() => this.loading.next(false), 300))
+        .subscribe(transactions => {
+          this.data = transactions;
+          this.gridData.next(process(this.data, this.state));
+          setTimeout(() => this.loading.next(false), 300);
+        })
+    );
   }
 
   public addHandler(e) {
@@ -78,7 +79,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public removeHandler(e) {
     this.loading.next(true);
-    console.log(e.dataItem);
     this.transaction
       .delete(e.dataItem.costId || e.dataItem.incomeId, e.dataItem.costId ? 'withdrawal' : 'deposit')
       .subscribe(response => {
@@ -97,16 +97,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   public dataStateChange(state: DataStateChangeEvent) {
-    
     setTimeout(() => this.loading.next(true), 0);
-
+    this.state = state;
     this.store.dispatch(new DeleteAll());
     const dates = this.core.startEndWorkMonth(5);
-    this.store.dispatch(new Fetch(dates.start, dates.end));
-
-    this.state = state;
-    this.gridData.next(process(this.data, this.state));
-    
+    this.store.next(new Fetch(dates.start, dates.end));
   }
 
   ngOnDestroy() {
@@ -134,7 +129,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dialog.result.subscribe((result) => {
       const transactionObject: any = getState(this.store).transactionManage;
 
-      if (!(result instanceof DialogCloseResult) && result.primary) {      
+      if (!(result instanceof DialogCloseResult) && result.primary) {
 
         if (dialogTransactionComponent.transactionState === 'withdrawal') {
           transactionObject.costId = transactionObject.id;
@@ -147,22 +142,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.loading.next(true);
           const transactionEntity = { ...transactionObject };
           this.transaction.update(transactionEntity, dialogTransactionComponent.transactionState)
-          .subscribe(result => {
-            transactionObject.id = id;            
-            this.store.dispatch(new UpdateOne(id, transactionObject));  
+          .subscribe(() => {
+            transactionObject.id = id;
+            this.store.dispatch(new UpdateOne(id, transactionObject));
           }, err => this.loading.next(false));
-                  
+
         } else {
           const transactionEntity = transactionObject;
-          console.log(transactionEntity);
 
-          this.transaction.add(transactionEntity, dialogTransactionComponent.transactionState).subscribe(response => {
+          this.transaction.add(transactionEntity, dialogTransactionComponent.transactionState).subscribe(() => {
             this.loading.next(true);
             this.store.dispatch(new DeleteAll());
             const dates = this.core.startEndWorkMonth(5);
             this.store.dispatch(new Fetch(dates.start, dates.end));
           });
-          
         }
       }
   });

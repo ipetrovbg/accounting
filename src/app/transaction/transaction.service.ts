@@ -21,10 +21,7 @@ export class TransactionService {
   ) { }
 
   fetch(from: Date = new Date(), to: Date = new Date()): Observable<Transaction[]> {
-    const url = `${from.getFullYear()}-${from.getMonth() + 1}-${from.getDate()}/${to.getFullYear()}-${to.getMonth() + 1 }-${to.getDate()}`;
-
-    return this.store.select(state => state.user.token)
-      .switchMap(token => this.http.post(`${this.core.api}/transaction`, { token, from, to }))
+    return this.http.post(`${this.core.api}/transaction`, { token: getState(this.store).user.token, from, to })
       .map(this.mapTransactions.bind(this));
   }
 
@@ -38,7 +35,6 @@ export class TransactionService {
   }
 
   add(transaction: Transaction, type: 'withdrawal' | 'deposit'): Observable<any> {
-    console.log(type);
     transaction.userId = getState(this.store).user.id;
     if (type === 'deposit') {
       return this.addDeposit(transaction);
@@ -116,8 +112,6 @@ export class TransactionService {
     if (transaction.withdrawal) {
       transaction.withdrawal       = +transaction.withdrawal;
     }
-    
-
     return transaction;
   }
 }

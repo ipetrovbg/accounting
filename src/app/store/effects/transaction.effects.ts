@@ -19,3 +19,4 @@ export class TransactionEffects {
       map(data => new AddMany(data))
     );
 }
+
