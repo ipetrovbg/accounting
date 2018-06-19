@@ -6,6 +6,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { routing } from './layout.routes';
 import { TransactionsGraphComponent } from './transactions-graph/transactions-graph.component';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { TransactionsComponent } from './transactions/transactions.component';
 
 @NgModule({
   imports: [
@@ -14,6 +15,6 @@ import { AuthenticationModule } from '../authentication/authentication.module';
     SharedModule,
     AuthenticationModule
   ],
-  declarations: [DashboardComponent, LayoutComponent, TransactionsGraphComponent]
+  declarations: [DashboardComponent, LayoutComponent, TransactionsGraphComponent, TransactionsComponent]
 })
 export class LayoutModule { }

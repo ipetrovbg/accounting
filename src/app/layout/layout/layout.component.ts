@@ -61,6 +61,7 @@ private mapItems(): any[] {
     { text: 'Dashboard', path: null,
       items: [
         { text: 'Dashboard', path: '/dashboard/dashboard' },
+        { text: 'Transactions', path: '/dashboard/transactions' },
         { text: 'Transactions Graph', path: '/dashboard/transactions-graph' }
       ]
     }

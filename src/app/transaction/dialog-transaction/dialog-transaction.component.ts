@@ -29,8 +29,9 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const transaction: any = getState(this.store).transactionManage;
     if (this.state === 'new') {
+      transaction.date = new Date();
       if (this.transactionState === 'deposit') {
-        transaction.deposit = 0;
+        transaction.deposit = 0;        
       } else {
         transaction.withdrawal = 0;
       }

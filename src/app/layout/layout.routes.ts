@@ -1,3 +1,4 @@
+import { TransactionsComponent } from './transactions/transactions.component';
 import { LayoutComponent } from './layout/layout.component';
 import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -9,8 +10,9 @@ import { TransactionsGraphComponent } from './transactions-graph/transactions-gr
 const routes: Routes = [
   { path: '', component: LayoutComponent, children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'transactions', component: TransactionsComponent },
+      { path: 'transactions-graph', component: TransactionsGraphComponent },
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'transactions-graph', component: TransactionsGraphComponent }
     ],
     // canActivate: [ LayoutGuard ]
   }
