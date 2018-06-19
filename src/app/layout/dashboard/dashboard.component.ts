@@ -21,6 +21,7 @@ import { DialogService, DialogRef, DialogCloseResult } from '@progress/kendo-ang
 import { Load } from '../../store/actions/transaction-manage.action';
 import { removeDebugNodeFromIndex } from '@angular/core/src/debug/debug_node';
 import 'rxjs-compat/add/operator/do';
+import { IntlService } from '@progress/kendo-angular-intl';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,6 +33,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public data: any[] = [];
   public state: State = { skip: 0, take: 100 };
   public loading: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public withdrawal: BehaviorSubject<number> = new BehaviorSubject(0);
+  public deposit: BehaviorSubject<number> = new BehaviorSubject(0);
   public subscription: Subscription = new Subscription();
   public menuData: Array<any> = [{
     text: 'Withdrawal',
@@ -44,7 +47,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(private core: CoreService,
               private transaction: TransactionService,
               private store: Store<AppState>,
-              private dialogService: DialogService) {
+              private dialogService: DialogService,
+              public intl: IntlService) {
   }
 
   ngOnInit() {
@@ -68,6 +72,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
           setTimeout(() => this.loading.next(false), 300);
         })
     );
+    this.gridData.subscribe(data => {
+      const aggregate = process(data.data, {
+        group: [
+          {
+            field: 'name',
+            aggregates: [
+              { aggregate: 'sum', field: 'deposit' },
+              { aggregate: 'sum', field: 'withdrawal' }
+            ]
+          }
+        ]          
+      });
+      if (aggregate.total) {
+        // console.log(this.intl.formatNumber(aggregate.data[0].aggregates.withdrawal.sum, { currency: 'BGN', currencyDisplay: 'symbol', style: 'currency' }));
+        this.withdrawal.next(aggregate.data[0].aggregates.withdrawal.sum);
+        this.deposit.next(aggregate.data[0].aggregates.deposit.sum);
+      }
+      
+    });
   }
 
   public addHandler(e) {

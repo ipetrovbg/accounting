@@ -9,7 +9,8 @@
     [sortable]="true"
     [pageable]="true"
     filterable="menu"
-    [selectable]="true"
+    
+    [navigable]="true"
     (dataStateChange)="dataStateChange($event)"
     (edit)="editHandler($event)"
     (cancel)="cancelHandler($event)"
@@ -37,14 +38,21 @@
         </ng-template>
       </kendo-grid-column>
     <kendo-grid-column field="reason" title="Reason" [sortable]="false"></kendo-grid-column>
-    <kendo-grid-column field="withdrawal" title="Withdrawal" width="120" format="{0:c}" [filterable]="false"></kendo-grid-column>
-    <kendo-grid-column field="deposit" title="Deposit" width="120" format="{0:c}" [filterable]="false"></kendo-grid-column>
+    <kendo-grid-column field="withdrawal" title="Withdrawal" width="120" format="{0:c}" [filterable]="false">
+        <ng-template kendoGridFooterTemplate>{{ withdrawal | async | kendoNumber:'c' }}</ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="deposit" title="Deposit" width="120" format="{0:c}" [filterable]="false">
+        <ng-template kendoGridFooterTemplate>{{ deposit | async | kendoNumber:'c' }}</ng-template>
+    </kendo-grid-column>
     
     <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="isTest" title="Simulation" width="110" [filterable]="false">
         <ng-template kendoGridCellTemplate let-dataItem>
             <input type="checkbox" [checked]="dataItem.isTest" disabled/>
+        </ng-template>
+        <ng-template kendoGridFooterTemplate>
+            <span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>
         </ng-template>
     </kendo-grid-column>
 

@@ -13,6 +13,7 @@ import { InputsModule } from '@progress/kendo-angular-inputs';
 import { LayoutModule } from '@progress/kendo-angular-layout';
 import { TooltipModule } from '@progress/kendo-angular-tooltip';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+import { IntlModule } from '@progress/kendo-angular-intl';
 
 import {
   FormsModule,
@@ -33,7 +34,8 @@ const kendo = [
   InputsModule,
   LayoutModule,
   TooltipModule,
-  DropDownsModule
+  DropDownsModule,
+  IntlModule
 ];
 const modules = [
   ReactiveFormsModule,
