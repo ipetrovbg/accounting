@@ -1,3 +1,14 @@
-<p>
-  transactions-graph works!
-</p>
+<kendo-chart [title]="{ text: 'Cash flow' }">
+  <kendo-chart-series>
+    <kendo-chart-series-item type="waterfall"
+                             [data]="cashFlowData" [color]="pointColor"
+                             field="amount" categoryField="period" summaryField="summary">
+      <kendo-chart-series-item-labels format="C0" position="insideEnd">
+      </kendo-chart-series-item-labels>
+    </kendo-chart-series-item>
+  </kendo-chart-series>
+  <kendo-chart-value-axis>
+    <kendo-chart-value-axis-item [labels]="{ format: 'C0' }">
+    </kendo-chart-value-axis-item>
+  </kendo-chart-value-axis>
+</kendo-chart>
