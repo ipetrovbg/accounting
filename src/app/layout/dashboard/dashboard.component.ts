@@ -52,6 +52,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.store.dispatch(new DeleteAll());
     this.loading.next(true);
     const transactions$ = this.store.select(selectAllTransactionsSelector);
 
