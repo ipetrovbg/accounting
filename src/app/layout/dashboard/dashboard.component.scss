@@ -5,3 +5,22 @@
         padding: 0;
         margin: 0;
 }
+::ng-deep kendo-sparkline {
+        &.transaction-spark-chart {
+                max-width: 500px;
+                margin-right: 10px;
+                min-width: 200px;
+                & > span {
+                        & > span {
+                                height: 25px;
+                                & > svg {
+                                        & > g {
+                                                & > path {
+                                                        fill: transparent;
+                                                }
+                                        }
+                                }
+                        }
+                }
+        }
+}

@@ -27,6 +27,15 @@ export class CoreService {
     return { start, end };
   }
 
+  daysToNextSalary() {
+    const day     = moment();
+    const payDay  = 5;
+
+    return (payDay > (+new Date().getDate() + 1)) ?
+      Math.abs(day.diff(moment([new Date().getFullYear(), new Date().getMonth(), payDay]), 'days')) + 1 :
+      (+moment().endOf('month').format('D') - (+moment(day).format('D'))) + payDay;
+  }
+
   public UUID(): string {
     let d = new Date().getTime();
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {

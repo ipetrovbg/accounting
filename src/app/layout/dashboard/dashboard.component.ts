@@ -6,7 +6,7 @@ import { State as AppState, getState } from './../../store/accounting.state';
 import { Observable } from 'rxjs/Observable';
 import { TransactionService } from '../../transaction/transaction.service';
 import { CoreService } from '../../core/core/core.service';
-import { Component, OnDestroy, OnInit, Inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, Inject, ViewChild, ElementRef, HostListener } from '@angular/core';
 
 import 'rxjs/add/operator/map';
 import { tap } from 'rxjs/operators/tap';
@@ -38,11 +38,35 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public subscription: Subscription = new Subscription();
   public menuData: Array<any> = [{
     text: 'Withdrawal',
-    click: () => this.addHandler({ action: 'new', state: 'withdrawal' })
-}, {
-    text: 'Deposit',
-    click: () => this.addHandler({ action: 'new', state: 'deposit' })
-}];
+      click: () => this.addHandler({ action: 'new', state: 'withdrawal' })
+  }, {
+      text: 'Deposit',
+      click: () => this.addHandler({ action: 'new', state: 'deposit' })
+  }];
+  public daysToNextSalary: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public min: Date = new Date();
+  public max: Date = new Date();
+  public show: boolean = false;
+
+  public sparkData: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
+
+
+  @ViewChild('anchor') public anchor: ElementRef;
+  @ViewChild('popup', { read: ElementRef }) public popup: ElementRef;
+
+  @HostListener('keydown', ['$event'])
+  public keydown(event: any): void {
+      if (event.keyCode === 27) {
+          this.toggle(false);
+      }
+  }
+
+  @HostListener('document:click', ['$event'])
+  public documentClick(event: any): void {
+      if (!this.contains(event.target)) {
+        this.toggle(false);
+      }
+  }
 
   constructor(private core: CoreService,
               private transaction: TransactionService,
@@ -53,6 +77,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store.dispatch(new DeleteAll());
+
+    this.daysToNextSalary.next(this.core.daysToNextSalary());
+    this.max = this.core.startEndWorkMonth(5).end;
+
     this.loading.next(true);
     const transactions$ = this.store.select(selectAllTransactionsSelector);
 
@@ -68,7 +96,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       transactions$
         .do(() => setTimeout(() => this.loading.next(false), 300))
         .subscribe(transactions => {
-          this.data = transactions;
+          this.data = [ ...transactions ];
+          const sortedTransactions = [ ...transactions.sort((a: any, b: any) => a.date - b.date) ]
+          this.sparkData.next(sortedTransactions
+              .map(transaction => {
+                return transaction.withdrawal ? (+transaction.withdrawal - (+transaction.withdrawal * 2)) : +transaction.deposit;
+              }));
           this.gridData.next(process(this.data, this.state));
           setTimeout(() => this.loading.next(false), 300);
         })
@@ -92,6 +125,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       
     });
+  }
+
+  public toggle(show?: boolean): void {
+      this.show = show !== undefined ? show : !this.show;
+  }
+
+  private contains(target: any): boolean {
+      return this.anchor.nativeElement.contains(target) ||
+          (this.popup ? this.popup.nativeElement.contains(target) : false);
+  }
+
+  public onShowRemainingDays() {
+    this.show = !this.show;
   }
 
   public addHandler(e) {

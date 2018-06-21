@@ -15,7 +15,7 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { AuthenticationModule } from './authentication/authentication.module';
-import { ChartsModule } from '@progress/kendo-angular-charts';
+
 
 
 
@@ -40,8 +40,7 @@ export const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     AccountingStoreModule,
     DateInputsModule,
-    AuthenticationModule,
-    ChartsModule
+    AuthenticationModule
   ],
   bootstrap: [AppComponent]
 })

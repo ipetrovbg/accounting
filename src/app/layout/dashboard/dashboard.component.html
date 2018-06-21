@@ -18,10 +18,22 @@
 >
     <ng-template kendoGridToolbarTemplate position="top">
         <!-- <button kendoGridAddCommand kendoButton ></button> -->
-        <div>
+        <div class="flex">
             <kendo-splitbutton [data]="menuData" (buttonClick)="addHandler({ action: 'new', state: 'withdrawal' })">
                     New
             </kendo-splitbutton>
+            <div>
+
+                <kendo-sparkline [data]="sparkData | async" type="area" class="transaction-spark-chart"></kendo-sparkline>
+                <button #anchor (click)="onShowRemainingDays()" kendoButton icon="calendar">
+                    <span>{{ daysToNextSalary | async }} <span class="k-field-info"> / &nbsp;</span> </span>
+                    <span> {{ ((deposit | async) - (withdrawal | async)) / ((daysToNextSalary | async) || 1) | kendoNumber:'c' }} </span>
+                </button>
+            </div>
+            
+            <kendo-popup [popupClass]="'content popup'" [anchor]="anchor" #popup (anchorViewportLeave)="show = false" *ngIf="show">
+                <kendo-calendar [min]="min" [max]="max"></kendo-calendar>
+            </kendo-popup>
         </div>
     </ng-template>
     <!--<kendo-grid-column field="incomeId" title="Deposit ID" width="100" [filterable]="false" [sortable]="false"></kendo-grid-column>

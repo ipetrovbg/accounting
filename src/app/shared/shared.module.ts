@@ -14,6 +14,8 @@ import { LayoutModule } from '@progress/kendo-angular-layout';
 import { TooltipModule } from '@progress/kendo-angular-tooltip';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { IntlModule } from '@progress/kendo-angular-intl';
+import { PopupModule } from '@progress/kendo-angular-popup';
+
 
 import {
   FormsModule,
@@ -21,7 +23,7 @@ import {
 } from '@angular/forms';
 
 import { DateRangeFilterComponent } from './date-range-filter/date-range-filter.component';
-import { DatePickerModule } from '@progress/kendo-angular-dateinputs';
+import { DatePickerModule, DateInputsModule } from '@progress/kendo-angular-dateinputs';
 
 const kendo = [
   ToolBarModule,
@@ -35,7 +37,9 @@ const kendo = [
   LayoutModule,
   TooltipModule,
   DropDownsModule,
-  IntlModule
+  IntlModule,
+  DateInputsModule,
+  PopupModule
 ];
 const modules = [
   ReactiveFormsModule,
