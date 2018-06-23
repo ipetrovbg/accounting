@@ -8,6 +8,9 @@ import { Store } from '@ngrx/store';
 import { Update } from '../store/actions/user.actions';
 import { AuthService } from '../authentication/auth/auth.service';
 import { catchError } from 'rxjs/internal/operators';
+import { Loading, SetError, SetErrorMessages } from '../store/actions/requests.actions';
+import { Observable } from 'rxjs';
+import { AuthState } from '../store/states/requests.state';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +20,7 @@ import { catchError } from 'rxjs/internal/operators';
 export class LoginComponent implements OnInit {
 
   public form: FormGroup;
+  public authRequest: Observable<AuthState>;
 
   constructor(
     private fb: FormBuilder,
@@ -28,7 +32,11 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.resetErrorsAndLoading();
+
     this.auth.checkAuth().subscribe();
+
+    this.authRequest = this.store.select(state => state.requests.auth);
 
     this.form = this.fb.group({
       email: '',
@@ -37,7 +45,30 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.auth.login(this.form.value).subscribe();
+    this.store.dispatch(new Loading('auth', true));
+
+    this.auth.login(this.form.value).subscribe((auth: any) => {
+      if (!auth.success) {
+        this.store.dispatch(new Loading('auth', false));
+        this.store.dispatch(new SetError('auth', true));
+        this.store.dispatch(new SetErrorMessages('auth', [auth.message]));
+      } else {
+        setTimeout(() => {
+          this.store.dispatch(new Loading('auth', false));
+          this.store.dispatch(new SetError('auth', false));
+          this.store.dispatch(new SetErrorMessages('auth', []));
+        }, 2000);
+      }
+    }, error => {
+      this.resetErrorsAndLoading();
+      console.log(error);
+    });
+  }
+
+  private resetErrorsAndLoading() {
+    this.store.dispatch(new Loading('auth', false));
+    this.store.dispatch(new SetError('auth', false));
+    this.store.dispatch(new SetErrorMessages('auth', []));
   }
 
 }

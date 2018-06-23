@@ -2,7 +2,10 @@
   <div class="card-block">
       <form class="k-form" [formGroup]="form" (ngSubmit)="login()">
           <fieldset>
-              <legend>Login Credentials</legend>
+              <legend>User Credentials</legend>
+            <span *ngFor="let message of (authRequest | async).errors" class="k-required">
+              {{ message }}
+            </span>
               <label class="k-form-field">
                   <span>Email</span>
                   <input class="k-textbox" type="email" placeholder="Your Email" formControlName="email" />
@@ -14,8 +17,12 @@
           </fieldset>
 
           <div class="text-right">
-            <button type="button" class="k-button">Cancel</button>
-            <button type="submit" class="k-button k-primary">Submit</button>
+            <button type="submit" kendoButton [primary]="true">
+              <span class="k-icon k-i-loading" *ngIf="(authRequest | async).loading"></span>
+              <span> Login</span>
+            </button>
+            <span> - or - </span>
+            <a routerLink="/register">Register</a>
           </div>
       </form>
   </div>

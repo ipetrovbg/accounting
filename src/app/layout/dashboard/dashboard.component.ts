@@ -22,6 +22,7 @@ import { Load } from '../../store/actions/transaction-manage.action';
 import { removeDebugNodeFromIndex } from '@angular/core/src/debug/debug_node';
 import 'rxjs-compat/add/operator/do';
 import { IntlService } from '@progress/kendo-angular-intl';
+import { CategoriesService } from '../../categories/categories.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -72,7 +73,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
               private transaction: TransactionService,
               private store: Store<AppState>,
               private dialogService: DialogService,
-              public intl: IntlService) {
+              public intl: IntlService,
+              private categories: CategoriesService) {
   }
 
   ngOnInit() {
@@ -116,14 +118,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
               { aggregate: 'sum', field: 'withdrawal' }
             ]
           }
-        ]          
+        ]
       });
       if (aggregate.total) {
         // console.log(this.intl.formatNumber(aggregate.data[0].aggregates.withdrawal.sum, { currency: 'BGN', currencyDisplay: 'symbol', style: 'currency' }));
         this.withdrawal.next(aggregate.data[0].aggregates.withdrawal.sum);
         this.deposit.next(aggregate.data[0].aggregates.deposit.sum);
       }
-      
     });
   }
 
@@ -142,7 +143,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public addHandler(e) {
 
-    this.store.dispatch(new Load({ withdrawal: null, deposit: null, id: null, reason: '', date: null, createdAt: null, updatedAt: null, isTest: false }));
+    this.store.dispatch(new Load({
+        withdrawal: null,
+        deposit: null,
+        id: null,
+        reason: '',
+        date: null,
+        createdAt: null,
+        updatedAt: null,
+        isTest: false, category: { id: null, category: '', fkId: null } }));
 
     this.openDialog(e.action, e.state);
   }
@@ -158,8 +167,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   public editHandler(e) {
 
-    const { withdrawal, deposit, id, costId, incomeId, reason, date, createdAt, updatedAt, isTest } = e.dataItem;
-    const dataItem = { withdrawal, deposit, reason, date, createdAt, updatedAt, isTest, id: '' };
+    const { withdrawal, deposit, id, costId, incomeId, reason, date, createdAt, updatedAt, isTest, category } = e.dataItem;
+    const dataItem = { withdrawal, deposit, reason, date, createdAt, updatedAt, isTest, id: '', category };
+
     dataItem.id = costId || incomeId;
 
     this.store.dispatch(new Load(dataItem));
@@ -219,12 +229,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         } else {
           const transactionEntity = transactionObject;
+          if (!transactionEntity.category) {
+            console.log('Please, select category');
+            return false;
+          }
 
-          this.transaction.add(transactionEntity, dialogTransactionComponent.transactionState).subscribe(() => {
-            this.loading.next(true);
-            this.store.dispatch(new DeleteAll());
-            const dates = this.core.startEndWorkMonth(5);
-            this.store.dispatch(new Fetch(dates.start, dates.end));
+          this.transaction.add(transactionEntity, dialogTransactionComponent.transactionState).subscribe((transaction) => {
+            this.categories.assignTransactionCategory(
+              transaction.response.id,
+              transactionEntity.category.id,
+              dialogTransactionComponent.transactionState
+            ).subscribe(() => {
+                this.loading.next(true);
+                this.store.dispatch(new DeleteAll());
+                const dates = this.core.startEndWorkMonth(5);
+                this.store.dispatch(new Fetch(dates.start, dates.end));
+              }, () => {
+                this.loading.next(true);
+                this.store.dispatch(new DeleteAll());
+                const dates = this.core.startEndWorkMonth(5);
+                this.store.dispatch(new Fetch(dates.start, dates.end));
+              });
+
           });
         }
       }

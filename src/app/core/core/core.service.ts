@@ -1,35 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import * as moment from 'moment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CoreService {
+  api: string = environment.api;
 
-  apiEndpoint: string = 'https://ancient-fjord-87958.herokuapp.com/api';
-  vertion: string     = '/v1';
-  api: string         = `${this.apiEndpoint}${this.vertion}`;
+  constructor() {
+  }
 
-  constructor() { }
+  startEndWorkMonth(payDay): { start: Date, end: Date } {
 
-  startEndWorkMonth( payDay ):{ start: Date, end: Date } {
+    const lastDayofSalary = payDay - 1;
 
-    const lastDayofSalary   = payDay - 1;
+    const start = payDay < (+new Date().getDate() + 1) ?
+      moment([new Date().getFullYear(), new Date().getMonth(), payDay]).toDate() :
+      moment([new Date().getFullYear(), new Date().getMonth() - 1, payDay]).toDate();
+    const end = payDay < (+new Date().getDate() + 1) ?
+      moment([new Date().getFullYear(), new Date().getMonth() + 1, payDay - 1]).toDate() :
+      moment([new Date().getFullYear(), new Date().getMonth(), payDay - 1]).toDate();
 
-    let start = payDay < (+new Date().getDate() + 1) ?
-                    moment([new Date().getFullYear(), new Date().getMonth(), payDay]).toDate():
-                    moment([new Date().getFullYear(), new Date().getMonth() - 1, payDay]).toDate();
-    let end = payDay < (+new Date().getDate() + 1) ?
-                  moment([new Date().getFullYear(), new Date().getMonth() + 1, payDay - 1]).toDate():
-                  moment([new Date().getFullYear(), new Date().getMonth(), payDay - 1]).toDate();
-
-    return { start, end };
+    return {start, end};
   }
 
   daysToNextSalary() {
-    const day     = moment();
-    const payDay  = 5;
+    const day = moment();
+    const payDay = 5;
 
     return (payDay > (+new Date().getDate() + 1)) ?
       Math.abs(day.diff(moment([new Date().getFullYear(), new Date().getMonth(), payDay]), 'days')) + 1 :
@@ -40,11 +39,56 @@ export class CoreService {
     let d = new Date().getTime();
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       // tslint:disable-next-line:no-bitwise
-      const r = ( d + Math.random() * 16 ) % 16 | 0;
-      d = Math.floor(d / 16 );
+      const r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
       // tslint:disable-next-line:no-bitwise
-      return (c === 'x' ? r : ( r & 0x3 | 0x8 )).toString(16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
     return uuid;
+  }
+
+  getClosestDate(days: Date[], testDate: Date | any = new Date()) {
+    const nextDateIndexesByDiff: any = [],
+      prevDateIndexesByDiff: any = [];
+
+    days.forEach((day, i) => {
+      if (new Date(day) === testDate) {
+        return {prev: [[i, 5]], next: []};
+      }
+    });
+
+    for (let i = 0; i < days.length; i++) {
+      const thisDateStr = [days[i].getMonth() + 1, days[i].getDate(), days[i].getFullYear()].join('/'),
+        thisDate: any = new Date(thisDateStr),
+        curDiff = testDate - thisDate;
+
+      curDiff < 0
+        ? nextDateIndexesByDiff.push([i, curDiff])
+        : prevDateIndexesByDiff.push([i, curDiff]);
+    }
+
+    nextDateIndexesByDiff.sort((a, b) => a[1] < b[1]);
+    prevDateIndexesByDiff.sort((a, b) => a[1] > b[1]);
+
+    let dates = {prev: prevDateIndexesByDiff, next: nextDateIndexesByDiff};
+    if (dates.prev.length && dates.next.length) {
+      dates = dates.next[0][0];
+    } else if (!dates.next.length && dates.prev.length) {
+      dates = dates.prev[0][0];
+    } else if (!dates.prev.length && dates.next.length) {
+      dates = dates.next[0][0];
+    } else {
+      dates = undefined;
+    }
+    return dates;
+  }
+
+  removeDuplicates(arr) {
+    const o: any = {};
+    arr.forEach(function (e) {
+      o[e] = true;
+    });
+
+    return Object.keys(o).map(date => new Date(date));
   }
 }

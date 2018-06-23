@@ -8,4 +8,9 @@ export interface TransactionManageState {
     updatedAt: Date;
     createdAt: Date;
     userId?: string;
+    category: {
+      id: number;
+      category: string;
+      fkId: number;
+    };
 }

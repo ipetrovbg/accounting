@@ -1,15 +1,16 @@
 import { Store } from '@ngrx/store';
 import { TransactionManageState } from './states/transaction-manage.state';
-import { Transaction } from './../transaction/transaction.model';
 import { TransactionState } from './states/transaction.state';
 import { UserState } from './states/user.state';
 import 'rxjs-compat/add/operator/take';
+import { RequestsState } from './states/requests.state';
 
 
 export interface State {
   transactions: TransactionState;
   transactionManage: TransactionManageState;
   user: UserState;
+  requests: RequestsState;
 }
 
 export const initialState: State = {
@@ -26,7 +27,12 @@ export const initialState: State = {
     withdrawal: '',
     deposit: '',
     reason: '',
-    isTest: false
+    isTest: false,
+    category: {
+      id: null,
+      category: '',
+      fkId: null
+    }
   },
   user: {
     id: null,
@@ -34,6 +40,13 @@ export const initialState: State = {
     password: '',
     token: '',
     name: ''
+  },
+  requests: {
+    auth: {
+      loading: false,
+      error: false,
+      errors: []
+    }
   }
 };
 

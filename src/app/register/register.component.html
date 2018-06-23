@@ -1,0 +1,40 @@
+<div class="card register-card">
+  <div class="card-block">
+    <form class="k-form" [formGroup]="form" (ngSubmit)="register()">
+      <span *ngFor="let message of (authRequest | async).errors" class="k-required">
+        {{ message }}
+      </span>
+      <fieldset>
+        <legend>User Fields</legend>
+        <label class="k-form-field">
+          <span>Name <span class="k-required"> *</span></span>
+          <input class="k-textbox" type="text" placeholder="Your Name" formControlName="name" />
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend>User Credentials</legend>
+        <label class="k-form-field">
+          <span>Email <span class="k-required"> *</span></span>
+          <input class="k-textbox" type="email" placeholder="Your Email" formControlName="email" />
+        </label>
+        <label class="k-form-field">
+          <span>Password <span class="k-required"> *</span></span>
+          <input type="password" class="k-textbox" formControlName="password" placeholder="Your password"/>
+        </label>
+        <label class="k-form-field">
+          <span>Confirm Password <span class="k-required"> *</span></span>
+          <input type="password" class="k-textbox" formControlName="copassword" placeholder="Your password"/>
+        </label>
+      </fieldset>
+
+      <div class="text-right">
+        <button type="submit" kendoButton [primary]="true">
+          <span class="k-icon k-i-loading" *ngIf="(authRequest | async).loading"></span>
+          <span> Register</span>
+        </button>
+        <span> - or - </span>
+        <a routerLink="/login">Login</a>
+      </div>
+    </form>
+  </div>
+</div>

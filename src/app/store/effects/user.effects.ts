@@ -15,8 +15,7 @@ import { Observable } from 'rxjs/Observable';
 export class UserEffects {
   constructor(
     private actions: Actions,
-    private auth: AuthService,
-    private router: Router
+    private auth: AuthService
   ) {}
 
   @Effect() tokenAuth = this.actions.ofType(UserActionTypes.TOKEN_LOGIN)

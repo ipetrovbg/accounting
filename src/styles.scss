@@ -22,6 +22,9 @@ h1, h2, h3, h4, h5, h6 {
 .flex {
     display: flex;
     justify-content: space-between;
+  .no-space-betwin {
+    justify-content: left;
+  }
 }
 .card {
     position: relative;
@@ -51,4 +54,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 .k-valid {
     color: green;
+}
+.clear {
+  clear: both;
+}
+.no-padding {
+  padding: 0!important;
+}
+.no-margin {
+  margin: 0!important;
 }

@@ -9,7 +9,7 @@
     [sortable]="true"
     [pageable]="true"
     filterable="menu"
-    
+
     [navigable]="true"
     (dataStateChange)="dataStateChange($event)"
     (edit)="editHandler($event)"
@@ -30,7 +30,7 @@
                     <span> {{ ((deposit | async) - (withdrawal | async)) / ((daysToNextSalary | async) || 1) | kendoNumber:'c' }} </span>
                 </button>
             </div>
-            
+
             <kendo-popup [popupClass]="'content popup'" [anchor]="anchor" #popup (anchorViewportLeave)="show = false" *ngIf="show">
                 <kendo-calendar [min]="min" [max]="max"></kendo-calendar>
             </kendo-popup>
@@ -47,6 +47,7 @@
           </app-date-range-filter>
         </ng-template>
       </kendo-grid-column>
+    <kendo-grid-column field="category.category" title="Category" [sortable]="true"></kendo-grid-column>
     <kendo-grid-column field="reason" title="Reason" [sortable]="false"></kendo-grid-column>
     <kendo-grid-column field="withdrawal" title="Withdrawal" width="120" format="{0:c}" [filterable]="false">
         <ng-template kendoGridFooterTemplate>
@@ -58,7 +59,7 @@
             <span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>
         </ng-template>
     </kendo-grid-column>
-    
+
     <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="isTest" title="Simulation" width="110" [filterable]="false">

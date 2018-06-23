@@ -15,13 +15,13 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { AuthenticationModule } from './authentication/authentication.module';
-
-
-
+import { RegisterComponent } from './register/register.component';
+import { CategoriesModule } from './categories/categories.module';
 
 export const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'dashboard', loadChildren: './layout/layout.module#LayoutModule' },
   { path: '',   redirectTo: 'home', pathMatch: 'full' },
 ];
@@ -30,7 +30,8 @@ export const appRoutes: Routes = [
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +41,8 @@ export const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     AccountingStoreModule,
     DateInputsModule,
-    AuthenticationModule
+    AuthenticationModule,
+    CategoriesModule
   ],
   bootstrap: [AppComponent]
 })

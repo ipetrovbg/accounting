@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  api: 'https://ancient-fjord-87958.herokuapp.com/api/v1'
 };

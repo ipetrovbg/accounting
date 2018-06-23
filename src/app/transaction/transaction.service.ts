@@ -95,7 +95,7 @@ export class TransactionService {
     return response.map(this.puryFyTransactions.bind(this));
   }
 
-  private puryFyTransactions(transaction: Transaction): Transaction {
+  private puryFyTransactions(transaction: Transaction | any): Transaction {
     transaction.date       = new Date(transaction.date);
     transaction.id         = this.core.UUID();
 
@@ -112,6 +112,12 @@ export class TransactionService {
     if (transaction.withdrawal) {
       transaction.withdrawal       = +transaction.withdrawal;
     }
+
+    transaction.category = {
+      category: transaction.category,
+      id: transaction.categoryId,
+      fkId: transaction.categoryAssignedId
+    };
     return transaction;
   }
 }

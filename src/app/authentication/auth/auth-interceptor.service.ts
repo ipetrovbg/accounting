@@ -23,14 +23,14 @@ export class AuthInterceptorService implements HttpInterceptor {
     return next.handle(req).do(response => {
       if (response instanceof HttpResponse) {
         // this.store.dispatch(new TokenAuthentication(localStorage.getItem('token')));
-        if (response.status === 401) {
+        if (response.status === 401 && (this.router.url !== '/register' && this.router.url !== '/login')) {
           this.router.navigate(['/login']);
         }
       }
     }, error => {
-      
+
       if (error instanceof HttpErrorResponse) {
-        if (error.status === 401) { 
+        if (error.status === 401 && (this.router.url !== '/register' && this.router.url !== '/login')) {
           this.router.navigate(['/login']);
         }
       }

@@ -34,6 +34,10 @@ export class AuthService {
       .do(this.handleAuthentication.bind(this));
   }
 
+  register(user) {
+    return this.http.post(`${this.core.api}/authenticate/create`, { user });
+  }
+
   private handleAuthentication(login: any) {
     if (login.success) {
 
