@@ -6,7 +6,6 @@
           <div class="half-with float-left category-row">
             <label class="k-form-field no-padding no-margin">
                     <span class="k-field-info">Category
-                            <span class="k-required">* </span>
                             <span
                               class="k-icon k-i-information k-i-info"
                               title="Select some category. It will be used for reports."
@@ -31,7 +30,6 @@
               <div class="padding">
                 <label class="k-form-field">
                 <span class="k-field-info">Category Name
-                  <span class="k-required">* </span>
                 </span>
                   <input type="text" kendoTextBox placeholder="Category Name" formControlName="category">
                 </label>
@@ -45,54 +43,47 @@
         </kendo-popup>
         <label class="k-form-field">
                         <span class="k-field-info">Comment
-                            <span class="k-required">* </span>
                             <span
                               class="k-icon k-i-information k-i-info"
-                              title="Enter some comment for this {{ transactionState === 'withdrawal' ? 'Withdrawal' : 'Deposit' }}"
+                              title="Enter some comment for this Transaction"
                             ></span>
                         </span>
-          <textarea kendoTextArea formControlName="reason" style="width: 100%;" rows="4" class=full-width></textarea>
+          <textarea kendoTextArea formControlName="comment" style="width: 100%;" rows="4" class=full-width></textarea>
         </label>
       </div>
     </kendo-splitter-pane>
     <kendo-splitter-pane>
       <div class="padding">
         <label class="k-form-field">
-          <span class="k-field-info">Transaction Type: <span class="k-required">*</span></span>
+          <span class="k-field-info">Transaction Type: </span>
           <kendo-dropdownlist
             class="full-with"
-            [disabled]="state === 'edit'"
             [data]="transactionStateList"
-            [value]="transactionState[0].toUpperCase() + transactionState.substring(1)"
-            (valueChange)="handleStateChange($event)"
-          >
-          </kendo-dropdownlist>
+            formControlName="type"
+          ></kendo-dropdownlist>
         </label>
         <div>
           <div class="half-with float-left">
             <label class="k-form-field">
-                                <span class="k-field-info">Transaction Date: <span class="k-required">* </span>
+                                <span class="k-field-info">Transaction Date:
                                 <span
                                   class="k-icon k-i-information k-i-info"
                                   title="When this transaction was made"
                                 ></span>
                                 </span>
-              <kendo-datepicker class="full-with" formControlName="date" required></kendo-datepicker>
+              <kendo-datepicker class="full-with" formControlName="date"></kendo-datepicker>
             </label>
           </div>
           <div class="half-with float-left">
             <label class="k-form-field">
                                 <span class="k-field-info">Amount
-                                    <span class="k-required">* </span>
                                     <span
                                       class="k-icon k-i-information k-i-info"
                                       title="The amount in BGN"
                                     ></span>
                                 </span>
-              <kendo-numerictextbox *ngIf="transactionState === 'withdrawal'" class="full-width" placeholder="Amount"
-                                    formControlName="withdrawal"></kendo-numerictextbox>
-              <kendo-numerictextbox *ngIf="transactionState === 'deposit'" class="full-width" placeholder="Amount"
-                                    formControlName="deposit"></kendo-numerictextbox>
+              <kendo-numerictextbox class="full-width" placeholder="Amount"
+                                    formControlName="amount"></kendo-numerictextbox>
             </label>
           </div>
         </div>
@@ -100,11 +91,11 @@
                         <span class="full-width k-field-info">Simulation
                             <span
                               class="k-icon k-i-information k-i-info"
-                              title="If it's used for simulation. It's not real {{ transactionState === 'withdrawal' ? 'Withdrawal' : 'Deposit' }}"
+                              title="If it's used for simulation. It's not real Transaction"
                             ></span>
                         </span>
           <kendo-switch
-            formControlName="isTest"
+            formControlName="simulation"
             onLabel="Yes"
             offLabel="No"
           ></kendo-switch>
@@ -112,10 +103,4 @@
       </div>
     </kendo-splitter-pane>
   </kendo-splitter>
-  <!-- <div class="half-with float-left">
-
-      </div>
-  <div class="half-with float-left">
-
-  </div> -->
 </form>

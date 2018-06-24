@@ -32,14 +32,14 @@ export enum TransactionActionTypes {
     readonly type: TransactionActionTypes.UPDATE_ONE = TransactionActionTypes.UPDATE_ONE;
 
     constructor(
-      public id: string,
+      public id: number,
       public changes: Partial<Transaction>,
     ) { }
   }
 
   export class DeleteOne implements Action {
     readonly type: TransactionActionTypes.DELETE_ONE = TransactionActionTypes.DELETE_ONE;
-    constructor(public id: string) { }
+    constructor(public id: number) { }
   }
 
   export class DeleteAll implements Action {
@@ -53,7 +53,7 @@ export enum TransactionActionTypes {
 
   export class GetOne implements Action {
     readonly type: TransactionActionTypes.GET_ONE = TransactionActionTypes.GET_ONE;
-    constructor(public id: string) { }
+    constructor(public id: number) { }
   }
 
   export type TransactionsActions = AddOne | GetOne | UpdateOne | DeleteOne | GetAll | AddMany | Fetch | DeleteAll;

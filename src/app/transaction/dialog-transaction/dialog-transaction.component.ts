@@ -6,6 +6,7 @@ import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, HostListene
 import { Store } from '@ngrx/store';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { CategoriesService } from '../../categories/categories.service';
+import 'rxjs-compat/add/operator/debounceTime';
 
 @Component({
   selector: 'app-dialog-transaction',
@@ -15,11 +16,11 @@ import { CategoriesService } from '../../categories/categories.service';
 export class DialogTransactionComponent implements OnInit, OnDestroy {
 
   @Input() state: 'new' | 'edit';
-  @Input() transactionState: 'deposit' | 'withdrawal';
 
   public form: FormGroup;
+  public transactionState: 'deposit' | 'withdrawal';
   public categoryForm: FormGroup;
-  public transactionStateList: string[] = ['Deposit', 'Withdrawal'];
+  public transactionStateList: string[] = ['deposit', 'withdrawal'];
   public allCategories: Observable<string[]> = null;
   public selectedCategory = { category: '', id: null };
   public show = false;
@@ -53,20 +54,17 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
     this.categoryForm = this.fb.group({
       category: ['', Validators.required]
     });
-    const transaction: any = getState(this.store).transactionManage;
+    const transaction: TransactionManageState = getState(this.store).transactionManage;
+    this.transactionState = transaction.type;
     if (this.state === 'new') {
       transaction.date = new Date();
-      transaction.category = null;
-      if (this.transactionState === 'deposit') {
-        transaction.deposit = 0;
-      } else {
-        transaction.withdrawal = 0;
-      }
+      this.store.dispatch(new Update('userId', getState(this.store).user.id));
+      this.store.dispatch(new Update('user', getState(this.store).user));
     }
 
     this.allCategories = this.getCategories().map(categories => {
       categories.map(item => {
-        if (transaction.category.id === item.id) {
+        if (transaction.category && transaction.category.id === item.id) {
           this.selectedCategory = item;
         }
         return item;
@@ -74,19 +72,20 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
       return categories;
     });
 
-    this.form = this.fb.group(transaction);
+    this.form = this.fb.group({ ...transaction }, { updateOn: 'blur' });
 
     this.form.get('date').valueChanges.subscribe(value => this.store.dispatch(new Update('date', value)));
-    this.form.get('withdrawal').valueChanges.subscribe(value => this.store.dispatch(new Update('withdrawal', value)));
-    this.form.get('deposit').valueChanges.subscribe(value => this.store.dispatch(new Update('deposit', value)));
-    this.form.get('reason').valueChanges.subscribe(value => this.store.dispatch(new Update('reason', value)));
-    this.form.get('isTest').valueChanges.subscribe(value => this.store.dispatch(new Update('isTest', value)));
+    this.form.get('amount').valueChanges.subscribe(value => this.store.dispatch(new Update('amount', value)));
+    this.form.get('comment').valueChanges.subscribe(value => this.store.dispatch(new Update('comment', value)));
+    this.form.get('simulation').valueChanges.subscribe(value => this.store.dispatch(new Update('simulation', value)));
+    this.form.get('type').valueChanges.subscribe(value => this.store.dispatch(new Update('type', value)));
     this.form.get('category').valueChanges.subscribe(value => {
-      console.log(value);
       this.store.dispatch(new Update('category', value));
+      this.store.dispatch(new Update('categoryId', value && value.id || null));
     });
 
     this.subscription.add(this.store.select(s => s.transactionManage)
+      .debounceTime(750)
     .subscribe((t: any) => {
       this.allCategories.subscribe((categories: any) => {
         categories.forEach(cat => {
@@ -109,13 +108,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   }
 
   handleStateChange(e) {
-    if (e === 'Deposit') {
-      this.form.get('deposit').patchValue(this.form.get('withdrawal').value);
-      this.form.get('withdrawal').patchValue(null);
-    } else {
-      this.form.get('withdrawal').patchValue(this.form.get('deposit').value);
-      this.form.get('deposit').patchValue(null);
-    }
+    console.log(e);
     this.transactionState = e.toLowerCase();
   }
 

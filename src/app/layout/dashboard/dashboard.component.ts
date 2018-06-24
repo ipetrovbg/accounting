@@ -23,6 +23,9 @@ import { removeDebugNodeFromIndex } from '@angular/core/src/debug/debug_node';
 import 'rxjs-compat/add/operator/do';
 import { IntlService } from '@progress/kendo-angular-intl';
 import { CategoriesService } from '../../categories/categories.service';
+import { Transaction } from '../../transaction/transaction.model';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,17 +35,17 @@ import { CategoriesService } from '../../categories/categories.service';
 export class DashboardComponent implements OnInit, OnDestroy {
   public gridData: BehaviorSubject<any> = new BehaviorSubject([]);
   public data: any[] = [];
-  public state: State = { skip: 0, take: 100 };
+  public state: State = {skip: 0, take: 100};
   public loading: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public withdrawal: BehaviorSubject<number> = new BehaviorSubject(0);
   public deposit: BehaviorSubject<number> = new BehaviorSubject(0);
   public subscription: Subscription = new Subscription();
   public menuData: Array<any> = [{
     text: 'Withdrawal',
-      click: () => this.addHandler({ action: 'new', state: 'withdrawal' })
+    click: () => this.addHandler({action: 'new', state: 'withdrawal'})
   }, {
-      text: 'Deposit',
-      click: () => this.addHandler({ action: 'new', state: 'deposit' })
+    text: 'Deposit',
+    click: () => this.addHandler({action: 'new', state: 'deposit'})
   }];
   public daysToNextSalary: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public min: Date = new Date();
@@ -53,20 +56,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   @ViewChild('anchor') public anchor: ElementRef;
-  @ViewChild('popup', { read: ElementRef }) public popup: ElementRef;
+  @ViewChild('popup', {read: ElementRef}) public popup: ElementRef;
 
   @HostListener('keydown', ['$event'])
   public keydown(event: any): void {
-      if (event.keyCode === 27) {
-          this.toggle(false);
-      }
+    if (event.keyCode === 27) {
+      this.toggle(false);
+    }
   }
 
   @HostListener('document:click', ['$event'])
   public documentClick(event: any): void {
-      if (!this.contains(event.target)) {
-        this.toggle(false);
-      }
+    if (!this.contains(event.target)) {
+      this.toggle(false);
+    }
   }
 
   constructor(private core: CoreService,
@@ -98,12 +101,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
       transactions$
         .do(() => setTimeout(() => this.loading.next(false), 300))
         .subscribe(transactions => {
-          this.data = [ ...transactions ];
-          const sortedTransactions = [ ...transactions.sort((a: any, b: any) => a.date - b.date) ]
+          this.data = [...transactions];
+          const sortedTransactions = [...transactions.sort((a: any, b: any) => a.date - b.date)];
+
           this.sparkData.next(sortedTransactions
-              .map(transaction => {
-                return transaction.withdrawal ? (+transaction.withdrawal - (+transaction.withdrawal * 2)) : +transaction.deposit;
-              }));
+            .map(transaction => {
+              return transaction.type === 'withdrawal' ? transaction.amount - (transaction.amount * 2) : transaction.amount;
+            }));
+          this.data.map((item: any) => {
+            item.category = {
+              category: item['category.category'],
+              id: item['category.id'],
+            };
+            item.user = {
+              id: item['user.id'],
+              name: item['user.name'],
+              email: item['user.email']
+            };
+            return item;
+          });
           this.gridData.next(process(this.data, this.state));
           setTimeout(() => this.loading.next(false), 300);
         })
@@ -112,29 +128,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const aggregate = process(data.data, {
         group: [
           {
-            field: 'name',
+            field: 'type',
             aggregates: [
-              { aggregate: 'sum', field: 'deposit' },
-              { aggregate: 'sum', field: 'withdrawal' }
+              {aggregate: 'sum', field: 'amount'}
             ]
           }
         ]
       });
-      if (aggregate.total) {
-        // console.log(this.intl.formatNumber(aggregate.data[0].aggregates.withdrawal.sum, { currency: 'BGN', currencyDisplay: 'symbol', style: 'currency' }));
-        this.withdrawal.next(aggregate.data[0].aggregates.withdrawal.sum);
-        this.deposit.next(aggregate.data[0].aggregates.deposit.sum);
-      }
+
+      this.withdrawal.next(this.extract('withdrawal', aggregate));
+      this.deposit.next(this.extract('deposit', aggregate));
     });
   }
 
   public toggle(show?: boolean): void {
-      this.show = show !== undefined ? show : !this.show;
+    this.show = show !== undefined ? show : !this.show;
+  }
+
+  private extract(type, aggregate): number {
+    let sum = 0;
+    aggregate.data.forEach(item => {
+      if (item.value === type) {
+        sum = item.aggregates.amount.sum;
+      }
+    });
+    return sum;
   }
 
   private contains(target: any): boolean {
-      return this.anchor.nativeElement.contains(target) ||
-          (this.popup ? this.popup.nativeElement.contains(target) : false);
+    return this.anchor.nativeElement.contains(target) ||
+      (this.popup ? this.popup.nativeElement.contains(target) : false);
   }
 
   public onShowRemainingDays() {
@@ -144,44 +167,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public addHandler(e) {
 
     this.store.dispatch(new Load({
-        withdrawal: null,
-        deposit: null,
-        id: null,
-        reason: '',
-        date: null,
-        createdAt: null,
-        updatedAt: null,
-        isTest: false, category: { id: null, category: '', fkId: null } }));
+      amount: null,
+      id: null,
+      userId: null,
+      categoryId: null,
+      comment: '',
+      type: e.state,
+      date: null,
+      createdAt: null,
+      updatedAt: null,
+      deletedAt: null,
+      simulation: false,
+      category: {id: null, category: ''},
+      user: {email: '', name: '', id: null}
+    }));
 
     this.openDialog(e.action, e.state);
   }
 
   public removeHandler(e) {
-    this.loading.next(true);
-    this.transaction
-      .delete(e.dataItem.costId || e.dataItem.incomeId, e.dataItem.costId ? 'withdrawal' : 'deposit')
-      .subscribe(response => {
-        this.store.dispatch(new DeleteOne(e.dataItem.id));
-      });
+    const dialog: DialogRef = this.dialogService.open({
+      title: `Please Confirm`,
+      content: ConfirmDialogComponent,
+      actions: [
+        {text: 'No'},
+        {text: 'Yes', primary: true}
+      ],
+      width: 420,
+      minWidth: 250
+    });
+
+    dialog.content.instance.message = `Are you sure you want to remove this Transaction.`;
+    dialog.content.instance.subMessage = `
+    It is about ${this.intl.formatNumber(e.dataItem.amount, 'c')}
+    ${e.dataItem.type[0].toUpperCase() + e.dataItem.type.substr(1)} on ${ moment(e.dataItem.date).format('DD/MMM YYYY') }`;
+
+    dialog.result.subscribe(actions => {
+      if (!(actions instanceof DialogCloseResult) && actions.primary) {
+        this.loading.next(true);
+        this.transaction.delete(e.dataItem.id).subscribe(() => this.store.dispatch(new DeleteOne(e.dataItem.id)));
+      }
+    });
+
+
   }
 
   public editHandler(e) {
-
-    const { withdrawal, deposit, id, costId, incomeId, reason, date, createdAt, updatedAt, isTest, category } = e.dataItem;
-    const dataItem = { withdrawal, deposit, reason, date, createdAt, updatedAt, isTest, id: '', category };
-
-    dataItem.id = costId || incomeId;
-
+    const {amount, id, comment, date, createdAt, updatedAt, simulation, category, user, type, userId, categoryId } = e.dataItem;
+    const dataItem = {type, amount, id, userId, categoryId, comment, date, createdAt, updatedAt, simulation, category, user};
     this.store.dispatch(new Load(dataItem));
-    this.openDialog(e.action, costId ? 'withdrawal' : 'deposit', id );
+    this.openDialog(e.action, id);
   }
 
   public dataStateChange(state: DataStateChangeEvent) {
-    setTimeout(() => this.loading.next(true), 0);
     this.state = state;
-    this.store.dispatch(new DeleteAll());
     const dates = this.core.startEndWorkMonth(5);
-    this.store.next(new Fetch(dates.start, dates.end));
+    this.refreshData(dates);
   }
 
   ngOnDestroy() {
@@ -189,72 +230,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteAll());
   }
 
-  private openDialog(state: 'new' | 'edit', transactionState: 'deposit' | 'withdrawal', id?: string) {
+  private openDialog(state: 'new' | 'edit', id?: number) {
 
     const dialog: DialogRef = this.dialogService.open({
       title: `${state[0].toUpperCase() + state.substring(1)} Transaction`,
       content: DialogTransactionComponent,
       actions: [
-          { text: 'Cancel' },
-          { text: 'Save', primary: true }
+        {text: 'Cancel'},
+        {text: 'Save', primary: true}
       ],
       width: 850,
       minWidth: 250
-  });
+    });
 
-  const dialogTransactionComponent              = dialog.content.instance;
-  dialogTransactionComponent.state              = state;
-  dialogTransactionComponent.transactionState   = transactionState;
+    const dialogTransactionComponent = dialog.content.instance;
+    dialogTransactionComponent.state = state;
 
-  dialog.result.subscribe((result) => {
-      const transactionObject: any = getState(this.store).transactionManage;
+
+    dialog.result.subscribe((result) => {
+      const transaction: TransactionManageState = getState(this.store).transactionManage;
 
       if (!(result instanceof DialogCloseResult) && result.primary) {
+        const dates = this.core.startEndWorkMonth(5);
 
-        if (dialogTransactionComponent.transactionState === 'withdrawal') {
-          transactionObject.costId = transactionObject.id;
-        }
-        if (dialogTransactionComponent.transactionState === 'deposit') {
-          transactionObject.incomeid = transactionObject.id;
-        }
-
-        if (state === 'edit') {
-          this.loading.next(true);
-          const transactionEntity = { ...transactionObject };
-          this.transaction.update(transactionEntity, dialogTransactionComponent.transactionState)
-          .subscribe(() => {
-            transactionObject.id = id;
-            this.store.dispatch(new UpdateOne(id, transactionObject));
-          }, err => this.loading.next(false));
-
-        } else {
-          const transactionEntity = transactionObject;
-          if (!transactionEntity.category) {
-            console.log('Please, select category');
-            return false;
-          }
-
-          this.transaction.add(transactionEntity, dialogTransactionComponent.transactionState).subscribe((transaction) => {
-            this.categories.assignTransactionCategory(
-              transaction.response.id,
-              transactionEntity.category.id,
-              dialogTransactionComponent.transactionState
-            ).subscribe(() => {
-                this.loading.next(true);
-                this.store.dispatch(new DeleteAll());
-                const dates = this.core.startEndWorkMonth(5);
-                this.store.dispatch(new Fetch(dates.start, dates.end));
-              }, () => {
-                this.loading.next(true);
-                this.store.dispatch(new DeleteAll());
-                const dates = this.core.startEndWorkMonth(5);
-                this.store.dispatch(new Fetch(dates.start, dates.end));
-              });
-
-          });
-        }
+        dialogTransactionComponent.state === 'new' ?
+          this.transaction.add(transaction).subscribe(r => this.refreshData(dates)) :
+          this.transaction.update(transaction).subscribe(r => this.refreshData(dates));
       }
-  });
+    });
+  }
+
+  private refreshData(dates) {
+    this.loading.next(true);
+    this.store.dispatch(new DeleteAll());
+    this.store.dispatch(new Fetch(dates.start, dates.end));
   }
 
 

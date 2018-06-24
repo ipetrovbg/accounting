@@ -45,6 +45,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 .padding {
     padding: 10px;
+  &.extra {
+    padding: 40px;
+  }
 }
 .float-left {
     float: left;

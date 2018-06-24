@@ -24,6 +24,7 @@ import {
 
 import { DateRangeFilterComponent } from './date-range-filter/date-range-filter.component';
 import { DatePickerModule, DateInputsModule } from '@progress/kendo-angular-dateinputs';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 const kendo = [
   ToolBarModule,
@@ -48,7 +49,8 @@ const modules = [
 ];
 const components = [
   AppToolbarComponent,
-  DateRangeFilterComponent
+  DateRangeFilterComponent,
+  ConfirmDialogComponent
 ];
 
 const forExports = [
@@ -68,6 +70,7 @@ const forExports = [
   ],
   exports: [
     ...forExports
-  ]
+  ],
+  entryComponents: [ConfirmDialogComponent]
 })
 export class SharedModule { }

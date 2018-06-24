@@ -24,14 +24,19 @@ export const initialState: State = {
     createdAt: null,
     updatedAt: null,
     userId: null,
-    withdrawal: '',
-    deposit: '',
-    reason: '',
-    isTest: false,
+    categoryId: null,
+    amount: null,
+    comment: '',
+    type: 'withdrawal',
+    simulation: false,
     category: {
       id: null,
       category: '',
-      fkId: null
+    },
+    user: {
+      id: null,
+      name: '',
+      email: ''
     }
   },
   user: {

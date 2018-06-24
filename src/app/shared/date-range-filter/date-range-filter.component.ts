@@ -2,6 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { FilterService, PopupCloseEvent, SinglePopupService } from '@progress/kendo-angular-grid';
 import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { addDays } from '@progress/kendo-date-math';
+import * as moment from 'moment';
 
 const closest = (node: any, predicate: any): any => {
   while (node && !predicate(node)) {
@@ -24,6 +25,7 @@ export class DateRangeFilterComponent implements OnInit, OnDestroy {
 
   public start: any;
   public end: any;
+  public currentFilter: string;
 
   public get min(): any {
     return this.start ? addDays(this.start, 1) : null;
@@ -54,6 +56,24 @@ export class DateRangeFilterComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.start = this.findValue('gte');
     this.end = this.findValue('lte');
+
+    this.applyFilterIfHas();
+  }
+
+  public onFilterChange(e) {
+    let start, end;
+    switch (e) {
+      case 'Today':
+        start = moment().startOf('day').toDate();
+        end = moment().startOf('day').add(1, 'd').toDate();
+        this.filterRange(start, end);
+        break;
+      case 'Yesterday':
+        start = moment().startOf('day').subtract(2, 'd').toDate();
+        end = moment().startOf('day').subtract(1, 'd').toDate();
+        this.filterRange(start, end);
+        break;
+    }
   }
 
   public ngOnDestroy(): void {
@@ -62,10 +82,37 @@ export class DateRangeFilterComponent implements OnInit, OnDestroy {
 
   public onStartChange(value: any): void {
     this.filterRange(value, this.end);
+    this.applyFilterIfHas();
   }
 
   public onEndChange(value: any): void {
     this.filterRange(this.start, value);
+    this.applyFilterIfHas();
+  }
+
+  private applyFilterIfHas() {
+    if (this.checkToday()) {
+      this.currentFilter = 'Today';
+    }
+
+    if (this.checkYesterday()) {
+      this.currentFilter = 'Yesterday';
+    }
+    if (!this.checkToday() && !this.checkYesterday()) {
+      this.currentFilter = '';
+    }
+  }
+
+  private checkToday(): boolean {
+    return moment(this.start).isSame(moment().startOf('day').toDate())
+      &&
+      moment(this.end).isSame(moment().add(1, 'd').startOf('day').toDate());
+  }
+
+  private checkYesterday(): boolean {
+    return  moment(this.start).isSame(moment().startOf('day').subtract(2, 'd').toDate())
+      &&
+      moment(this.end).isSame(moment().startOf('day').subtract(1, 'd').toDate());
   }
 
   private findValue(operator) {

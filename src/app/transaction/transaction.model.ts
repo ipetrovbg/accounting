@@ -1,15 +1,22 @@
 export interface Transaction {
-    id: string;
-    costId?: string;
-    incomeId?: string;
-    income?: number;
-    cost?: number;
-    reason: string;
-    withdrawal: number;
-    deposit: number;
-    date: Date;
-    userId?: number;
-    updatedAt: Date;
-    createdAt: Date;
-    isTest: boolean;
+  id: number;
+  comment: string;
+  amount: number;
+  type: 'deposit' | 'withdrawal';
+  date: Date;
+  simulation: boolean;
+  userId: number;
+  categoryId: number;
+  updatedAt?: Date;
+  createdAt: Date;
+  deletedAt?: Date;
+  category: {
+    id: number;
+    category: string;
+  };
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }

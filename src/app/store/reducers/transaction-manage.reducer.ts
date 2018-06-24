@@ -8,9 +8,9 @@ export function transactionManageReducer(state: TransactionManageState = initial
             return { ...state, [action.field]: action.value };
 
         case TransactionManageActionTypes.LOAD:
-        const { id, date, isTest, createdAt, updatedAt, reason, userId, withdrawal, deposit, category } = action.transaction;
+        const { id, date, simulation, createdAt, type, categoryId, updatedAt, deletedAt, comment, userId, amount, category, user } = action.transaction;
 
-            return { ...state, ...{ id, date, isTest, createdAt, updatedAt, reason, userId, withdrawal, deposit, category } };
+            return { ...state, ...{ id, date, simulation, type, categoryId, createdAt, updatedAt, deletedAt, comment, userId, amount, category, user } };
 
         default: return state;
     }

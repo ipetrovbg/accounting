@@ -1,5 +1,9 @@
 <div class="k-form">
   <label class="k-form-field">
+    <span>Filters</span>
+    <kendo-dropdownlist [data]="['Today', 'Yesterday']" [value]="currentFilter" (valueChange)="onFilterChange($event)"></kendo-dropdownlist>
+  </label>
+  <label class="k-form-field">
     <span>After</span>
     <kendo-datepicker (valueChange)="onStartChange($event)"
                       [(ngModel)]="start" [max]="max" [popupSettings]="popupSettings">

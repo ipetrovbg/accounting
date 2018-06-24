@@ -1,16 +1,22 @@
 export interface TransactionManageState {
-    id: string;
-    date: Date;
-    reason: string;
-    withdrawal: string;
-    deposit: string;
-    isTest: boolean;
-    updatedAt: Date;
-    createdAt: Date;
-    userId?: string;
-    category: {
-      id: number;
-      category: string;
-      fkId: number;
-    };
+  id: number;
+  date: Date;
+  comment: string;
+  type: 'deposit' | 'withdrawal';
+  amount: number;
+  simulation: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  userId: number;
+  categoryId: number;
+  user: {
+    email: string;
+    name: string;
+    id: number;
+  };
+  category: {
+    id: number;
+    category: string;
+  };
 }

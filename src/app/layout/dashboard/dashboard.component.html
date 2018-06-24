@@ -9,7 +9,7 @@
     [sortable]="true"
     [pageable]="true"
     filterable="menu"
-
+    [selectable]="true"
     [navigable]="true"
     (dataStateChange)="dataStateChange($event)"
     (edit)="editHandler($event)"
@@ -17,7 +17,6 @@
     (add)="addHandler($event)"
 >
     <ng-template kendoGridToolbarTemplate position="top">
-        <!-- <button kendoGridAddCommand kendoButton ></button> -->
         <div class="flex">
             <kendo-splitbutton [data]="menuData" (buttonClick)="addHandler({ action: 'new', state: 'withdrawal' })">
                     New
@@ -36,8 +35,7 @@
             </kendo-popup>
         </div>
     </ng-template>
-    <!--<kendo-grid-column field="incomeId" title="Deposit ID" width="100" [filterable]="false" [sortable]="false"></kendo-grid-column>
-    <kendo-grid-column field="costId" title="Withdrawal ID" width="115" [filterable]="false" [sortable]="false"></kendo-grid-column>-->
+    <kendo-grid-column field="id" title="ID" width="50" [filterable]="false" [sortable]="false"></kendo-grid-column>
     <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}" width="150">
         <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
           <app-date-range-filter
@@ -48,13 +46,19 @@
         </ng-template>
       </kendo-grid-column>
     <kendo-grid-column field="category.category" title="Category" [sortable]="true"></kendo-grid-column>
-    <kendo-grid-column field="reason" title="Reason" [sortable]="false"></kendo-grid-column>
-    <kendo-grid-column field="withdrawal" title="Withdrawal" width="120" format="{0:c}" [filterable]="false">
+    <kendo-grid-column field="comment" title="Comment" [sortable]="false"></kendo-grid-column>
+    <kendo-grid-column field="amount" title="Withdrawal" width="120" format="{0:c}" [filterable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <span *ngIf="dataItem.type === 'withdrawal'">{{ dataItem.amount | kendoNumber:'c' }}</span>
+      </ng-template>
         <ng-template kendoGridFooterTemplate>
             <span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="deposit" title="Deposit" width="120" format="{0:c}" [filterable]="false">
+    <kendo-grid-column field="amount" title="Deposit" width="120" format="{0:c}" [filterable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <span *ngIf="dataItem.type === 'deposit'">{{ dataItem.amount | kendoNumber:'c' }}</span>
+      </ng-template>
         <ng-template kendoGridFooterTemplate>
             <span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>
         </ng-template>
@@ -62,9 +66,9 @@
 
     <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
     <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
-    <kendo-grid-column field="isTest" title="Simulation" width="110" [filterable]="false">
+    <kendo-grid-column field="simulation" title="Simulation" width="110" [filterable]="false">
         <ng-template kendoGridCellTemplate let-dataItem>
-            <input type="checkbox" [checked]="dataItem.isTest" disabled/>
+            <input type="checkbox" [checked]="dataItem.simulation" disabled />
         </ng-template>
         <ng-template kendoGridFooterTemplate>
             <span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>
