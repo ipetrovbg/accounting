@@ -2,15 +2,22 @@ import { TransactionMangeActions, TransactionManageActionTypes } from './../acti
 import { TransactionManageState } from '../states/transaction-manage.state';
 import { initialState } from '../accounting.state';
 
-export function transactionManageReducer(state: TransactionManageState = initialState.transactionManage, action: TransactionMangeActions): TransactionManageState {
+export function transactionManageReducer(
+  state: TransactionManageState = initialState.transactionManage,
+  action: TransactionMangeActions
+): TransactionManageState {
     switch (action.type) {
         case TransactionManageActionTypes.UPDATE:
             return { ...state, [action.field]: action.value };
 
         case TransactionManageActionTypes.LOAD:
-        const { id, date, simulation, createdAt, type, categoryId, updatedAt, deletedAt, comment, userId, amount, category, user } = action.transaction;
+        const {
+          id, date, simulation, createdAt, type, categoryId, updatedAt, deletedAt, comment,
+          userId, amount, category, user, account, accountId } = action.transaction;
 
-            return { ...state, ...{ id, date, simulation, type, categoryId, createdAt, updatedAt, deletedAt, comment, userId, amount, category, user } };
+            return { ...state, ...{
+              id, date, simulation, type, categoryId, createdAt, updatedAt, deletedAt, comment,
+                userId, amount, category, user, account, accountId } };
 
         default: return state;
     }

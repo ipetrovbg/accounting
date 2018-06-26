@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { CategoriesService } from '../../categories/categories.service';
 import 'rxjs-compat/add/operator/debounceTime';
+import { TransactionService } from '../transaction.service';
 
 @Component({
   selector: 'app-dialog-transaction',
@@ -22,6 +23,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   public categoryForm: FormGroup;
   public transactionStateList: string[] = ['deposit', 'withdrawal'];
   public allCategories: Observable<string[]> = null;
+  public accounts: Observable<any> = null;
   public selectedCategory = { category: '', id: null };
   public show = false;
 
@@ -47,7 +49,8 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<State>,
     private fb: FormBuilder,
-    private categories: CategoriesService
+    private categories: CategoriesService,
+    private transaction: TransactionService
   ) { }
 
   ngOnInit() {
@@ -72,7 +75,22 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
       return categories;
     });
 
-    this.form = this.fb.group({ ...transaction }, { updateOn: 'blur' });
+    this.form = this.fb.group(transaction);
+
+    this.accounts = this.getAccounts().map(accounts => {
+      if (this.state === 'new' && accounts.length) {
+        this.setMailAccount(accounts);
+      }
+      accounts.forEach(item => {
+        if (transaction.account && transaction.account.id === item.id) {
+          this.form.get('account').patchValue({
+            id: item.id,
+            name: item.name
+          });
+        }
+      });
+      return accounts;
+    });
 
     this.form.get('date').valueChanges.subscribe(value => this.store.dispatch(new Update('date', value)));
     this.form.get('amount').valueChanges.subscribe(value => this.store.dispatch(new Update('amount', value)));
@@ -82,6 +100,10 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
     this.form.get('category').valueChanges.subscribe(value => {
       this.store.dispatch(new Update('category', value));
       this.store.dispatch(new Update('categoryId', value && value.id || null));
+    });
+    this.form.get('account').valueChanges.subscribe(value => {
+      this.store.dispatch(new Update('account', value));
+      this.store.dispatch(new Update('accountId', value && value.id || null));
     });
 
     this.subscription.add(this.store.select(s => s.transactionManage)
@@ -97,6 +119,17 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
       });
 
     }));
+  }
+
+  setMailAccount(accounts) {
+    accounts.forEach(item => {
+      if (item.name === 'Main') {
+        this.form.get('account').patchValue({
+          id: item.id,
+          name: item.name
+        });
+      }
+    });
   }
 
   openCategoryDialog() {
@@ -129,6 +162,10 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
           this.show = false;
       });
     }
+  }
+
+  public getAccounts() {
+    return this.transaction.fetchAccounts().map((accounts: any) => accounts.response);
   }
 
   private contains(target: any): boolean {

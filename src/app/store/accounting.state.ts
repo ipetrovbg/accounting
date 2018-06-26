@@ -29,6 +29,11 @@ export const initialState: State = {
     comment: '',
     type: 'withdrawal',
     simulation: false,
+    accountId: null,
+    account: {
+      id: null,
+      name: ''
+    },
     category: {
       id: null,
       category: '',

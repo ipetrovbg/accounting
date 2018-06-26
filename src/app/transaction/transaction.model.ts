@@ -10,6 +10,11 @@ export interface Transaction {
   updatedAt?: Date;
   createdAt: Date;
   deletedAt?: Date;
+  accountId: number;
+  account: {
+    id: number;
+    name: string;
+  };
   category: {
     id: number;
     category: string;

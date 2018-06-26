@@ -1,4 +1,3 @@
-import { TransactionManageState } from './../store/states/transaction-manage.state';
 import { CoreService } from './../core/core/core.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -20,6 +19,11 @@ export class TransactionService {
     private core: CoreService,
     private store: Store<State>
   ) { }
+
+  fetchAccounts() {
+    const user = getState(this.store).user;
+    return this.http.post(`${this.core.api}/account`, { token: user.token });
+  }
 
   fetchGroup(from: Date = new Date(), to: Date = new Date()) {
     return this.http.post(`${this.core.api}/transaction/group`, { token: getState(this.store).user.token, from, to });

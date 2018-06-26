@@ -113,6 +113,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
               category: item['category.category'],
               id: item['category.id'],
             };
+            item.account = {
+              name: item['account.name'],
+              id: item['account.id'],
+            };
             item.user = {
               id: item['user.id'],
               name: item['user.name'],
@@ -178,7 +182,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       updatedAt: null,
       deletedAt: null,
       simulation: false,
+      accountId: null,
       category: {id: null, category: ''},
+      account: {id: null, name: ''},
       user: {email: '', name: '', id: null}
     }));
 
@@ -213,8 +219,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   public editHandler(e) {
-    const {amount, id, comment, date, createdAt, updatedAt, simulation, category, user, type, userId, categoryId } = e.dataItem;
-    const dataItem = {type, amount, id, userId, categoryId, comment, date, createdAt, updatedAt, simulation, category, user};
+    const { amount, id, comment, date, createdAt, updatedAt, simulation, category, user,
+      type, userId, categoryId, account, accountId } = e.dataItem;
+
+    const dataItem = {type, amount, id, userId, categoryId, comment, date, createdAt, updatedAt, simulation, category, user,
+      account, accountId };
     this.store.dispatch(new Load(dataItem));
     this.openDialog(e.action, id);
   }

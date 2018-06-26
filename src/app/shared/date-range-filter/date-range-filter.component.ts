@@ -69,8 +69,8 @@ export class DateRangeFilterComponent implements OnInit, OnDestroy {
         this.filterRange(start, end);
         break;
       case 'Yesterday':
-        start = moment().startOf('day').subtract(2, 'd').toDate();
-        end = moment().startOf('day').subtract(1, 'd').toDate();
+        start = moment().startOf('day').subtract(1, 'd').toDate();
+        end = moment().startOf('day').toDate();
         this.filterRange(start, end);
         break;
     }
@@ -110,9 +110,9 @@ export class DateRangeFilterComponent implements OnInit, OnDestroy {
   }
 
   private checkYesterday(): boolean {
-    return  moment(this.start).isSame(moment().startOf('day').subtract(2, 'd').toDate())
+    return  moment(this.start).isSame(moment().startOf('day').subtract(1, 'd').toDate())
       &&
-      moment(this.end).isSame(moment().startOf('day').subtract(1, 'd').toDate());
+      moment(this.end).isSame(moment().startOf('day').toDate());
   }
 
   private findValue(operator) {

@@ -54,14 +54,32 @@
     </kendo-splitter-pane>
     <kendo-splitter-pane>
       <div class="padding">
-        <label class="k-form-field">
-          <span class="k-field-info">Transaction Type: </span>
-          <kendo-dropdownlist
-            class="full-with"
-            [data]="transactionStateList"
-            formControlName="type"
-          ></kendo-dropdownlist>
-        </label>
+        <div>
+          <div class="float-left half-with">
+            <label class="k-form-field">
+              <span class="k-field-info">Transaction Type: </span>
+              <kendo-dropdownlist
+                class="full-with"
+                [data]="transactionStateList"
+                formControlName="type"
+              ></kendo-dropdownlist>
+            </label>
+          </div>
+          <div class="float-left half-with">
+            <label class="k-form-field">
+              <span class="k-field-info">Account: </span>
+              <kendo-dropdownlist
+                class="full-with"
+                [data]="accounts | async"
+                [valuePrimitive]="false"
+                textField="name"
+                valueField="id"
+                formControlName="account"
+              ></kendo-dropdownlist>
+            </label>
+          </div>
+          <div class="clear"></div>
+        </div>
         <div>
           <div class="half-with float-left">
             <label class="k-form-field">

@@ -10,6 +10,11 @@ export interface TransactionManageState {
   deletedAt?: Date;
   userId: number;
   categoryId: number;
+  accountId: number;
+  account: {
+    id: number;
+    name: string;
+  };
   user: {
     email: string;
     name: string;
