@@ -10,6 +10,7 @@ import { Fetch } from '../../store/actions/transaction.actions';
 import * as moment from 'moment';
 import { process } from '@progress/kendo-data-query';
 import { TransactionService } from '../../transaction/transaction.service';
+import { TransactionFilterUpdate } from '../../store/actions/transation-filter.actions';
 
 @Component({
   selector: 'app-transactions-graph',
@@ -27,11 +28,16 @@ export class TransactionsGraphComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const dates = this.core.startEndWorkMonth(5);
+    if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
+      this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(5).start));
+      this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(5).end));
+    }
+
     this.store.select(state => state.user.token)
       .subscribe(token => {
         if (token) {
-          this.transaction.fetchGroup(dates.start, dates.end).subscribe((response: any) => {
+          const { from, to } = getState(this.store).transactionFilter;
+          this.transaction.fetchGroup(from, to).subscribe((response: any) => {
             const data = response.response.map((item: any) => {
 
               item.amount = item.type === 'withdrawal' ?

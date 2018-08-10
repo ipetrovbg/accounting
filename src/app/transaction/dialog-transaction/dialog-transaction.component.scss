@@ -18,38 +18,9 @@
   }
 }
 
-.form {
-  padding: 0;
-  .k-form-field {
-    // display: block!important;
-    margin: 5px;
-    padding: 5px;
-    p {
-      padding: 0;
-      margin: 0;
-    }
-  }
-}
-
 .category-row {
   height: 56px;
   align-items: flex-end;
-}
-.hover {
-  &:hover {
-    .visible-on-hover {
-      opacity: 1!important;
-    }
-  }
-  .visible-on-hover {
-    opacity: 0!important;
-  }
-}
-.popup-width {
-  width: 350px;
-  input{
-    width: 100%;
-  }
 }
 ::ng-deep {
   .k-animation-container-fixed > .k-popup {

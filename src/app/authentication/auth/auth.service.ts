@@ -25,7 +25,7 @@ export class AuthService {
     return this.http.get(`${this.core.api}/authenticate/${getState(this.store).user.token}`);
   }
 
-  tokenAuth(token) {
+  tokenAuth(token, refreshToken?: string) {
     return this.http.post(`${this.core.api}/authenticate/token`, { token });
   }
 

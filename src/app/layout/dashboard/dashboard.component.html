@@ -1,88 +1,134 @@
 <kendo-grid
-    height="540"
-    [loading]="loading | async"
-    [data]="gridData | async"
-    [pageSize]="state.take"
-    [skip]="state.skip"
-    [sort]="state.sort"
-    [filter]="state.filter"
-    [sortable]="true"
-    [pageable]="true"
-    filterable="menu"
-    [selectable]="true"
-    [navigable]="true"
-    (dataStateChange)="dataStateChange($event)"
-    (edit)="editHandler($event)"
-    (remove)="removeHandler($event)"
-    (add)="addHandler($event)"
+  height="540"
+  [loading]="loading | async"
+  [data]="gridData | async"
+  [pageSize]="state.take"
+  [skip]="state.skip"
+  [sort]="state.sort"
+  [filter]="state.filter"
+  [sortable]="true"
+  [pageable]="true"
+  filterable="menu"
+  [selectable]="true"
+  [navigable]="true"
+  (dataStateChange)="dataStateChange($event)"
+  (edit)="editHandler($event)"
+
+  (add)="addHandler($event)"
 >
-    <ng-template kendoGridToolbarTemplate position="top">
-        <div class="flex">
-            <kendo-splitbutton [data]="menuData" (buttonClick)="addHandler({ action: 'new', state: 'withdrawal' })">
-                    New
-            </kendo-splitbutton>
-            <div>
-
-                <kendo-sparkline [data]="sparkData | async" type="area" class="transaction-spark-chart"></kendo-sparkline>
-                <button #anchor (click)="onShowRemainingDays()" kendoButton icon="calendar">
-                    <span>{{ daysToNextSalary | async }} <span class="k-field-info"> / &nbsp;</span> </span>
-                    <span> {{ ((deposit | async) - (withdrawal | async)) / ((daysToNextSalary | async) || 1) | kendoNumber:'c' }} </span>
-                </button>
-            </div>
-
-            <kendo-popup [popupClass]="'content popup'" [anchor]="anchor" #popup (anchorViewportLeave)="show = false" *ngIf="show">
-                <kendo-calendar [min]="min" [max]="max"></kendo-calendar>
-            </kendo-popup>
+  <!--(remove)="removeHandler($event)"-->
+  <ng-template kendoGridToolbarTemplate position="top">
+    <div class="flex">
+      <div>
+        <div class="float-left">
+          <kendo-splitbutton [data]="menuData" (buttonClick)="addHandler({ action: 'new', state: 'withdrawal' })">
+            New
+          </kendo-splitbutton>
         </div>
+        <div class="float-left padding left">
+          <div class="hover">
+            <kendo-dropdownlist
+              [data]="accounts$ | async"
+              [valuePrimitive]="false"
+              textField="name"
+              valueField="id"
+              [value]="selectedAccount$ | async"
+              (selectionChange)="accountSelect($event)"
+            >
+              <ng-template kendoDropDownListValueTemplate let-dataItem>
+                <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+              </ng-template>
+              <ng-template kendoDropDownListItemTemplate let-dataItem>
+                <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+              </ng-template>
+            </kendo-dropdownlist>
+
+            <button kendoButton class="visible-on-hover" icon="plus" #anchorCategory
+                    (click)="openCategoryDialog()"></button>
+            <kendo-popup [popupClass]="'content popup'" [anchor]="anchorCategory" #popup
+                         (anchorViewportLeave)="showAccount = false" *ngIf="showAccount">
+              <div class="k-form no-padding popup-width">
+                <div class="padding">
+                  <h4>Create Account</h4>
+                </div>
+                <form [formGroup]="accountForm">
+                  <div class="padding">
+                    <label class="k-form-field">
+                <span class="k-field-info">Account Name
+                </span>
+                      <input type="text" kendoTextBox placeholder="Account Name" formControlName="name">
+                    </label>
+                  </div>
+                  <kendo-buttongroup [width]="'100%'">
+                    <button kendoButton (click)="showAccount = false">Cancel</button>
+                    <button kendoButton [primary]="true" (click)="createAccount()">Save</button>
+                  </kendo-buttongroup>
+                </form>
+              </div>
+            </kendo-popup>
+          </div>
+
+        </div>
+      </div>
+      <div>
+        <kendo-sparkline [data]="sparkData | async" type="area" class="transaction-spark-chart"></kendo-sparkline>
+        <button (click)="onShowRemainingDays()" kendoButton icon="calendar">
+          <span>{{ daysToNextSalary | async }} <span class="k-field-info"> / &nbsp;</span> </span>
+          <span> {{ ((deposit | async) - (withdrawal | async)) / ((daysToNextSalary | async) || 1) | kendoNumber:'c' }} </span>
+        </button>
+      </div>
+    </div>
+  </ng-template>
+  <kendo-grid-column field="id" title="ID" width="50" [filterable]="false" [sortable]="false"></kendo-grid-column>
+  <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}" width="150">
+    <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
+      <app-date-range-filter
+        [field]="column.field"
+        [filter]="filter"
+        [filterService]="filterService">
+      </app-date-range-filter>
     </ng-template>
-    <kendo-grid-column field="id" title="ID" width="50" [filterable]="false" [sortable]="false"></kendo-grid-column>
-    <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}" width="150">
-        <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
-          <app-date-range-filter
-            [field]="column.field"
-            [filter]="filter"
-            [filterService]="filterService">
-          </app-date-range-filter>
-        </ng-template>
-      </kendo-grid-column>
-    <kendo-grid-column field="category.category" title="Category" [sortable]="true"></kendo-grid-column>
-    <kendo-grid-column field="comment" title="Comment" [sortable]="false"></kendo-grid-column>
-    <kendo-grid-column field="amount" title="Withdrawal" width="120" format="{0:c}" [filterable]="false">
-      <ng-template kendoGridCellTemplate let-dataItem>
-        <span *ngIf="dataItem.type === 'withdrawal'">{{ dataItem.amount | kendoNumber:'c' }}</span>
-      </ng-template>
-        <ng-template kendoGridFooterTemplate>
-            <span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>
-        </ng-template>
-    </kendo-grid-column>
-    <kendo-grid-column field="amount" title="Deposit" width="120" format="{0:c}" [filterable]="false">
-      <ng-template kendoGridCellTemplate let-dataItem>
-        <span *ngIf="dataItem.type === 'deposit'">{{ dataItem.amount | kendoNumber:'c' }}</span>
-      </ng-template>
-        <ng-template kendoGridFooterTemplate>
-            <span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>
-        </ng-template>
-    </kendo-grid-column>
+  </kendo-grid-column>
+  <kendo-grid-column field="category.category" title="Category" width="150" [sortable]="true"></kendo-grid-column>
+  <kendo-grid-column field="comment" title="Comment" [sortable]="false"></kendo-grid-column>
+  <kendo-grid-column field="amount" title="Withdrawal" width="120" format="{0:c}" [filterable]="false">
+    <ng-template kendoGridCellTemplate let-dataItem>
+      <span *ngIf="dataItem.type === 'withdrawal'">{{ dataItem.amount | kendoNumber:'c' }}</span>
+    </ng-template>
+    <ng-template kendoGridFooterTemplate>
+      <span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>
+    </ng-template>
+  </kendo-grid-column>
+  <kendo-grid-column field="amount" title="Deposit" width="120" format="{0:c}" [filterable]="false">
+    <ng-template kendoGridCellTemplate let-dataItem>
+      <span *ngIf="dataItem.type === 'deposit'">{{ dataItem.amount | kendoNumber:'c' }}</span>
+    </ng-template>
+    <ng-template kendoGridFooterTemplate>
+      <span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>
+    </ng-template>
+  </kendo-grid-column>
 
-    <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
-    <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="150" [filterable]="false"></kendo-grid-column>
-    <kendo-grid-column field="simulation" title="Simulation" width="110" [filterable]="false">
-        <ng-template kendoGridCellTemplate let-dataItem>
-            <input type="checkbox" [checked]="dataItem.simulation" disabled />
-        </ng-template>
-        <ng-template kendoGridFooterTemplate>
-            <span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>
-        </ng-template>
-    </kendo-grid-column>
+  <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="150"
+                     [filterable]="false"></kendo-grid-column>
+  <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="150"
+                     [filterable]="false"></kendo-grid-column>
+  <kendo-grid-column field="simulation" title="Simulation" width="110" [filterable]="false">
+    <ng-template kendoGridCellTemplate let-dataItem>
+      <input type="checkbox" [checked]="dataItem.simulation" disabled/>
+    </ng-template>
+    <ng-template kendoGridFooterTemplate>
+      <span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>
+    </ng-template>
+  </kendo-grid-column>
 
-    <kendo-grid-command-column title="Actions" width="150">
-        <ng-template kendoGridCellTemplate let-isNew="isNew">
-            <button kendoGridEditCommand [primary]="true">Edit</button>
-            <button kendoGridRemoveCommand>Remove</button>
-            <button kendoGridSaveCommand [disabled]="formGroup?.invalid">{{ isNew ? 'Add' : 'Update' }}</button>
-            <button kendoGridCancelCommand>{{ isNew ? 'Discard changes' : 'Cancel' }}</button>
-        </ng-template>
-    </kendo-grid-command-column>
+  <kendo-grid-command-column title="Actions" width="80">
+    <ng-template kendoGridCellTemplate let-isNew="isNew">
+      <button kendoGridEditCommand [primary]="true">Edit</button>
+      <!--<button kendoGridRemoveCommand>Remove</button>-->
+      <button kendoGridSaveCommand [disabled]="formGroup?.invalid">{{ isNew ? 'Add' : 'Update' }}</button>
+      <button kendoGridCancelCommand>{{ isNew ? 'Discard changes' : 'Cancel' }}</button>
+    </ng-template>
+  </kendo-grid-command-column>
 
 </kendo-grid>
 

@@ -13,7 +13,7 @@ export enum TransactionActionTypes {
   }
   export class Fetch implements Action {
     public readonly type: TransactionActionTypes.FETCH = TransactionActionTypes.FETCH;
-    constructor( public from: Date, public to: Date ) {}
+    constructor( public from: Date, public to: Date, public account?: number ) {}
   }
 
   export class AddOne implements Action {

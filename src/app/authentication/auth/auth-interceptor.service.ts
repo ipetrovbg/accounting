@@ -6,7 +6,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, Htt
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/do';
 import { Router } from '@angular/router';
-import { TokenAuthentication } from '../../store/actions/user.actions';
+import { Logout, TokenAuthentication } from '../../store/actions/user.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +24,8 @@ export class AuthInterceptorService implements HttpInterceptor {
       if (response instanceof HttpResponse) {
         // this.store.dispatch(new TokenAuthentication(localStorage.getItem('token')));
         if (response.status === 401 && (this.router.url !== '/register' && this.router.url !== '/login')) {
+          localStorage.removeItem('token');
+          this.store.dispatch(new Logout());
           this.router.navigate(['/login']);
         }
       }
@@ -31,6 +33,8 @@ export class AuthInterceptorService implements HttpInterceptor {
 
       if (error instanceof HttpErrorResponse) {
         if (error.status === 401 && (this.router.url !== '/register' && this.router.url !== '/login')) {
+          localStorage.removeItem('token');
+          this.store.dispatch(new Logout());
           this.router.navigate(['/login']);
         }
       }

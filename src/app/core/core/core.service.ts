@@ -12,16 +12,21 @@ export class CoreService {
   constructor() {
   }
 
-  startEndWorkMonth(payDay): { start: Date, end: Date } {
+  startEndWorkMonth(payDay, beginingOfTime: boolean = true): { start: Date, end: Date } {
 
     const lastDayofSalary = payDay - 1;
+    let start: Date = new Date();
+    if (beginingOfTime) {
+      start = new Date('01-01-1970');
+    } else {
+      start = payDay < (+new Date().getDate()) ?
+        moment([new Date().getFullYear(), new Date().getMonth(), payDay]).toDate() :
+        moment([new Date().getFullYear(), new Date().getMonth(), payDay]).toDate();
+    }
 
-    const start = payDay < (+new Date().getDate() + 1) ?
-      moment([new Date().getFullYear(), new Date().getMonth(), payDay]).toDate() :
-      moment([new Date().getFullYear(), new Date().getMonth() - 1, payDay]).toDate();
     const end = payDay < (+new Date().getDate() + 1) ?
-      moment([new Date().getFullYear(), new Date().getMonth() + 1, payDay - 1]).toDate() :
-      moment([new Date().getFullYear(), new Date().getMonth(), payDay - 1]).toDate();
+      moment([new Date().getFullYear(), new Date().getMonth() + 1, lastDayofSalary]).toDate() :
+      moment([new Date().getFullYear(), new Date().getMonth(), lastDayofSalary]).toDate();
 
     return {start, end};
   }

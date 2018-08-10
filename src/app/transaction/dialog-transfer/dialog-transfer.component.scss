@@ -1,0 +1,7 @@
+.flex-row {
+  flex-direction: column;
+  span {
+    text-align: left;
+    align-self: flex-start;
+  }
+}

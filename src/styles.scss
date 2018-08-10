@@ -45,12 +45,32 @@ h1, h2, h3, h4, h5, h6 {
 }
 .padding {
     padding: 10px;
+  &.without-padding{
+    &.left {
+      padding-left: 0;
+    }
+    &.right {
+      padding-right: 0;
+    }
+    &.top {
+      padding-top: 0;
+    }
+    &.bottom {
+      padding-bottom: 0;
+    }
+  }
   &.extra {
     padding: 40px;
   }
+  &.left {
+    padding: 0 0 0 10px;
+  }
+}
+.info {
+  color: #b9b9b9;
 }
 .float-left {
-    float: left;
+    float: left!important;
 }
 .float-right {
     float: right;
@@ -66,4 +86,37 @@ h1, h2, h3, h4, h5, h6 {
 }
 .no-margin {
   margin: 0!important;
+}
+.hover {
+  &:hover {
+    .visible-on-hover {
+      opacity: 1!important;
+    }
+  }
+  .visible-on-hover {
+    opacity: 0!important;
+  }
+}
+.popup-width {
+  width: 350px;
+  input{
+    width: 100%;
+  }
+}
+
+.form {
+  padding: 0;
+  .k-form-field {
+    // display: block!important;
+    margin: 5px;
+    padding: 5px;
+    p {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
+.account-row {
+  height: 56px;
+  align-items: flex-end;
 }

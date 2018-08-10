@@ -1,0 +1,48 @@
+<form [formGroup]="form" class="form k-form-inline">
+  <kendo-splitter style="height: 172px;">
+    <kendo-splitter-pane size="49.5%" min="40%">
+      <div class="flex no-space-betwin padding">
+        <div class="account-row full-width">
+          <label class="k-form-field flex-row">
+            <span class="k-field-info">Account: </span>
+            <kendo-dropdownlist
+              [data]="accounts$ | async"
+              [valuePrimitive]="false"
+              textField="name"
+              valueField="id"
+              formControlName="withdrawalAccount"
+              class="full-width"
+            ></kendo-dropdownlist>
+          </label>
+          <label class="k-form-field flex-row">
+            <span class="k-field-info">Account: </span>
+            <kendo-dropdownlist
+              [data]="accounts$ | async"
+              [valuePrimitive]="false"
+              textField="name"
+              valueField="id"
+              formControlName="depositAccount"
+              class="full-width"
+            ></kendo-dropdownlist>
+          </label>
+        </div>
+      </div>
+    </kendo-splitter-pane>
+    <kendo-splitter-pane>
+      <div class="flex no-space-betwin padding">
+        <div class="account-row full-width">
+          <label class="k-form-field flex-row">
+                                <span class="k-field-info">Amount
+                                    <span
+                                      class="k-icon k-i-information k-i-info"
+                                      title="The amount in BGN"
+                                    ></span>
+                                </span>
+            <kendo-numerictextbox class="full-width" placeholder="Amount"
+                                  formControlName="amount"></kendo-numerictextbox>
+          </label>
+        </div>
+      </div>
+    </kendo-splitter-pane>
+  </kendo-splitter>
+</form>

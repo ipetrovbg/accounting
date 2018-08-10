@@ -15,6 +15,7 @@ import { TooltipModule } from '@progress/kendo-angular-tooltip';
 import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { IntlModule } from '@progress/kendo-angular-intl';
 import { PopupModule } from '@progress/kendo-angular-popup';
+import { UploadModule } from '@progress/kendo-angular-upload';
 
 
 import {
@@ -40,7 +41,8 @@ const kendo = [
   DropDownsModule,
   IntlModule,
   DateInputsModule,
-  PopupModule
+  PopupModule,
+  UploadModule
 ];
 const modules = [
   ReactiveFormsModule,

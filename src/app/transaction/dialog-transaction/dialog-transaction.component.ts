@@ -77,9 +77,15 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
 
     this.form = this.fb.group(transaction);
 
+    if (this.state === 'edit') {
+      this.form.get('amount').disable();
+      this.form.get('account').disable();
+      this.form.get('type').disable();
+    }
+
     this.accounts = this.getAccounts().map(accounts => {
       if (this.state === 'new' && accounts.length) {
-        this.setMailAccount(accounts);
+        this.setAccount();
       }
       accounts.forEach(item => {
         if (transaction.account && transaction.account.id === item.id) {
@@ -121,15 +127,8 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
     }));
   }
 
-  setMailAccount(accounts) {
-    accounts.forEach(item => {
-      if (item.name === 'Main') {
-        this.form.get('account').patchValue({
-          id: item.id,
-          name: item.name
-        });
-      }
-    });
+  setAccount() {
+    this.form.get('account').patchValue(getState(this.store).accountManage);
   }
 
   openCategoryDialog() {

@@ -10,6 +10,8 @@ import { Transaction } from './transaction.model';
 import { Observable } from 'rxjs';
 import 'rxjs-compat/add/operator/switchMap';
 import 'rxjs-compat/add/observable/of';
+import { Account } from './account.model';
+import { Update } from '../store/actions/user.actions';
 
 @Injectable()
 export class TransactionService {
@@ -22,33 +24,125 @@ export class TransactionService {
 
   fetchAccounts() {
     const user = getState(this.store).user;
-    return this.http.post(`${this.core.api}/account`, { token: user.token });
+    return this.http.post(`${this.core.api}/account`, { token: user.token })
+      .catch(() => Observable.of([]));
+  }
+
+  createAccount(name) {
+    const user = getState(this.store).user;
+    return this.http.post(`${this.core.api}/account/create`, { token: user.token, name });
   }
 
   fetchGroup(from: Date = new Date(), to: Date = new Date()) {
-    return this.http.post(`${this.core.api}/transaction/group`, { token: getState(this.store).user.token, from, to });
+    return this.http.post(`${this.core.api}/transaction/group`, { token: getState(this.store).user.token, from, to })
+      .map((response: any) => {
+        if (response.success) {
+          localStorage.setItem('token', response.token.token);
+          this.store.dispatch(new Update({
+            id: response.token.userId,
+            email: response.token.email,
+            token: response.token.token,
+            name: getState(this.store).user.name,
+            password: ''
+          }));
+        }
+        return response;
+      })
+      .catch(() => Observable.of([]));
   }
 
-  fetch(from: Date = new Date(), to: Date = new Date()): Observable<Transaction[]> {
-    return this.http.post(`${this.core.api}/transaction`, { token: getState(this.store).user.token, from, to })
+  fetch(from: Date = new Date(), to: Date = new Date(), account?: number): Observable<Transaction[]> {
+    return this.http.post(`${this.core.api}/transaction`, { token: getState(this.store).user.token, from, to, account })
+      .map((response: any) => {
+        if (response.success) {
+          localStorage.setItem('token', response.token.token);
+          this.store.dispatch(new Update({
+            id: response.token.userId,
+            email: response.token.email,
+            token: response.token.token,
+            name: getState(this.store).user.name,
+            password: ''
+          }));
+        }
+        return response;
+      })
+      .catch(() => Observable.of([]))
       .map(this.mapTransactions.bind(this));
   }
 
   update(transaction: Transaction): Observable<any> {
     const user = getState(this.store).user;
-    return this.http.put(`${this.core.api}/transaction/update/${transaction.id}`, { token: user.token, transaction });
+    return this.http.put(`${this.core.api}/transaction/update/${transaction.id}`, { token: user.token, transaction })
+      .map((response: any) => {
+        if (response.success) {
+          localStorage.setItem('token', response.token.token);
+          this.store.dispatch(new Update({
+            id: response.token.userId,
+            email: response.token.email,
+            token: response.token.token,
+            name: getState(this.store).user.name,
+            password: ''
+          }));
+        }
+        return response;
+      });
   }
 
   add(transaction: Transaction): Observable<any> {
     const user = getState(this.store).user;
-    return this.http.post(`${this.core.api}/transaction/create`, { token: user.token, transaction });
+    return this.http.post(`${this.core.api}/transaction/create`, { token: user.token, transaction })
+      .map((response: any) => {
+        if (response.success) {
+          localStorage.setItem('token', response.token.token);
+          this.store.dispatch(new Update({
+            id: response.token.userId,
+            email: response.token.email,
+            token: response.token.token,
+            name: getState(this.store).user.name,
+            password: ''
+          }));
+        }
+        return response;
+      });
   }
 
   delete(id: number): Observable<any> {
 
     const user = getState(this.store).user;
 
-    return this.http.request('delete', `${this.core.api}/transaction/delete/${id}`, { body: { token: user.token  } });
+    return this.http.request('delete', `${this.core.api}/transaction/delete/${id}`, { body: { token: user.token  } })
+      .map((response: any) => {
+        if (response.success) {
+          localStorage.setItem('token', response.token.token);
+          this.store.dispatch(new Update({
+            id: response.token.userId,
+            email: response.token.email,
+            token: response.token.token,
+            name: getState(this.store).user.name,
+            password: ''
+          }));
+        }
+        return response;
+      });
+  }
+
+  transfer(withdrawalAccount: Account, depositAccount: Account, amount: number) {
+    const user = getState(this.store).user;
+    const body = { token: user.token, from: withdrawalAccount.id, to: depositAccount.id, amount};
+    return this.http.post(`${this.core.api}/transaction/transfer`, body)
+      .map((response: any) => {
+        if (response.success) {
+          localStorage.setItem('token', response.token.token);
+          this.store.dispatch(new Update({
+            id: response.token.userId,
+            email: response.token.email,
+            token: response.token.token,
+            name: getState(this.store).user.name,
+            password: ''
+          }));
+        }
+        return response;
+      });
   }
 
   private mapTransactions(response: { success: boolean, response: Transaction[] }) {

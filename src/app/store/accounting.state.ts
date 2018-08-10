@@ -4,11 +4,17 @@ import { TransactionState } from './states/transaction.state';
 import { UserState } from './states/user.state';
 import 'rxjs-compat/add/operator/take';
 import { RequestsState } from './states/requests.state';
+import { AccountState } from './states/accounts.state';
+import { AccountManageState } from './states/account-manage.state';
+import { TransactionFilterState } from './states/transaction-filter.state';
 
 
 export interface State {
   transactions: TransactionState;
+  accounts: AccountState;
+  accountManage: AccountManageState;
   transactionManage: TransactionManageState;
+  transactionFilter: TransactionFilterState;
   user: UserState;
   requests: RequestsState;
 }
@@ -17,6 +23,14 @@ export const initialState: State = {
   transactions: {
     ids: [],
     entities: null
+  },
+  accounts: {
+    ids: [],
+    entities: null
+  },
+  accountManage: {
+    id: null,
+    name: ''
   },
   transactionManage: {
     id: null,
@@ -43,6 +57,11 @@ export const initialState: State = {
       name: '',
       email: ''
     }
+  },
+  transactionFilter: {
+    from: null,
+    to: null,
+    account: null
   },
   user: {
     id: null,

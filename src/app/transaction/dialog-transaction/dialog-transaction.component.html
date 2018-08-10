@@ -75,7 +75,14 @@
                 textField="name"
                 valueField="id"
                 formControlName="account"
-              ></kendo-dropdownlist>
+              >
+                <ng-template kendoDropDownListValueTemplate let-dataItem>
+                  <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+                </ng-template>
+                <ng-template kendoDropDownListItemTemplate let-dataItem>
+                  <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+                </ng-template>
+              </kendo-dropdownlist>
             </label>
           </div>
           <div class="clear"></div>

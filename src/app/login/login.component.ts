@@ -62,6 +62,8 @@ export class LoginComponent implements OnInit {
     }, error => {
       this.resetErrorsAndLoading();
       console.log(error);
+      this.store.dispatch(new SetError('auth', false));
+      this.store.dispatch(new SetErrorMessages('auth', ['Authentication error']));
     });
   }
 

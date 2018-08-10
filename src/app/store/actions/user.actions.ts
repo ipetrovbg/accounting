@@ -25,7 +25,7 @@ export class Logout implements Action {
 
 export class TokenAuthentication implements Action {
   public readonly type: UserActionTypes.TOKEN_LOGIN = UserActionTypes.TOKEN_LOGIN;
-  constructor( public token: string ) {}
+  constructor( public token: string, public refreshToken?: string) {}
 }
 
 export type UserActions = Login | Update | Logout | TokenAuthentication;

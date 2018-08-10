@@ -18,7 +18,7 @@ export function transactionReducer(state: TransactionState = initialState, actio
           return transactionAdapter.addOne(action.transaction, state);
 
         case TransactionActionTypes.ADD_MANY:
-          return transactionAdapter.addMany(action.transactions, state);
+          return transactionAdapter.upsertMany(action.transactions, state);
 
         case TransactionActionTypes.UPDATE_ONE:
           return transactionAdapter.updateOne({ id: action.id, changes: action.changes, }, state);

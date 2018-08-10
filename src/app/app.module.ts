@@ -3,8 +3,9 @@ import { TransactionModule } from './transaction/transaction.module';
 import { SharedModule } from './shared/shared.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 
-import { Router, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 
@@ -17,6 +18,10 @@ import { DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { RegisterComponent } from './register/register.component';
 import { CategoriesModule } from './categories/categories.module';
+import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../environments/environment';
+
+
 
 export const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -25,6 +30,7 @@ export const appRoutes: Routes = [
   { path: 'dashboard', loadChildren: './layout/layout.module#LayoutModule' },
   { path: '',   redirectTo: 'home', pathMatch: 'full' },
 ];
+const config: SocketIoConfig = { url: environment.host, options: {} };
 
 @NgModule({
   declarations: [
@@ -42,7 +48,9 @@ export const appRoutes: Routes = [
     AccountingStoreModule,
     DateInputsModule,
     AuthenticationModule,
-    CategoriesModule
+    CategoriesModule,
+    HttpClientModule,
+    SocketIoModule.forRoot(config)
   ],
   bootstrap: [AppComponent]
 })

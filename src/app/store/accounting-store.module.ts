@@ -7,6 +7,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { reducers } from './reducers';
 import { TransactionEffects } from './effects/transaction.effects';
 import { UserEffects } from './effects/user.effects';
+import { AccountEffects } from './effects/account.effects';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { UserEffects } from './effects/user.effects';
     StoreDevtoolsModule.instrument({ maxAge: 100 }),
     EffectsModule.forRoot([
       TransactionEffects,
+      AccountEffects,
       UserEffects
     ])
   ],
