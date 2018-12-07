@@ -1,0 +1,25 @@
+<form class="form k-form-inline" [formGroup]="form">
+  <div class="centered">
+  <!--<kendo-splitter style="height: 172px;">-->
+    <!--<kendo-splitter-pane size="49.5%" min="40%">-->
+      <label class="k-form-field">
+        <span class="k-field-info">Account</span>
+        <input type="text" kendoTextBox formControlName="name">
+      </label>
+    <!--</kendo-splitter-pane>-->
+    <!--<kendo-splitter-pane>-->
+      <label class="k-form-field full-with">
+          <span class="k-field-info">Currency</span>
+        <kendo-combobox
+          class="full-with"
+          [data]="currencies$ | async"
+          [valuePrimitive]="false"
+          textField="sign"
+          valueField="id"
+          formControlName="currency"
+        ></kendo-combobox>
+      </label>
+    <!--</kendo-splitter-pane>-->
+  <!--</kendo-splitter>-->
+  </div>
+</form>

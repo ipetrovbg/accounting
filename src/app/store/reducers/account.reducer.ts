@@ -1,12 +1,12 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { AccountState } from '../states/accounts.state';
-import { Account } from '../../transaction/account.model';
+import { Account, AccountModelExtended } from '../../transaction/account.model';
 import { AccountActions, AccountActionTypes } from '../actions/account.actions';
 import { createEntityAdapter } from '@ngrx/entity';
 import { State } from '../accounting.state';
 
 
-const accountAdapter = createEntityAdapter<Account>();
+const accountAdapter = createEntityAdapter<AccountModelExtended>();
 
 const initialState: AccountState = accountAdapter.getInitialState();
 

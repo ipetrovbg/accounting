@@ -22,19 +22,8 @@ export class TransactionService {
     private store: Store<State>
   ) { }
 
-  fetchAccounts() {
-    const user = getState(this.store).user;
-    return this.http.post(`${this.core.api}/account`, { token: user.token })
-      .catch(() => Observable.of([]));
-  }
-
-  createAccount(name) {
-    const user = getState(this.store).user;
-    return this.http.post(`${this.core.api}/account/create`, { token: user.token, name });
-  }
-
-  fetchGroup(from: Date = new Date(), to: Date = new Date()) {
-    return this.http.post(`${this.core.api}/transaction/group`, { token: getState(this.store).user.token, from, to })
+  fetchGroup(from: Date = new Date(), to: Date = new Date(), account) {
+    return this.http.post(`${this.core.api}/transaction/group`, { token: getState(this.store).user.token, from, to, account })
       .map((response: any) => {
         if (response.success) {
           localStorage.setItem('token', response.token.token);
@@ -49,6 +38,9 @@ export class TransactionService {
         return response;
       })
       .catch(() => Observable.of([]));
+  }
+  fetchGroupByCategory(from, to, account) {
+    return this.http.post(`${this.core.api}/transaction/group-by-category`, { token: getState(this.store).user.token, from, to, account });
   }
 
   fetch(from: Date = new Date(), to: Date = new Date(), account?: number): Observable<Transaction[]> {
@@ -126,9 +118,9 @@ export class TransactionService {
       });
   }
 
-  transfer(withdrawalAccount: Account, depositAccount: Account, amount: number) {
+  transfer(withdrawalAccount: Account, depositAccount: Account, amount: number, rate: number) {
     const user = getState(this.store).user;
-    const body = { token: user.token, from: withdrawalAccount.id, to: depositAccount.id, amount};
+    const body = { token: user.token, from: withdrawalAccount.id, to: depositAccount.id, amount, rate};
     return this.http.post(`${this.core.api}/transaction/transfer`, body)
       .map((response: any) => {
         if (response.success) {

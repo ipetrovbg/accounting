@@ -20,6 +20,8 @@ import { RegisterComponent } from './register/register.component';
 import { CategoriesModule } from './categories/categories.module';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { RippleModule } from '@progress/kendo-angular-ripple';
+
 
 
 
@@ -50,7 +52,8 @@ const config: SocketIoConfig = { url: environment.host, options: {} };
     AuthenticationModule,
     CategoriesModule,
     HttpClientModule,
-    SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config),
+    RippleModule
   ],
   bootstrap: [AppComponent]
 })

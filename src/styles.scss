@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import url('https://fonts.googleapis.com/css?family=Roboto');
+//@import "~@progress/kendo-theme-material/scss/all";
 @import "~@progress/kendo-theme-default/scss/all";
 
 body, html {
@@ -96,6 +97,10 @@ h1, h2, h3, h4, h5, h6 {
   .visible-on-hover {
     opacity: 0!important;
   }
+}
+.not-visible {
+  visibility: hidden;
+  opacity: 0;
 }
 .popup-width {
   width: 350px;

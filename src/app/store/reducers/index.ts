@@ -7,6 +7,7 @@ import { requestsReducer } from './requests.reducer';
 import { accountReducer } from './account.reducer';
 import { accountManageReducer } from './account-manage.reducer';
 import { transactionFilterReducer } from './transaction-filter.reducer';
+import { currencyReducer } from './currency.reducer';
 
 export const reducers: ActionReducerMap<State> = {
   transactions: transactionReducer,
@@ -15,5 +16,6 @@ export const reducers: ActionReducerMap<State> = {
   transactionManage: transactionManageReducer,
   user: userReducer,
   requests: requestsReducer,
-  transactionFilter: transactionFilterReducer
+  transactionFilter: transactionFilterReducer,
+  currencies: currencyReducer
 };

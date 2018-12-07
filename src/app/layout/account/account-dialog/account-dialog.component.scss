@@ -1,0 +1,12 @@
+.centered {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 290px;
+  .k-form-field {
+    display: flex;
+    .k-field-info {
+      width: 62px;
+    }
+  }
+}

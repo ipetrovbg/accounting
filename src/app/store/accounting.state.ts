@@ -7,6 +7,7 @@ import { RequestsState } from './states/requests.state';
 import { AccountState } from './states/accounts.state';
 import { AccountManageState } from './states/account-manage.state';
 import { TransactionFilterState } from './states/transaction-filter.state';
+import { CurrencyManageState } from './states/currency.state';
 
 
 export interface State {
@@ -17,6 +18,7 @@ export interface State {
   transactionFilter: TransactionFilterState;
   user: UserState;
   requests: RequestsState;
+  currencies: CurrencyManageState;
 }
 
 export const initialState: State = {
@@ -30,7 +32,23 @@ export const initialState: State = {
   },
   accountManage: {
     id: null,
-    name: ''
+    name: '',
+    edit: {
+      id: null,
+      name: '',
+      currency: {
+        id: null,
+        sign: '',
+        country: '',
+        currency: ''
+      }
+    },
+    currency: {
+      id: null,
+      sign: '',
+      country: '',
+      currency: ''
+    }
   },
   transactionManage: {
     id: null,
@@ -40,13 +58,22 @@ export const initialState: State = {
     userId: null,
     categoryId: null,
     amount: null,
+    originalAmount: null,
+    transactionId: null,
+    currencyId: null,
     comment: '',
     type: 'withdrawal',
     simulation: false,
     accountId: null,
     account: {
       id: null,
-      name: ''
+      name: '',
+      currency: {
+        currency: '',
+        sign: '',
+        id: null,
+        country: ''
+      }
     },
     category: {
       id: null,
@@ -75,6 +102,18 @@ export const initialState: State = {
       loading: false,
       error: false,
       errors: []
+    }
+  },
+  currencies: {
+    lastUsed: {
+      id: null,
+      sign: '',
+      country: '',
+      currency: ''
+    },
+    currencies: {
+      ids: [],
+      entities: null
     }
   }
 };

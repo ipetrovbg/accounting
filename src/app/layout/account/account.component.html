@@ -1,0 +1,35 @@
+<kendo-grid
+  height="540"
+  [loading]="loading | async"
+  [data]="gridData | async"
+  [filter]="state.filter"
+  [sort]="state.sort"
+  [sortable]="true"
+  [pageable]="false"
+  filterable="menu"
+  [selectable]="true"
+  [navigable]="true"
+  (edit)="addEditAccount($event)"
+  (dataStateChange)="dataStateChange($event)"
+>
+  <ng-template kendoGridToolbarTemplate position="top">
+    <div class="flex">
+      <div>
+        <div class="float-left">
+          <button kendoButton class="visible-on-hover" icon="plus" (click)="addEditAccount()"></button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <kendo-grid-column field="id" title="ID" width="30" [filterable]="false" [sortable]="false"></kendo-grid-column>
+  <kendo-grid-column field="name" title="Name" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
+  <kendo-grid-column field="currency.currency" title="Currency" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
+  <kendo-grid-column field="currency.sign" title="Abbreviation" width="50" [filterable]="true" [sortable]="true"></kendo-grid-column>
+  <kendo-grid-column field="currency.country" title="Country" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
+  <kendo-grid-command-column title="Actions" width="30">
+    <ng-template kendoGridCellTemplate let-isNew="isNew">
+      <button kendoGridEditCommand [primary]="true">Edit</button>
+    </ng-template>
+  </kendo-grid-command-column>
+</kendo-grid>
+<div kendoDialogContainer></div>

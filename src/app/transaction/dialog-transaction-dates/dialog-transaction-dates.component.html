@@ -22,7 +22,7 @@
         </label>
       </div>
     </kendo-splitter-pane>
-    <kendo-splitter-pane size="50%" min="40%">
+    <kendo-splitter-pane size="50%" min="50%">
       <div>
         <span
           class="padding k-icon k-i-information info"
@@ -30,7 +30,7 @@
         ></span>
       </div>
       <div class="padding without-padding top">
-        <kendo-calendar [min]="min" [max]="max"></kendo-calendar>
+        <kendo-calendar [min]="min" [max]="max | async"></kendo-calendar>
       </div>
     </kendo-splitter-pane>
   </kendo-splitter>

@@ -1,23 +1,25 @@
 <form [formGroup]="form" class="form k-form-inline" kendoTooltip>
   <kendo-splitter style="height: 235px;">
-    <kendo-splitter-pane size="49.5%" min="40%">
+    <kendo-splitter-pane size="35%" min="30%">
       <div class="padding">
-        <div class="flex no-space-betwin padding container hover">
-          <div class="half-with float-left category-row">
-            <label class="k-form-field no-padding no-margin">
-                    <span class="k-field-info">Category
-                            <span
-                              class="k-icon k-i-information k-i-info"
-                              title="Select some category. It will be used for reports."
-                            ></span>
-                        </span>
-              <kendo-combobox [data]="allCategories | async" [valuePrimitive]="false" textField="category"
-                              valueField="id" formControlName="category">
+        <div class="flex no-space-betwin padding container"> <!--hover-->
+          <div class="full-width float-left category-row">
+            <label class="k-form-field no-padding no-margin full-width">
+              <span class="k-field-info">Category
+                      <span
+                        class="k-icon k-i-information k-i-info"
+                        title="Select some category. It will be used for reports."
+                      ></span>
+              </span>
+              <span *ngIf="!combo.isOpen">
+                <span #anchor></span>
+              </span>
+              <kendo-combobox class="full-width" [data]="allCategories | async" [valuePrimitive]="false" textField="category" valueField="id" formControlName="category">
+                <ng-template kendoComboBoxHeaderTemplate>
+                  <button class="visible-on-hover" (click)="openCategoryDialog()" kendoButton icon="plus" #anchor>Create</button>
+                </ng-template>
               </kendo-combobox>
             </label>
-          </div>
-          <div class="half-with float-left category-row flex no-space-betwin">
-            <button class="visible-on-hover" #anchor (click)="openCategoryDialog()" kendoButton icon="plus"></button>
           </div>
         </div>
         <div class="clear"></div>
@@ -42,13 +44,62 @@
           </div>
         </kendo-popup>
         <label class="k-form-field">
-                        <span class="k-field-info">Comment
+                        <span class="k-field-info">Note
                             <span
                               class="k-icon k-i-information k-i-info"
-                              title="Enter some comment for this Transaction"
+                              title="Add some note for this Transaction"
                             ></span>
                         </span>
-          <textarea kendoTextArea formControlName="comment" style="width: 100%;" rows="4" class=full-width></textarea>
+          <textarea kendoTextArea formControlName="comment" style="width: 100%;height: 50px;" rows="1"
+                    class=full-width></textarea>
+        </label>
+      </div>
+    </kendo-splitter-pane>
+    <kendo-splitter-pane size="30%" min="30%">
+      <div class="padding" [formGroup]="currencyForm">
+        <label class="k-form-field">
+          <span class="k-field-info">Currency from:
+            <span
+              class="k-icon k-i-information k-i-info"
+              title="Currency in which you enter the amount"
+            ></span>
+          </span>
+          <kendo-combobox
+            class="full-with"
+            [data]="currencies$ | async"
+            [valuePrimitive]="false"
+            textField="sign"
+            valueField="id"
+            formControlName="from"
+          ></kendo-combobox>
+        </label>
+
+        <label class="k-form-field">
+                                <span class="k-field-info">Rate
+                                    <span
+                                      class="k-icon k-i-information k-i-info"
+                                      title="The rate for selected currencies"
+                                    ></span>
+                                </span>
+          <kendo-numerictextbox formControlName="rate" class="full-width" placeholder="Rate"></kendo-numerictextbox>
+        </label>
+
+        <label class="k-form-field">
+          <span class="k-field-info">To account currency:
+            <span
+              class="k-icon k-i-information k-i-info"
+              title="The currency in which is your selected account. It aways will be preselected from the account"
+            ></span>
+          </span>
+          <kendo-combobox
+            #accountCurrency
+            class="full-with"
+            [data]="currencies$ | async"
+            [valuePrimitive]="false"
+            textField="sign"
+            valueField="id"
+            formControlName="to"
+          ></kendo-combobox>
         </label>
       </div>
     </kendo-splitter-pane>
@@ -104,7 +155,7 @@
                                 <span class="k-field-info">Amount
                                     <span
                                       class="k-icon k-i-information k-i-info"
-                                      title="The amount in BGN"
+                                      [title]="currencyForm.controls['to'] && currencyForm.controls['to'].value && currencyForm.controls['to'].value.sign ? 'The amount in ' + currencyForm.controls['to'].value.sign : 'The amount in selected currency'"
                                     ></span>
                                 </span>
               <kendo-numerictextbox class="full-width" placeholder="Amount"

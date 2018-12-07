@@ -1,4 +1,4 @@
-import { Account } from './../../transaction/account.model';
+import { AccountModelExtended } from './../../transaction/account.model';
 import { EntityState } from '@ngrx/entity';
 
-export interface AccountState extends EntityState<Account> {}
+export interface AccountState extends EntityState<AccountModelExtended> {}

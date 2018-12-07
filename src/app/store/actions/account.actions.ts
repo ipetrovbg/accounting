@@ -1,4 +1,4 @@
-import { Account } from './../../transaction/account.model';
+import { Account, AccountModelExtended } from './../../transaction/account.model';
 import { Action } from '@ngrx/store';
 
 export enum AccountActionTypes {
@@ -24,13 +24,13 @@ export class AccountsFetch implements Action {
 export class AddOne implements Action {
   public readonly type: AccountActionTypes.ADD_ONE = AccountActionTypes.ADD_ONE;
 
-  constructor( public account: Account ) { }
+  constructor( public account: AccountModelExtended ) { }
 }
 
 export class AddMany implements Action {
   public readonly type: AccountActionTypes.ADD_MANY = AccountActionTypes.ADD_MANY;
 
-  constructor( public accounts: Account[] ) { }
+  constructor( public accounts: AccountModelExtended[] ) { }
 }
 
 export class UpdateOne implements Action {
@@ -38,7 +38,7 @@ export class UpdateOne implements Action {
 
   constructor(
     public id: number,
-    public changes: Partial<Account>,
+    public changes: Partial<AccountModelExtended>,
   ) { }
 }
 
@@ -53,7 +53,7 @@ export class AccountsDeleteAll implements Action {
 
 export class GetAll implements Action {
   readonly type: AccountActionTypes.GET_ALL = AccountActionTypes.GET_ALL;
-  constructor(public accounts: Account[]) { }
+  constructor(public accounts: AccountModelExtended[]) { }
 }
 
 export class GetOne implements Action {

@@ -7,6 +7,8 @@ import { routing } from './layout.routes';
 import { TransactionsGraphComponent } from './transactions-graph/transactions-graph.component';
 import { AuthenticationModule } from '../authentication/authentication.module';
 import { TransactionsComponent } from './transactions/transactions.component';
+import { AccountComponent } from './account/account.component';
+import { AccountDialogComponent } from './account/account-dialog/account-dialog.component';
 
 @NgModule({
   imports: [
@@ -15,6 +17,16 @@ import { TransactionsComponent } from './transactions/transactions.component';
     SharedModule,
     AuthenticationModule
   ],
-  declarations: [DashboardComponent, LayoutComponent, TransactionsGraphComponent, TransactionsComponent]
+  declarations: [
+    DashboardComponent,
+    LayoutComponent,
+    TransactionsGraphComponent,
+    TransactionsComponent,
+    AccountComponent,
+    AccountDialogComponent
+  ],
+  entryComponents: [
+    AccountDialogComponent
+  ]
 })
 export class LayoutModule { }

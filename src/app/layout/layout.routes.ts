@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TransactionsGraphComponent } from './transactions-graph/transactions-graph.component';
+import { AccountComponent } from './account/account.component';
 
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
       { path: 'transactions', component: TransactionsComponent },
       { path: 'transactions-graph', component: TransactionsGraphComponent },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'accounts', component: AccountComponent },
     ],
     // canActivate: [ LayoutGuard ]
   }

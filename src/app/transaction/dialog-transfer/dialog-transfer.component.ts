@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { Fetch } from '../../store/actions/transaction.actions';
 import { AccountsDeleteAll, AccountsFetch } from '../../store/actions/account.actions';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CurrencyService } from '../../core/currency.service';
 
 @Component({
   selector: 'app-dialog-transfer',
@@ -22,17 +23,23 @@ export class DialogTransferComponent implements OnInit {
   constructor(
     private transaction: TransactionService,
     private store: Store<State>,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private currency: CurrencyService
   ) { }
 
   ngOnInit() {
+    this.accounts$ = this.store.select(selectAllAccountsSelector);
+
     this.form = this.fb.group({
       withdrawalAccount: [getState(this.store).accountManage, Validators.required],
       depositAccount: [{id: null, name: ''}, Validators.required],
-      amount: 0
+      amount: 0,
+      rate: [null, Validators.required]
     });
-    // this.store.dispatch(new AccountsDeleteAll());
-    this.accounts$ = this.store.select(selectAllAccountsSelector);
+
+    this.form.get('withdrawalAccount').valueChanges.debounceTime(100).subscribe(() => this.accountChanged());
+    this.form.get('depositAccount').valueChanges.debounceTime(100).subscribe(() => this.accountChanged());
+
 
     this.store.select(state => state.user.token)
       .subscribe(token => {
@@ -40,12 +47,13 @@ export class DialogTransferComponent implements OnInit {
           this.store.dispatch(new AccountsFetch());
         }
       });
+  }
 
-      // .subscribe(accounts => {
-      // this.transaction.transfer(accounts[0].id, 1).subscribe(data => console.log(data), err => {
-      //   console.log(err.error.error);
-      // });
-    // });
+  accountChanged() {
+    const {withdrawalAccount, depositAccount} = this.form.value;
+    this.currency.getCurrencyPairRate(withdrawalAccount.currency.id, depositAccount.currency.id).subscribe(rate => {
+      this.form.get('rate').patchValue(rate.rate || null);
+    });
   }
 
 }

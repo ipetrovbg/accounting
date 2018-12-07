@@ -13,11 +13,11 @@ export function transactionManageReducer(
         case TransactionManageActionTypes.LOAD:
         const {
           id, date, simulation, createdAt, type, categoryId, updatedAt, deletedAt, comment,
-          userId, amount, category, user, account, accountId } = action.transaction;
+          userId, amount, category, user, account, accountId, currencyId, originalAmount, transactionId } = action.transaction;
 
             return { ...state, ...{
               id, date, simulation, type, categoryId, createdAt, updatedAt, deletedAt, comment,
-                userId, amount, category, user, account, accountId } };
+                userId, amount, category, user, account, accountId, currencyId, originalAmount, transactionId } };
 
         default: return state;
     }

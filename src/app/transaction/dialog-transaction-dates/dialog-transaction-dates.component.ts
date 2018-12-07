@@ -3,6 +3,7 @@ import { CoreService } from '../../core/core/core.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { getState, State } from '../../store/accounting.state';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-transaction-dates',
@@ -10,8 +11,8 @@ import { getState, State } from '../../store/accounting.state';
   styleUrls: ['./dialog-transaction-dates.component.scss']
 })
 export class DialogTransactionDatesComponent implements OnInit {
-  public min: Date = new Date();
-  public max: Date = new Date();
+  public min: Date = new Date(`${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()}`);
+  public max: BehaviorSubject<Date> = new BehaviorSubject<Date>(new Date());
   public form: FormGroup;
 
   constructor(
@@ -26,7 +27,7 @@ export class DialogTransactionDatesComponent implements OnInit {
       start: dates.from,
       end: dates.to
     });
-    this.max = this.core.startEndWorkMonth(5).end;
+    this.max.next(this.core.startEndWorkMonth(5).end);
   }
 
 }

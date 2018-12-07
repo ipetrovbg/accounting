@@ -2,6 +2,8 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModuleWithProviders } from '@angular/compiler/src/core';
 import { CoreService } from './core/core.service';
+import { CurrencyService } from './currency.service';
+import { CommitService } from './commit/commit.service';
 
 @NgModule({
   imports: [
@@ -14,7 +16,9 @@ export class CoreModule {
     return {
       ngModule: CoreModule,
       providers: [
-        CoreService
+        CoreService,
+        CurrencyService,
+        CommitService
       ]
     };
   }

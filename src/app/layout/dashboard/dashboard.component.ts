@@ -5,11 +5,11 @@ import { State as AppState, getState } from '../../store/accounting.state';
 import { Observable } from 'rxjs/Observable';
 import { TransactionService } from '../../transaction/transaction.service';
 import { CoreService } from '../../core/core/core.service';
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
 
 import 'rxjs/add/operator/map';
 
-import { DataStateChangeEvent } from '@progress/kendo-angular-grid';
+import { DataStateChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
 import { State, process } from '@progress/kendo-data-query';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { selectAllTransactionsSelector } from '../../store/reducers/transaction.reducer';
@@ -25,7 +25,7 @@ import { CategoriesService } from '../../categories/categories.service';
 import { Account } from '../../transaction/account.model';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import * as moment from 'moment';
-import { AccountLoad } from '../../store/actions/account-manage.actions';
+import { AccountLoad, Delete } from '../../store/actions/account-manage.actions';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogTransferComponent } from '../../transaction/dialog-transfer/dialog-transfer.component';
 import { Transaction } from '../../transaction/transaction.model';
@@ -33,13 +33,16 @@ import { DialogTransactionDatesComponent } from '../../transaction/dialog-transa
 import { TransactionFilterUpdate } from '../../store/actions/transation-filter.actions';
 import { TransactionFilterState } from '../../store/states/transaction-filter.state';
 import { state } from '@angular/animations';
+import { ComboBoxComponent, DropDownListComponent, PopupComponent } from '@progress/kendo-angular-dropdowns';
+import { CommitService } from '../../core/commit/commit.service';
+import { setTime } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public gridData: BehaviorSubject<any> = new BehaviorSubject([]);
   public data: any[] = [];
   public state: State = {skip: 0, take: 1000};
@@ -58,6 +61,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       text: 'Transfer',
       click: () => this.transferHandler({ action: 'transfer' })
   }];
+  public exportData: Array<any> = [{
+    text: 'Excel',
+    icon: 'file-excel',
+    click: () => this.exportToExcel()
+  }, {
+    text: 'Pdf',
+    icon: 'file-pdf',
+    click: () => this.exportToPDF()
+  }];
   public daysToNextSalary: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public min: Date = new Date();
   public max: Date = new Date();
@@ -66,12 +78,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public selectedAccount$: Observable<Account>;
   public transactionFilter$: Observable<TransactionFilterState>;
   public accountForm: FormGroup;
+  public commits$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public commitsCount$: BehaviorSubject<number> = new BehaviorSubject(0);
+  public commitLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  public isNewTransactionAvailable$: Observable<boolean> = null;
 
   public sparkData: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
 
 
   @ViewChild('anchorCategory') public anchorCategory: ElementRef;
+  @ViewChild(GridComponent) public grid: GridComponent;
   @ViewChild('popup', {read: ElementRef}) public popup: ElementRef;
+  @ViewChild(DropDownListComponent) public dropDown: DropDownListComponent;
 
   @HostListener('keydown', ['$event'])
   public keydown(event: any): void {
@@ -80,14 +99,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('document:click', ['$event'])
-  public documentClick(event: any): void {
-    if (!this.containsCat(event.target)) {
-      this.toggleCat(false);
-    }
-  }
+  // @HostListener('document:click', ['$event'])
+  // public documentClick(event: any): void {
+  //   if (!this.containsCat(event.target)) {
+  //     this.toggleCat(false);
+  //   }
+  // }
 
   constructor(private core: CoreService,
+              private commit: CommitService,
               private transaction: TransactionService,
               private store: Store<AppState>,
               private dialogService: DialogService,
@@ -97,6 +117,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isNewTransactionAvailable$ = this.store.select(s => !!s.accountManage.currency.id);
     if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
       this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(5).start));
       this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(5).end));
@@ -104,6 +125,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(new DeleteAll());
     this.store.dispatch(new AccountsDeleteAll());
+
     this.accountForm = this.fb.group({
       name: ['', Validators.required]
     });
@@ -123,14 +145,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.accounts$ = this.store.select(selectAllAccountsSelector).do(accounts => {
       accounts.forEach(account => {
         if (account.name === 'Main' && !getState(this.store).transactionFilter.account) {
+          if (!account.currency) {
+            account.currency = {
+              currency: '',
+              id: null,
+              sign: '',
+              country: ''
+            };
+          }
           this.store.dispatch(new AccountLoad(account));
         }
       });
     });
     this.store.select(state => state.user.token)
       .subscribe(token => {
-        if (token)
+        if (token) {
+          this.commitLoading.next(true);
+          this.commit.all().map((c: any) => {
+            if (c.response && c.response.length > 0) {
+              this.commitsCount$.next(c.response[0].Transactions.length);
+            }
+            return !!c.response.length;
+          }).subscribe(commiting => {
+            this.commits$.next(commiting);
+            this.commitLoading.next(false);
+          });
           this.store.dispatch(new AccountsFetch());
+        }
       });
 
     this.subscription.add(
@@ -191,6 +232,45 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  startCommit() {
+    this.commitLoading.next(true);
+    this.commit.createCommit().subscribe(commit => {
+      setTimeout(() => this.commitLoading.next(false), 300);
+      this.commit.all().map((c: any) => !!c.response.length).subscribe(commiting => this.commits$.next(commiting));
+    }, () => this.commitLoading.next(false));
+  }
+
+  cancelCommit() {
+    this.commitLoading.next(true);
+    this.commit.remove().subscribe(done => {
+      setTimeout(() => this.commitLoading.next(false), 300);
+      this.commit.all().map((c: any) => !!c.response.length).subscribe(commiting => this.commits$.next(commiting));
+    });
+  }
+
+  finishCommit() {
+    this.commitLoading.next(false);
+    this.commit.commit().subscribe(done => {
+      this.commit.all().map((c: any) => !!c.response.length).subscribe(commiting => {
+        this.commits$.next(commiting);
+        this.refreshData();
+      });
+    });
+  }
+
+  ngAfterViewInit() {
+    this.dropDown.open.subscribe(() => {
+      this.showAccount = false;
+    });
+  }
+
+  exportToPDF(): void {
+    this.grid.saveAsPDF();
+  }
+  exportToExcel(): void {
+    this.grid.saveAsExcel();
+  }
+
   createAccount() {
     if (this.accountForm.get('name').valid) {
       this.store.dispatch(new AccountsCreate(this.accountForm.get('name').value));
@@ -199,11 +279,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   openCategoryDialog() {
-    this.accountForm.reset();
-    this.showAccount = !this.showAccount;
+    this.dropDown.toggle(this.showAccount);
+    setTimeout(() =>  this.showAccount = !this.showAccount, 20);
   }
 
   public accountSelect(e) {
+    if (!e.currency) {
+      e.currency = {
+        id: null,
+        sign: '',
+        currency: '',
+        country: ''
+      };
+    }
     this.store.dispatch(new AccountLoad(e));
   }
 
@@ -261,18 +349,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     dialog.result.subscribe(actions => {
       if (!(actions instanceof DialogCloseResult) && actions.primary) {
-        if (dialog.content.instance.form.valid) {
-          this.loading.next(true);
-          const withdrawalAccount = dialog.content.instance.form.get('withdrawalAccount').value;
-          const depositAccount = dialog.content.instance.form.get('depositAccount').value;
-          const amount = dialog.content.instance.form.get('amount').value;
+        const { amount, depositAccount, withdrawalAccount } = dialog.content.instance.form.value;
 
-          this.transaction.transfer(withdrawalAccount, depositAccount, amount)
+        if (dialog.content.instance.form.valid && (amount > 0) && (depositAccount.id && withdrawalAccount.id) && (depositAccount.id !== withdrawalAccount.id)) {
+          this.loading.next(true);
+          const withdrawalAccountValue = dialog.content.instance.form.get('withdrawalAccount').value;
+          const depositAccountValue = dialog.content.instance.form.get('depositAccount').value;
+          const rate = dialog.content.instance.form.get('rate').value;
+          const amountValue = dialog.content.instance.form.get('amount').value;
+
+          this.transaction.transfer(withdrawalAccountValue, depositAccountValue, amountValue, rate)
             .subscribe((data: { success: boolean, response: Transaction }) => {
-              data.response.date = new Date(data.response.date);
+              /*data.response.date = new Date(data.response.date);
               data.response.createdAt = new Date(data.response.createdAt);
               data.response.updatedAt = new Date(data.response.updatedAt);
-              this.store.dispatch(new AddOne(data.response));
+              this.store.dispatch(new AddOne(data.response));*/
+              this.refreshData();
               }, err => {
               this.loading.next(false);
                 console.log(err.error.error);
@@ -289,6 +381,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       id: null,
       userId: null,
       categoryId: null,
+      currencyId: null,
       comment: '',
       type: e.state,
       date: null,
@@ -297,8 +390,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       deletedAt: null,
       simulation: false,
       accountId: null,
+      transactionId: null,
+      originalAmount: null,
       category: {id: null, category: ''},
-      account: {id: null, name: ''},
+      account: {id: null, name: '', currency: { id: null, sign: '', country: '', currency: '' }},
       user: {email: '', name: '', id: null}
     }));
 
@@ -335,12 +430,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public editHandler(e) {
     const {
       amount, id, comment, date, createdAt, updatedAt, simulation, category, user,
-      type, userId, categoryId, account, accountId
+      type, userId, categoryId, account, accountId, currencyId, transactionId, originalAmount
     } = e.dataItem;
 
     const dataItem = {
       type, amount, id, userId, categoryId, comment, date, createdAt, updatedAt, simulation, category, user,
-      account, accountId
+      account, accountId, currencyId, transactionId, originalAmount
     };
     this.store.dispatch(new Load(dataItem));
     this.openDialog(e.action, id);
@@ -357,6 +452,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private openDialog(state: 'new' | 'edit', id?: number) {
+
+    if (!getState(this.store).accountManage.currency) {
+      return;
+    }
 
     const dialog: DialogRef = this.dialogService.open({
       title: `${state[0].toUpperCase() + state.substring(1)} Transaction`,
@@ -376,7 +475,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     dialog.result.subscribe((result) => {
       const transaction: TransactionManageState = getState(this.store).transactionManage;
 
-      if (!(result instanceof DialogCloseResult) && result.primary) {
+      if (!(result instanceof DialogCloseResult) &&
+        result.primary && ( dialogTransactionComponent.form.valid ) &&
+        (dialogTransactionComponent.currencyForm.valid || dialogTransactionComponent.currencyForm.disabled)) {
+
+        if (dialogTransactionComponent.state === 'new') {
+          transaction.amount = transaction.amount * dialogTransactionComponent.currencyForm.value.rate;
+          transaction.originalAmount = transaction.amount;
+          transaction.currencyId = dialogTransactionComponent.currencyForm.value.from.id;
+        }
+
         dialogTransactionComponent.state === 'new' ?
           this.transaction.add(transaction).subscribe(r => this.refreshData()) :
           this.transaction.update(transaction).subscribe(r => this.refreshData());
@@ -389,6 +497,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loading.next(true);
     this.store.dispatch(new DeleteAll());
     this.store.dispatch(new Fetch(filter.from, filter.to, filter.account));
+    this.commitLoading.next(true);
+    this.commit.all().map((c: any) => {
+      if (c.response && c.response.length > 0) {
+        this.commitsCount$.next(c.response[0].Transactions.length);
+      }
+      return !!c.response.length;
+    }).subscribe(commiting => {
+      this.commits$.next(commiting);
+      this.commitLoading.next(false);
+    });
   }
 
 

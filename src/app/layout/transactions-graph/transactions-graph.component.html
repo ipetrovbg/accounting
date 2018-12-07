@@ -1,14 +1,53 @@
-<kendo-chart [title]="{ text: 'Cash flow' }">
-  <kendo-chart-series>
-    <kendo-chart-series-item type="waterfall"
-                             [data]="cashFlowData | async" [color]="pointColor"
-                             field="amount" categoryField="period" summaryField="summary">
-      <kendo-chart-series-item-labels format="C0" position="insideEnd">
-      </kendo-chart-series-item-labels>
-    </kendo-chart-series-item>
-  </kendo-chart-series>
-  <kendo-chart-value-axis>
-    <kendo-chart-value-axis-item [labels]="{ format: 'C0' }">
-    </kendo-chart-value-axis-item>
-  </kendo-chart-value-axis>
-</kendo-chart>
+<!--<app-toolbar>
+  <button (click)="onShowRemainingDays()" kendoButton icon="calendar">
+    <span>{{ daysToNextSalary | async }} <span class="k-field-info"></span> </span>
+  </button>
+</app-toolbar>-->
+<kendo-tabstrip>
+  <kendo-tabstrip-tab [title]="'Money goes'" [selected]="true">
+    <ng-template kendoTabContent>
+      <kendo-chart [title]="{ text: 'Where my money goes' }">
+        <kendo-chart-series>
+          <kendo-chart-series-item type="radarLine" name="" [data]="banksData | async" field="amount" categoryField="catName">
+          </kendo-chart-series-item>
+        </kendo-chart-series>
+        <kendo-chart-value-axis>
+          <kendo-chart-value-axis-item [labels]="{ format: 'C0' }">
+          </kendo-chart-value-axis-item>
+        </kendo-chart-value-axis>
+        <kendo-chart-legend position="bottom"></kendo-chart-legend>
+      </kendo-chart>
+
+      <kendo-chart>
+        <kendo-chart-title text="Units sold"></kendo-chart-title>
+        <kendo-chart-category-axis>
+          <kendo-chart-category-axis-item [categories]="['Q1', 'Q2', 'Q3', 'Q4']">
+          </kendo-chart-category-axis-item>
+        </kendo-chart-category-axis>
+        <kendo-chart-series>
+          <kendo-chart-series-item type="bar" [gap]="2" field="amount" categoryField="catName" [spacing]=".25" [data]="banksData | async">
+          </kendo-chart-series-item>
+        </kendo-chart-series>
+      </kendo-chart>
+    </ng-template>
+  </kendo-tabstrip-tab>
+  <kendo-tabstrip-tab [title]="'Cache flow'">
+    <ng-template kendoTabContent>
+      <kendo-chart [title]="{ text: 'Cash flow' }">
+        <kendo-chart-series>
+          <kendo-chart-series-item type="waterfall"
+                                   [data]="cashFlowData | async" [color]="pointColor"
+                                   field="amount" categoryField="period" summaryField="summary">
+            <kendo-chart-series-item-labels format="C0" position="insideEnd">
+            </kendo-chart-series-item-labels>
+          </kendo-chart-series-item>
+        </kendo-chart-series>
+        <kendo-chart-value-axis>
+          <kendo-chart-value-axis-item [labels]="{ format: 'C0' }">
+          </kendo-chart-value-axis-item>
+        </kendo-chart-value-axis>
+      </kendo-chart>
+    </ng-template>
+  </kendo-tabstrip-tab>
+</kendo-tabstrip>
+<div kendoDialogContainer></div>

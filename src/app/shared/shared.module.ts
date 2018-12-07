@@ -5,7 +5,7 @@ import { AppToolbarComponent } from './app-toolbar/app-toolbar.component';
 
 import { ToolBarModule } from '@progress/kendo-angular-toolbar';
 import { MenuModule } from '@progress/kendo-angular-menu';
-import { GridModule } from '@progress/kendo-angular-grid';
+import { GridModule, ExcelModule, PDFModule } from '@progress/kendo-angular-grid';
 import { ChartsModule } from '@progress/kendo-angular-charts';
 import { ButtonsModule } from '@progress/kendo-angular-buttons';
 import { DialogsModule } from '@progress/kendo-angular-dialog';
@@ -16,6 +16,7 @@ import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
 import { IntlModule } from '@progress/kendo-angular-intl';
 import { PopupModule } from '@progress/kendo-angular-popup';
 import { UploadModule } from '@progress/kendo-angular-upload';
+import { RippleModule } from '@progress/kendo-angular-ripple';
 
 
 import {
@@ -42,7 +43,10 @@ const kendo = [
   IntlModule,
   DateInputsModule,
   PopupModule,
-  UploadModule
+  UploadModule,
+  ExcelModule,
+  PDFModule,
+  RippleModule
 ];
 const modules = [
   ReactiveFormsModule,

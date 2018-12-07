@@ -12,7 +12,15 @@
               valueField="id"
               formControlName="withdrawalAccount"
               class="full-width"
-            ></kendo-dropdownlist>
+            >
+              <ng-template kendoDropDownListValueTemplate let-dataItem>
+                <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+              </ng-template>
+              <ng-template kendoDropDownListItemTemplate let-dataItem>
+                <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+              </ng-template>
+
+            </kendo-dropdownlist>
           </label>
           <label class="k-form-field flex-row">
             <span class="k-field-info">Account: </span>
@@ -23,7 +31,14 @@
               valueField="id"
               formControlName="depositAccount"
               class="full-width"
-            ></kendo-dropdownlist>
+            >
+              <ng-template kendoDropDownListValueTemplate let-dataItem>
+                <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+              </ng-template>
+              <ng-template kendoDropDownListItemTemplate let-dataItem>
+                <span>{{ dataItem?.name }} {{ dataItem?.currency ? ' / ' + dataItem?.currency.sign : '' }}</span>
+              </ng-template>
+            </kendo-dropdownlist>
           </label>
         </div>
       </div>
@@ -40,6 +55,16 @@
                                 </span>
             <kendo-numerictextbox class="full-width" placeholder="Amount"
                                   formControlName="amount"></kendo-numerictextbox>
+          </label>
+          <label class="k-form-field flex-row">
+                                <span class="k-field-info">Amount
+                                    <span
+                                      class="k-icon k-i-information k-i-info"
+                                      title="The amount in BGN"
+                                    ></span>
+                                </span>
+            <kendo-numerictextbox class="full-width" placeholder="Rate"
+                                  formControlName="rate"></kendo-numerictextbox>
           </label>
         </div>
       </div>
