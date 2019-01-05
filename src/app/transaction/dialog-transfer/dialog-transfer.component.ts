@@ -36,8 +36,7 @@ export class DialogTransferComponent implements OnInit {
       amount: 0,
       rate: [null, Validators.required]
     });
-
-    this.form.get('withdrawalAccount').valueChanges.debounceTime(100).subscribe(() => this.accountChanged());
+    this.form.get('withdrawalAccount').disable();
     this.form.get('depositAccount').valueChanges.debounceTime(100).subscribe(() => this.accountChanged());
 
 
@@ -50,9 +49,11 @@ export class DialogTransferComponent implements OnInit {
   }
 
   accountChanged() {
+    this.form.get('withdrawalAccount').enable();
     const {withdrawalAccount, depositAccount} = this.form.value;
     this.currency.getCurrencyPairRate(withdrawalAccount.currency.id, depositAccount.currency.id).subscribe(rate => {
       this.form.get('rate').patchValue(rate.rate || null);
+      this.form.get('withdrawalAccount').disable();
     });
   }
 

@@ -6,6 +6,7 @@
           <label class="k-form-field flex-row">
             <span class="k-field-info">Account: </span>
             <kendo-dropdownlist
+              #withdrawal
               [data]="accounts$ | async"
               [valuePrimitive]="false"
               textField="name"
@@ -25,6 +26,7 @@
           <label class="k-form-field flex-row">
             <span class="k-field-info">Account: </span>
             <kendo-dropdownlist
+              #deposit
               [data]="accounts$ | async"
               [valuePrimitive]="false"
               textField="name"
@@ -50,17 +52,17 @@
                                 <span class="k-field-info">Amount
                                     <span
                                       class="k-icon k-i-information k-i-info"
-                                      title="The amount in BGN"
+                                      title="The amount in {{ withdrawal.value.currency.sign }}"
                                     ></span>
                                 </span>
             <kendo-numerictextbox class="full-width" placeholder="Amount"
                                   formControlName="amount"></kendo-numerictextbox>
           </label>
           <label class="k-form-field flex-row">
-                                <span class="k-field-info">Amount
+                                <span class="k-field-info">Rate
                                     <span
                                       class="k-icon k-i-information k-i-info"
-                                      title="The amount in BGN"
+                                      [title]="deposit?.value?.currency?.sign ? 'The rate of ' + deposit?.value?.currency?.sign + ' vs ' +  withdrawal?.value?.currency?.sign : 'Please, select Account'"
                                     ></span>
                                 </span>
             <kendo-numerictextbox class="full-width" placeholder="Rate"

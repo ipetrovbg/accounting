@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import * as moment from 'moment';
 import { environment } from '../../../environments/environment';
 
@@ -19,9 +18,9 @@ export class CoreService {
     if (beginingOfTime) {
       start = new Date('01-01-1970');
     } else {
-      start = payDay < (+new Date().getDate()) ?
+      start = payDay < (+new Date().getDate() + 1) ?
         moment([new Date().getFullYear(), new Date().getMonth(), payDay]).toDate() :
-        moment([new Date().getFullYear(), new Date().getMonth(), payDay]).toDate();
+        moment([new Date().getFullYear(), new Date().getMonth(), payDay]).subtract(1,'months').toDate();
     }
 
     const end = payDay < (+new Date().getDate() + 1) ?

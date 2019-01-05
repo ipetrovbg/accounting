@@ -71,6 +71,7 @@ export class AccountComponent implements OnInit {
                   currency: newAccount.currency.currency,
                   country: newAccount.currency.country
                 },
+                amount: newAccount.amount,
                 id: newAccount.id,
                 name: newAccount.name
               }));

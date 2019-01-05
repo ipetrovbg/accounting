@@ -34,7 +34,6 @@
         </div>
         <div class="float-left padding left">
           <div class=""> <!--hover-->
-
             <kendo-dropdownlist
               [data]="accounts$ | async"
               [valuePrimitive]="false"
@@ -79,21 +78,21 @@
             </kendo-popup>
           </div>
         </div>
-        <div class="float-left">
-          <div class="padding left float-left">
-            <button *ngIf="commits$ | async" kendoButton (click)="cancelCommit()">
-              <span *ngIf="!(commitLoading | async)"> Cancel </span>
-              <span class="k-icon k-i-loading" *ngIf="(commitLoading | async)"></span>
-            </button>
-            <button *ngIf="!(commits$ | async)" kendoButton [primary]="true" (click)="startCommit()">
-              <span *ngIf="!(commitLoading | async)"> Start Commit </span>
-              <span class="k-icon k-i-loading" *ngIf="(commitLoading | async)"></span>
-            </button>
-          </div>
-          <div class="padding left float-left">
-            <button [title]="(commitsCount$ | async) === 1 ? 'You are about to commit one Transaction' : 'You are about to commit '+ (commitsCount$ | async) +' Transactions'" *ngIf="commits$ | async" kendoButton [primary]="true" (click)="finishCommit()"> Commit </button>
-          </div>
-        </div>
+        <!--<div class="float-left">-->
+          <!--<div class="padding left float-left">-->
+            <!--<button *ngIf="commits$ | async" kendoButton (click)="cancelCommit()">-->
+              <!--<span *ngIf="!(commitLoading | async)"> Cancel </span>-->
+              <!--<span class="k-icon k-i-loading" *ngIf="(commitLoading | async)"></span>-->
+            <!--</button>-->
+            <!--<button *ngIf="!(commits$ | async)" kendoButton [primary]="true" (click)="startCommit()">-->
+              <!--<span *ngIf="!(commitLoading | async)"> Start Commit </span>-->
+              <!--<span class="k-icon k-i-loading" *ngIf="(commitLoading | async)"></span>-->
+            <!--</button>-->
+          <!--</div>-->
+          <!--<div class="padding left float-left">-->
+            <!--<button [title]="(commitsCount$ | async) === 1 ? 'You are about to commit one Transaction' : 'You are about to commit '+ (commitsCount$ | async) +' Transactions'" *ngIf="commits$ | async" kendoButton [primary]="true" (click)="finishCommit()"> Commit </button>-->
+          <!--</div>-->
+        <!--</div>-->
       </div>
       <div>
         <kendo-sparkline [data]="sparkData | async" type="area" class="transaction-spark-chart"></kendo-sparkline>
@@ -121,28 +120,31 @@
       <span *ngIf="dataItem.type === 'withdrawal'">{{ dataItem.amount | kendoNumber:'c' }}</span>
     </ng-template>
     <ng-template kendoGridFooterTemplate>
-      <span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>
+      <!--<span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>-->
     </ng-template>
   </kendo-grid-column>
   <kendo-grid-column field="amount" title="Deposit" width="120" format="{0:c}" [filterable]="false">
     <ng-template kendoGridCellTemplate let-dataItem>
       <span *ngIf="dataItem.type === 'deposit'">{{ dataItem.amount | kendoNumber:'c' }}</span>
     </ng-template>
-    <ng-template kendoGridFooterTemplate>
-      <span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>
-    </ng-template>
   </kendo-grid-column>
 
   <kendo-grid-column field="createdAt" title="Created" format="{0:MMMM d, y}" width="150"
                      [filterable]="false"></kendo-grid-column>
   <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="150"
-                     [filterable]="false"></kendo-grid-column>
+                     [filterable]="false">
+    <ng-template kendoGridFooterTemplate>
+      <!--<span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>-->
+      <h5 class="k-text-uppercase">Total: </h5>
+    </ng-template>
+  </kendo-grid-column>
   <kendo-grid-column field="simulation" title="Simulation" width="110" [filterable]="false">
     <ng-template kendoGridCellTemplate let-dataItem>
       <input type="checkbox" [checked]="dataItem.simulation" disabled/>
     </ng-template>
     <ng-template kendoGridFooterTemplate>
-      <span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>
+      <!--<span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>-->
+      <span [class]="(selectedAccount$ | async)?.amount > 0 ? 'k-valid' : 'k-required'">{{ (selectedAccount$ | async)?.amount | kendoNumber:'c' }}</span>
     </ng-template>
   </kendo-grid-column>
 
@@ -177,16 +179,18 @@
       <ng-template kendoGridCellTemplate let-dataItem>
         <span *ngIf="dataItem.type === 'withdrawal'">{{ dataItem.amount | kendoNumber:'c' }}</span>
       </ng-template>
-      <ng-template kendoGridFooterTemplate>
-        <span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>
-      </ng-template>
+      <!--<ng-template kendoGridFooterTemplate>-->
+        <!--<span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>-->
+      <!--</ng-template>-->
     </kendo-grid-column>
     <kendo-grid-column field="amount" title="Deposit" width="120" format="{0:c}" [filterable]="false">
       <ng-template kendoGridCellTemplate let-dataItem>
         <span *ngIf="dataItem.type === 'deposit'">{{ dataItem.amount | kendoNumber:'c' }}</span>
       </ng-template>
+
       <ng-template kendoGridFooterTemplate>
-        <span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>
+        <h5>Total: </h5>
+        <!--<span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>-->
       </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="simulation" title="Total" [filterable]="false">
@@ -194,7 +198,7 @@
         <!--<input type="checkbox" [checked]="dataItem.simulation" disabled/>-->
       </ng-template>
       <ng-template kendoGridFooterTemplate>
-        <span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>
+        <span [class]="(deposit | async) - (withdrawal | async) > 0 ? 'k-valid' : 'k-required'">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>
       </ng-template>
     </kendo-grid-column>
   </kendo-grid-pdf>

@@ -26,6 +26,7 @@
   <kendo-grid-column field="currency.currency" title="Currency" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
   <kendo-grid-column field="currency.sign" title="Abbreviation" width="50" [filterable]="true" [sortable]="true"></kendo-grid-column>
   <kendo-grid-column field="currency.country" title="Country" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
+  <kendo-grid-column field="amount" title="Amount" format="{0:c}" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
   <kendo-grid-command-column title="Actions" width="30">
     <ng-template kendoGridCellTemplate let-isNew="isNew">
       <button kendoGridEditCommand [primary]="true">Edit</button>

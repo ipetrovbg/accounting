@@ -25,7 +25,7 @@ import { CategoriesService } from '../../categories/categories.service';
 import { Account } from '../../transaction/account.model';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import * as moment from 'moment';
-import { AccountLoad, Delete } from '../../store/actions/account-manage.actions';
+import {AccountLoad, Delete, Update} from '../../store/actions/account-manage.actions';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogTransferComponent } from '../../transaction/dialog-transfer/dialog-transfer.component';
 import { Transaction } from '../../transaction/transaction.model';
@@ -117,9 +117,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.loading.next(true);
     this.isNewTransactionAvailable$ = this.store.select(s => !!s.accountManage.currency.id);
+
     if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
-      this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(5).start));
+      this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(5, false).start));
       this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(5).end));
     }
 
@@ -134,7 +136,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.daysToNextSalary.next(this.core.daysToNextSalary());
     this.max = this.core.startEndWorkMonth(5).end;
 
-    this.loading.next(true);
+
     const transactions$ = this.store.select(selectAllTransactionsSelector);
     this.transactionFilter$ = this.store.select(filterState => filterState.transactionFilter);
     this.selectedAccount$ = this.store.select(state2 => state2.accountManage).do(accountManage => {
@@ -155,8 +157,20 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           this.store.dispatch(new AccountLoad(account));
         }
+        if (account.id === getState(this.store).transactionFilter.account) {
+          if (!account.currency) {
+            account.currency = {
+              currency: '',
+              id: null,
+              sign: '',
+              country: ''
+            };
+          }
+          this.store.dispatch(new Update('amount', account.amount));
+        }
       });
     });
+
     this.store.select(state => state.user.token)
       .subscribe(token => {
         if (token) {
@@ -178,6 +192,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       transactions$
         .do(() => setTimeout(() => this.loading.next(false), 300))
         .subscribe(transactions => {
+
+          // this.store.dispatch(new AccountsDeleteAll());
+          // this.store.dispatch(new AccountLoad());
+
           this.data = [...transactions];
           const sortedTransactions = [...transactions.sort((a: any, b: any) => a.date - b.date)];
 
@@ -201,10 +219,27 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
             };
             return item;
           });
+
+          // this.accounts$.subscribe(accounts => {
+          //   accounts.forEach(account => {
+          //     if (account.id === getState(this.store).transactionFilter.account) {
+          //       debugger;
+          //       if (!account.currency) {
+          //         account.currency = {
+          //           currency: '',
+          //           id: null,
+          //           sign: '',
+          //           country: ''
+          //         };
+          //       }
+          //       this.store.dispatch(new AccountLoad(account));
+          //     }
+          //   });
+          // });
           this.gridData.next(process(this.data, this.state));
         }, err => this.loading.next(false)));
 
-    this.gridData.subscribe(data => {
+    this.subscription.add(this.gridData.subscribe(data => {
       const aggregate = process(data.data, {
         group: [
           {
@@ -218,9 +253,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.withdrawal.next(this.extract('withdrawal', aggregate));
       this.deposit.next(this.extract('deposit', aggregate));
-    });
+    }));
 
-    this.transactionFilter$.map(filter => {
+    this.subscription.add(this.transactionFilter$.map(filter => {
       this.loading.next(true);
       this.store.dispatch(new DeleteAll());
       return filter;
@@ -229,7 +264,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loading.next(true);
         this.store.dispatch(new Fetch(filter.from, filter.to, filter.account));
       }
-    });
+    }));
   }
 
   startCommit() {
@@ -284,6 +319,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public accountSelect(e) {
+    this.store.dispatch(new AccountsDeleteAll());
+    this.store.dispatch(new AccountsFetch());
     if (!e.currency) {
       e.currency = {
         id: null,
@@ -349,6 +386,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     dialog.result.subscribe(actions => {
       if (!(actions instanceof DialogCloseResult) && actions.primary) {
+        dialog.content.instance.form.get('withdrawalAccount').enable();
         const { amount, depositAccount, withdrawalAccount } = dialog.content.instance.form.value;
 
         if (dialog.content.instance.form.valid && (amount > 0) && (depositAccount.id && withdrawalAccount.id) && (depositAccount.id !== withdrawalAccount.id)) {
@@ -495,6 +533,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   private refreshData() {
     const filter = getState(this.store).transactionFilter;
     this.loading.next(true);
+    this.store.dispatch(new AccountsFetch());
     this.store.dispatch(new DeleteAll());
     this.store.dispatch(new Fetch(filter.from, filter.to, filter.account));
     this.commitLoading.next(true);

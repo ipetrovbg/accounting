@@ -33,9 +33,11 @@ export const initialState: State = {
   accountManage: {
     id: null,
     name: '',
+    amount: 0,
     edit: {
       id: null,
       name: '',
+      amount: 0,
       currency: {
         id: null,
         sign: '',

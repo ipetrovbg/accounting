@@ -14,10 +14,10 @@ export function accountManageReducer(
       return {...state, ...initialState.accountManage};
 
     case AccountManageActionTypes.LOAD:
-      const {id, name, currency} = action.account;
+      const {id, name, currency, amount} = action.account;
       return {
         ...state, ...{
-          id, name, edit: state.edit, currency:
+          id, name, amount, edit: state.edit, currency:
             {
               id: currency.id, currency: currency.currency, sign: currency.sign, country: currency.country
             }

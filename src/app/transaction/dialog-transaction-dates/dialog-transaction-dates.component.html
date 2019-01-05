@@ -1,25 +1,29 @@
-<form class="form k-form-inline" kendoTooltip [formGroup]="form">
+
   <kendo-splitter orientation="vertical">
     <kendo-splitter-pane>
       <div class="padding">
-        <label class="k-form-field">
+
+        <form class="form k-form-inline" kendoTooltip [formGroup]="form">
+          <label class="k-form-field">
                                 <span class="k-field-info">From:
                                 <span
                                   class="k-icon k-i-information k-i-info"
                                   title="From date"
                                 ></span>
                                 </span>
-          <kendo-datepicker class="full-width" formControlName="start"></kendo-datepicker>
-        </label>
-        <label class="k-form-field">
+            <kendo-datepicker class="full-width" formControlName="start"></kendo-datepicker>
+          </label>
+          <label class="k-form-field">
                                 <span class="k-field-info">To:
                                 <span
                                   class="k-icon k-i-information k-i-info"
                                   title="To date"
                                 ></span>
                                 </span>
-          <kendo-datepicker class="full-width" formControlName="end"></kendo-datepicker>
-        </label>
+            <kendo-datepicker class="full-width" formControlName="end"></kendo-datepicker>
+          </label>
+        </form>
+
       </div>
     </kendo-splitter-pane>
     <kendo-splitter-pane size="50%" min="50%">
@@ -30,9 +34,10 @@
         ></span>
       </div>
       <div class="padding without-padding top">
-        <kendo-calendar [min]="min" [max]="max | async"></kendo-calendar>
+
+        <kendo-calendar [min]="min | async" [max]="max | async"></kendo-calendar>
       </div>
     </kendo-splitter-pane>
   </kendo-splitter>
-</form>
+
 

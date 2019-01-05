@@ -5,5 +5,6 @@ export interface AccountManageState {
   id: number;
   name: string;
   currency: Currency;
+  amount: number;
   edit?: AccountModelExtended;
 }
