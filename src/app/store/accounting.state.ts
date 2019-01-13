@@ -8,6 +8,7 @@ import { AccountState } from './states/accounts.state';
 import { AccountManageState } from './states/account-manage.state';
 import { TransactionFilterState } from './states/transaction-filter.state';
 import { CurrencyManageState } from './states/currency.state';
+import { SettingsState } from './states/settings.state';
 
 
 export interface State {
@@ -19,6 +20,7 @@ export interface State {
   user: UserState;
   requests: RequestsState;
   currencies: CurrencyManageState;
+  settings: SettingsState;
 }
 
 export const initialState: State = {
@@ -117,6 +119,10 @@ export const initialState: State = {
       ids: [],
       entities: null
     }
+  },
+  settings: {
+    ids: [],
+    entities: null
   }
 };
 

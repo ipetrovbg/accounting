@@ -98,7 +98,7 @@
         <kendo-sparkline [data]="sparkData | async" type="area" class="transaction-spark-chart"></kendo-sparkline>
         <button (click)="onShowRemainingDays()" kendoButton icon="calendar">
           <span>{{ daysToNextSalary | async }} <span class="k-field-info"> / &nbsp;</span> </span>
-          <span> {{ ((deposit | async) - (withdrawal | async)) / ((daysToNextSalary | async) || 1) | kendoNumber:'c' }} </span>
+          <span> {{ ((selectedAccount$ | async)?.amount) / ((daysToNextSalary | async) || 1) | kendoNumber:'c' }} </span>
         </button>
       </div>
     </div>
@@ -120,12 +120,15 @@
       <span *ngIf="dataItem.type === 'withdrawal'">{{ dataItem.amount | kendoNumber:'c' }}</span>
     </ng-template>
     <ng-template kendoGridFooterTemplate>
-      <!--<span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>-->
+      <span class="k-required">-{{ withdrawal | async | kendoNumber:'c' }}</span>
     </ng-template>
   </kendo-grid-column>
   <kendo-grid-column field="amount" title="Deposit" width="120" format="{0:c}" [filterable]="false">
     <ng-template kendoGridCellTemplate let-dataItem>
       <span *ngIf="dataItem.type === 'deposit'">{{ dataItem.amount | kendoNumber:'c' }}</span>
+    </ng-template>
+    <ng-template kendoGridFooterTemplate>
+      <span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>
     </ng-template>
   </kendo-grid-column>
 
@@ -134,7 +137,6 @@
   <kendo-grid-column field="updatedAt" title="Updated" format="{0:MMMM d, y}" width="150"
                      [filterable]="false">
     <ng-template kendoGridFooterTemplate>
-      <!--<span class="k-valid">{{ deposit | async | kendoNumber:'c' }}</span>-->
       <h5 class="k-text-uppercase">Total: </h5>
     </ng-template>
   </kendo-grid-column>

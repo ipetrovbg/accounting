@@ -47,6 +47,7 @@ public ngOnInit() {
         text: name,
         path: null,
         items: [
+          { text: 'Settings', path: '/dashboard/settings' },
           { text: 'Logout', path: '/login' }
         ]
       }
@@ -60,6 +61,7 @@ ngOnDestroy() {
 }
 
 public onSelectUserMenu({ item }) {
+
   if (item.text === 'Logout') {
     localStorage.removeItem('token');
     this.store.dispatch(new Logout());
@@ -69,11 +71,15 @@ public onSelectUserMenu({ item }) {
     this.store.dispatch(new Delete());
     this.store.dispatch(new TransactionFilterUpdate('account', null));
     this.router.navigate([ item.path ]);
+    return;
   }
+
+  this.router.navigate([ item.path ]);
 }
 
 public onSelect({ item }): void {
   if (item.path) {
+
     this.router.navigate([ item.path ]);
   }
 }

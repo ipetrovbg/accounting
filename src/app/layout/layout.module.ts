@@ -9,6 +9,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
 import { TransactionsComponent } from './transactions/transactions.component';
 import { AccountComponent } from './account/account.component';
 import { AccountDialogComponent } from './account/account-dialog/account-dialog.component';
+import { SettingsComponent } from '../settings/settings/settings.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { AccountDialogComponent } from './account/account-dialog/account-dialog.
     TransactionsGraphComponent,
     TransactionsComponent,
     AccountComponent,
-    AccountDialogComponent
+    AccountDialogComponent,
+    SettingsComponent
   ],
   entryComponents: [
     AccountDialogComponent

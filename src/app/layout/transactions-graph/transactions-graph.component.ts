@@ -16,6 +16,8 @@ import { DialogTransactionDatesComponent } from '../../transaction/dialog-transa
 import { AccountsFetch } from '../../store/actions/account.actions';
 import { selectAllAccountsSelector } from '../../store/reducers/account.reducer';
 import { AccountLoad } from '../../store/actions/account-manage.actions';
+import {selectAPayDaySettingsSelector} from '../../store/reducers/settings.reducer';
+import {Settings} from '../../settings/settings.model';
 
 @Component({
   selector: 'app-transactions-graph',
@@ -39,13 +41,15 @@ export class TransactionsGraphComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.daysToNextSalary.next(this.core.daysToNextSalary());
-    this.max = this.core.startEndWorkMonth(5).end;
+    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Settings) => {
+      this.daysToNextSalary.next(this.core.daysToNextSalary(setting.settings || this.core.defaultPayDay));
+      this.max = this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).end;
 
-    if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
-      this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(5).start));
-      this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(5).end));
-    }
+      if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
+        this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).start));
+        this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).end));
+      }
+    }));
 
     this.store.select(state => state.user.token)
       .subscribe(token => {

@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 //@import "~@progress/kendo-theme-material/scss/all";
 @import "~@progress/kendo-theme-default/scss/all";
+@import '~handsontable/dist/handsontable.full.css';
 
 body, html {
     font-family: 'Roboto', sans-serif;
@@ -124,4 +125,7 @@ h1, h2, h3, h4, h5, h6 {
 .account-row {
   height: 56px;
   align-items: flex-end;
+}
+kendo-menu {
+  z-index: 999;
 }

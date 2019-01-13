@@ -36,6 +36,8 @@ import { state } from '@angular/animations';
 import { ComboBoxComponent, DropDownListComponent, PopupComponent } from '@progress/kendo-angular-dropdowns';
 import { CommitService } from '../../core/commit/commit.service';
 import { setTime } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
+import {Settings} from '../../settings/settings.model';
+import {selectAllSettingsSelector, selectAPayDaySettingsSelector} from '../../store/reducers/settings.reducer';
 
 @Component({
   selector: 'app-dashboard',
@@ -83,6 +85,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public commitLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public isNewTransactionAvailable$: Observable<boolean> = null;
+  public settings$: Observable<Settings[]> = null;
 
   public sparkData: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
 
@@ -121,8 +124,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isNewTransactionAvailable$ = this.store.select(s => !!s.accountManage.currency.id);
 
     if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
-      this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(5, false).start));
-      this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(5).end));
+      this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Settings) => {
+        this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay, false).start));
+        this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).end));
+      }));
     }
 
     this.store.dispatch(new DeleteAll());
@@ -133,11 +138,16 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
 
-    this.daysToNextSalary.next(this.core.daysToNextSalary());
-    this.max = this.core.startEndWorkMonth(5).end;
+
+    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Settings) => {
+      this.daysToNextSalary.next(this.core.daysToNextSalary(+setting.settings || this.core.defaultPayDay));
+      this.max = this.core.startEndWorkMonth(+setting.settings || this.core.defaultPayDay).end;
+    }));
+
 
 
     const transactions$ = this.store.select(selectAllTransactionsSelector);
+    this.settings$ = this.store.select(selectAllSettingsSelector);
     this.transactionFilter$ = this.store.select(filterState => filterState.transactionFilter);
     this.selectedAccount$ = this.store.select(state2 => state2.accountManage).do(accountManage => {
       if (accountManage.id)
@@ -457,8 +467,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
     dialog.result.subscribe(actions => {
       if (!(actions instanceof DialogCloseResult) && actions.primary) {
-        this.loading.next(true);
-        this.transaction.delete(e.dataItem.id).subscribe(() => this.store.dispatch(new DeleteOne(e.dataItem.id)));
+        this.transaction.delete(e.dataItem.id).subscribe(() => this.refreshData());
       }
     });
 

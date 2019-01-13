@@ -8,9 +8,8 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs-compat/add/observable/of';
-import { catchError } from 'rxjs/internal/operators';
-import { Observable } from 'rxjs';
 import { Update } from '../../store/actions/user.actions';
+import { Fetch } from '../../store/actions/settings.actions';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +25,8 @@ export class AuthService {
   }
 
   tokenAuth(token, refreshToken?: string) {
-    return this.http.post(`${this.core.api}/authenticate/token`, { token });
+    return this.http.post(`${this.core.api}/authenticate/token`, { token })
+      .do((auth: any) => this.store.dispatch(new Fetch(auth.user.id)));
   }
 
   login(credentials) {
@@ -48,6 +48,7 @@ export class AuthService {
         password: '',
         id: login.user.id
       }));
+      this.store.dispatch(new Fetch(login.user.id));
 
       localStorage.setItem('token', login.token);
       this.router.navigate(['/dashboard']);

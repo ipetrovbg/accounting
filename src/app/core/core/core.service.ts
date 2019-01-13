@@ -7,13 +7,14 @@ import { environment } from '../../../environments/environment';
 })
 export class CoreService {
   api: string = environment.api;
+  defaultPayDay = 1;
 
   constructor() {
   }
 
   startEndWorkMonth(payDay, beginingOfTime: boolean = true): { start: Date, end: Date } {
 
-    const lastDayofSalary = payDay - 1;
+    const lastDayofSalary = payDay;
     let start: Date = new Date();
     if (beginingOfTime) {
       start = new Date('01-01-1970');
@@ -30,9 +31,8 @@ export class CoreService {
     return {start, end};
   }
 
-  daysToNextSalary() {
+  daysToNextSalary(payDay) {
     const day = moment();
-    const payDay = 5;
 
     return (payDay > (+new Date().getDate() + 1)) ?
       Math.abs(day.diff(moment([new Date().getFullYear(), new Date().getMonth(), payDay]), 'days')) + 1 :

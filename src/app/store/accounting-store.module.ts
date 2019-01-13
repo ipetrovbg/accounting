@@ -8,6 +8,7 @@ import { reducers } from './reducers';
 import { TransactionEffects } from './effects/transaction.effects';
 import { UserEffects } from './effects/user.effects';
 import { AccountEffects } from './effects/account.effects';
+import { SettingsEffects } from './effects/settings.effects';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { AccountEffects } from './effects/account.effects';
     EffectsModule.forRoot([
       TransactionEffects,
       AccountEffects,
-      UserEffects
+      UserEffects,
+      SettingsEffects
     ])
   ],
   declarations: [],

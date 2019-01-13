@@ -7,8 +7,11 @@
   <kendo-tabstrip-tab [title]="'Money goes'" [selected]="true">
     <ng-template kendoTabContent>
       <kendo-chart [title]="{ text: 'Where my money goes' }">
+        <kendo-chart-tooltip>
+        </kendo-chart-tooltip>
         <kendo-chart-series>
           <kendo-chart-series-item type="radarLine" name="" [data]="banksData | async" field="amount" categoryField="catName">
+            <kendo-chart-series-item-tooltip></kendo-chart-series-item-tooltip>
           </kendo-chart-series-item>
         </kendo-chart-series>
         <kendo-chart-value-axis>
@@ -26,6 +29,7 @@
         </kendo-chart-category-axis>
         <kendo-chart-series>
           <kendo-chart-series-item type="bar" [gap]="2" field="amount" categoryField="catName" [spacing]=".25" [data]="banksData | async">
+            <kendo-chart-series-item-tooltip></kendo-chart-series-item-tooltip>
           </kendo-chart-series-item>
         </kendo-chart-series>
       </kendo-chart>
