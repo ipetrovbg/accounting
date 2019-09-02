@@ -91,10 +91,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public sparkData: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
 
 
-  @ViewChild('anchorCategory') public anchorCategory: ElementRef;
-  @ViewChild(GridComponent) public grid: GridComponent;
-  @ViewChild('popup', {read: ElementRef}) public popup: ElementRef;
-  @ViewChild(DropDownListComponent) public dropDown: DropDownListComponent;
+  @ViewChild('anchorCategory', { static: false }) public anchorCategory: ElementRef;
+  @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
+  @ViewChild('popup', { read: ElementRef, static: false }) public popup: ElementRef;
+  @ViewChild(DropDownListComponent, { static: false }) public dropDown: DropDownListComponent;
 
   @HostListener('keydown', ['$event'])
   public keydown(event: any): void {

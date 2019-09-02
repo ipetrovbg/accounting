@@ -36,9 +36,9 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   public selectedCategory = { category: '', id: null };
   public show = false;
 
-  @ViewChild('anchor') public anchor: ElementRef;
-  @ViewChild('popup', { read: ElementRef }) public popup: ElementRef;
-  @ViewChild(ComboBoxComponent) public combo: ComboBoxComponent;
+  @ViewChild('anchor', { static: false }) public anchor: ElementRef;
+  @ViewChild('popup', { read: ElementRef, static: false }) public popup: ElementRef;
+  @ViewChild(ComboBoxComponent, { static: true }) public combo: ComboBoxComponent;
 
   private subscription: Subscription = new Subscription();
 
