@@ -1,6 +1,7 @@
 import { Currency } from '../store/states/currency.state';
 
 export interface Account {
+  currency: Currency;
   id: number;
   name: string;
   userId?: number;

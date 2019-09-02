@@ -1,6 +1,5 @@
 
 import {map, tap} from 'rxjs/operators';
-import { AddOne, DeleteOne } from '../../store/actions/transaction.actions';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { DialogTransactionComponent } from '../../transaction/dialog-transaction/dialog-transaction.component';
 import { State as AppState, getState } from '../../store/accounting.state';
@@ -76,7 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public daysToNextSalary: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public min: Date = new Date();
   public max: Date = new Date();
-  public showAccount: boolean = false;
+  public showAccount = false;
   public accounts$: Observable<Account[]>;
   public selectedAccount$: Observable<Account>;
   public transactionFilter$: Observable<TransactionFilterState>;
@@ -151,8 +150,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.settings$ = this.store.select(selectAllSettingsSelector);
     this.transactionFilter$ = this.store.select(filterState => filterState.transactionFilter);
     this.selectedAccount$ = this.store.select(state2 => state2.accountManage).pipe(tap(accountManage => {
-      if (accountManage.id)
+      if (accountManage.id) {
         this.store.dispatch(new TransactionFilterUpdate('account', accountManage.id));
+      }
     }));
 
     this.accounts$ = this.store.select(selectAllAccountsSelector).pipe(tap(accounts => {
@@ -182,7 +182,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }));
 
-    this.store.select(state => state.user.token)
+    this.store.select(s => s.user.token)
       .subscribe(token => {
         if (token) {
           this.commitLoading.next(true);
@@ -400,7 +400,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         dialog.content.instance.form.get('withdrawalAccount').enable();
         const { amount, depositAccount, withdrawalAccount } = dialog.content.instance.form.value;
 
-        if (dialog.content.instance.form.valid && (amount > 0) && (depositAccount.id && withdrawalAccount.id) && (depositAccount.id !== withdrawalAccount.id)) {
+        if (dialog.content.instance.form.valid &&
+          (amount > 0) &&
+          (depositAccount.id && withdrawalAccount.id) &&
+          (depositAccount.id !== withdrawalAccount.id)) {
           this.loading.next(true);
           const withdrawalAccountValue = dialog.content.instance.form.get('withdrawalAccount').value;
           const depositAccountValue = dialog.content.instance.form.get('depositAccount').value;
@@ -489,8 +492,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.openDialog(e.action, id);
   }
 
-  public dataStateChange(state: DataStateChangeEvent) {
-    this.state = state;
+  public dataStateChange(s: DataStateChangeEvent) {
+    this.state = s;
     this.refreshData();
   }
 
@@ -499,14 +502,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.dispatch(new DeleteAll());
   }
 
-  private openDialog(state: 'new' | 'edit', id?: number) {
+  private openDialog(s: 'new' | 'edit', id?: number) {
 
     if (!getState(this.store).accountManage.currency) {
       return;
     }
 
     const dialog: DialogRef = this.dialogService.open({
-      title: `${state[0].toUpperCase() + state.substring(1)} Transaction`,
+      title: `${s[0].toUpperCase() + s.substring(1)} Transaction`,
       content: DialogTransactionComponent,
       actions: [
         {text: 'Cancel'},
@@ -517,7 +520,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     const dialogTransactionComponent = dialog.content.instance;
-    dialogTransactionComponent.state = state;
+    dialogTransactionComponent.state = s;
 
 
     dialog.result.subscribe((result) => {

@@ -3,7 +3,6 @@ import {of as observableOf,  Observable } from 'rxjs';
 
 import {catchError, map, switchMap} from 'rxjs/operators';
 import { UserState } from './../states/user.state';
-import { catchError } from 'rxjs/internal/operators';
 import { Injectable } from '@angular/core';
 import { Actions } from '@ngrx/effects';
 import { Effect } from '@ngrx/effects';
@@ -36,5 +35,6 @@ export class UserEffects {
       } else {
         return new Update(new UserState());
       }
-    }),catchError(() => observableOf(new Update(new UserState()))),);
+    }),
+    catchError(() => observableOf(new Update(new UserState()))));
 }
