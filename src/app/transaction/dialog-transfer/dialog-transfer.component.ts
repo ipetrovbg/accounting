@@ -1,3 +1,5 @@
+
+import {debounceTime} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { TransactionService } from '../transaction.service';
 import { Store } from '@ngrx/store';
@@ -37,7 +39,7 @@ export class DialogTransferComponent implements OnInit {
       rate: [null, Validators.required]
     });
     this.form.get('withdrawalAccount').disable();
-    this.form.get('depositAccount').valueChanges.debounceTime(100).subscribe(() => this.accountChanged());
+    this.form.get('depositAccount').valueChanges.pipe(debounceTime(100)).subscribe(() => this.accountChanged());
 
 
     this.store.select(state => state.user.token)

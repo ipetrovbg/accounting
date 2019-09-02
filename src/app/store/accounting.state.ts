@@ -1,3 +1,5 @@
+
+import {take} from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { TransactionManageState } from './states/transaction-manage.state';
 import { TransactionState } from './states/transaction.state';
@@ -129,6 +131,6 @@ export const initialState: State = {
 
 export function getState(store: Store<State>) {
   let o: State;
-  store.select(state => state).take(1).subscribe(state => o = state);
+  store.select(state => state).pipe(take(1)).subscribe(state => o = state);
   return o;
 }

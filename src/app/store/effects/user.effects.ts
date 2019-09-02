@@ -1,3 +1,7 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {catchError, map, switchMap} from 'rxjs/operators';
 import { UserState } from './../states/user.state';
 import { catchError } from 'rxjs/internal/operators';
 import { Injectable } from '@angular/core';
@@ -8,8 +12,6 @@ import { AuthService } from '../../authentication/auth/auth.service';
 import { Router } from '@angular/router';
 import 'rxjs-compat/add/operator/switchMap';
 import 'rxjs-compat/add/operator/catch';
-import 'rxjs/add/observable/of';
-import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class UserEffects {
@@ -18,9 +20,9 @@ export class UserEffects {
     private auth: AuthService
   ) {}
 
-  @Effect() tokenAuth = this.actions.ofType(UserActionTypes.TOKEN_LOGIN)
-    .switchMap((action: TokenAuthentication) => this.auth.tokenAuth(action.token))
-    .map((response: any) => {
+  @Effect() tokenAuth = this.actions.ofType(UserActionTypes.TOKEN_LOGIN).pipe(
+    switchMap((action: TokenAuthentication) => this.auth.tokenAuth(action.token)),
+    map((response: any) => {
       if (response.success) {
         localStorage.setItem('token', response.token);
 
@@ -34,5 +36,5 @@ export class UserEffects {
       } else {
         return new Update(new UserState());
       }
-    }).catch(() => Observable.of(new Update(new UserState())));
+    }),catchError(() => observableOf(new Update(new UserState()))),);
 }

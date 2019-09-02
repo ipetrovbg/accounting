@@ -17,7 +17,6 @@ import { IntlModule } from '@progress/kendo-angular-intl';
 import { PopupModule } from '@progress/kendo-angular-popup';
 import { UploadModule } from '@progress/kendo-angular-upload';
 import { RippleModule } from '@progress/kendo-angular-ripple';
-import { HotTableModule } from '@handsontable-pro/angular';
 
 import {
   FormsModule,
@@ -70,14 +69,12 @@ const forExports = [
     CommonModule,
     ...kendo,
     ...modules,
-    HotTableModule.forRoot()
   ],
   declarations: [
     ...components
   ],
   exports: [
     ...forExports,
-    HotTableModule
   ],
   entryComponents: [ConfirmDialogComponent]
 })

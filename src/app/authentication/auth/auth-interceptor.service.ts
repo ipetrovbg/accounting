@@ -1,10 +1,12 @@
+
+import {tap} from 'rxjs/operators';
 import { State } from './../../store/accounting.state';
 import { Store } from '@ngrx/store';
 import { catchError } from 'rxjs/internal/operators';
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import 'rxjs/add/operator/do';
+
 import { Router } from '@angular/router';
 import { Logout, TokenAuthentication } from '../../store/actions/user.actions';
 
@@ -20,7 +22,7 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // this.store.dispatch(new TokenAuthentication(localStorage.getItem('token')));
-    return next.handle(req).do(response => {
+    return next.handle(req).pipe(tap(response => {
       if (response instanceof HttpResponse) {
         // this.store.dispatch(new TokenAuthentication(localStorage.getItem('token')));
         if (response.status === 401 && (this.router.url !== '/register' && this.router.url !== '/login')) {
@@ -38,7 +40,7 @@ export class AuthInterceptorService implements HttpInterceptor {
           this.router.navigate(['/login']);
         }
       }
-    });
+    }));
   }
 
 }

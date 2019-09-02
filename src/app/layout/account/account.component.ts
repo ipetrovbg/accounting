@@ -1,3 +1,5 @@
+
+import {tap} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Account } from '../../transaction/account.model';
@@ -37,7 +39,7 @@ export class AccountComponent implements OnInit {
           this.refreshData();
       });
 
-    this.accounts$ = this.store.select(selectAllAccountsSelector).do(() => this.loading.next(false));
+    this.accounts$ = this.store.select(selectAllAccountsSelector).pipe(tap(() => this.loading.next(false)));
 
     this.accounts$.subscribe(accounts => this.gridData.next(process(accounts, this.state)));
   }

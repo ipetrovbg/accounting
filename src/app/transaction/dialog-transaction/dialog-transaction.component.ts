@@ -1,3 +1,5 @@
+
+import {debounceTime, map} from 'rxjs/operators';
 import { Update } from './../../store/actions/transaction-manage.action';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
@@ -81,7 +83,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
       transaction.amount = transaction.originalAmount;
     }
 
-    this.allCategories = this.getCategories().map(categories => {
+    this.allCategories = this.getCategories().pipe(map(categories => {
       categories.map(item => {
         if (transaction.category && transaction.category.id === item.id) {
           this.selectedCategory = item;
@@ -89,7 +91,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
         return item;
       });
       return categories;
-    });
+    }));
 
     this.form = this.fb.group(transaction);
     this.form.setValidators(() => {
@@ -110,7 +112,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
       this.currencyForm.get('from').setErrors(null);
     }
 
-    this.accounts = this.getAccounts().map(accounts => {
+    this.accounts = this.getAccounts().pipe(map(accounts => {
       if (this.state === 'new' && accounts.length) {
         this.setAccount();
       }
@@ -127,7 +129,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
         }
       });
       return accounts;
-    });
+    }));
 
     this.form.get('date').valueChanges.subscribe(value => this.store.dispatch(new Update('date', value)));
     if (this.state === 'edit') {
@@ -149,8 +151,8 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
       this.store.dispatch(new Update('accountId', value && value.id || null));
     });
 
-    this.subscription.add(this.store.select(s => s.transactionManage)
-      .debounceTime(750)
+    this.subscription.add(this.store.select(s => s.transactionManage).pipe(
+      debounceTime(750))
     .subscribe((t: any) => {
       this.allCategories.subscribe((categories: any) => {
         categories.forEach(cat => {
@@ -269,7 +271,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   }
 
   public getCategories() {
-    return this.categories.fetchCategories().map(cat => cat.results);
+    return this.categories.fetchCategories().pipe(map(cat => cat.results));
   }
 
   public createCategory(e) {
@@ -285,7 +287,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   }
 
   public getAccounts() {
-    return this.account.fetchAccounts().map((accounts: any) => accounts.response);
+    return this.account.fetchAccounts().pipe(map((accounts: any) => accounts.response));
   }
 /*
   private contains(target: any): boolean {

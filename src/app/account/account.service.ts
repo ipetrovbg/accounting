@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {catchError} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { getState, State } from '../store/accounting.state';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CoreService } from '../core/core/core.service';
 import { Store } from '@ngrx/store';
@@ -20,8 +23,8 @@ export class AccountService {
 
   fetchAccounts() {
     const user = getState(this.store).user;
-    return this.http.post(`${this.core.api}/account`, { token: user.token })
-      .catch(() => Observable.of([]));
+    return this.http.post(`${this.core.api}/account`, { token: user.token }).pipe(
+      catchError(() => observableOf([])));
   }
 
   createAccount(name) {

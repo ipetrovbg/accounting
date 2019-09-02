@@ -1,10 +1,11 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { AccountActionTypes, AccountsCreate, AccountsDeleteAll, AddMany, AddOne } from '../actions/account.actions';
 
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { AccountModelExtended } from '../../transaction/account.model';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs-compat/add/observable/of';
 import { AccountService } from '../../account/account.service';
 
@@ -17,7 +18,7 @@ export class AccountEffects {
       map((accounts: { response: AccountModelExtended[]}) => accounts.response),
       mergeMap(data => [new AccountsDeleteAll(), new AddMany(data || [])]),
       catchError(err => {
-        return Observable.of(new AccountsDeleteAll());
+        return observableOf(new AccountsDeleteAll());
       }),
     );
   @Effect() createAccount = this.actions.ofType(AccountActionTypes.CREATE)

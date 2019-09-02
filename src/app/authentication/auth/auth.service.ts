@@ -1,12 +1,14 @@
+
+import {tap} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CoreService } from '../../core/core/core.service';
 import { Router } from '@angular/router';
 import { State, getState } from '../../store/accounting.state';
 import { Store } from '@ngrx/store';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/switchMap';
+
+
+
 import 'rxjs-compat/add/observable/of';
 import { Update } from '../../store/actions/user.actions';
 import { Fetch } from '../../store/actions/settings.actions';
@@ -25,13 +27,13 @@ export class AuthService {
   }
 
   tokenAuth(token, refreshToken?: string) {
-    return this.http.post(`${this.core.api}/authenticate/token`, { token })
-      .do((auth: any) => this.store.dispatch(new Fetch(auth.user.id)));
+    return this.http.post(`${this.core.api}/authenticate/token`, { token }).pipe(
+      tap((auth: any) => this.store.dispatch(new Fetch(auth.user.id))));
   }
 
   login(credentials) {
-    return this.http.post(`${this.core.api}/authenticate`, credentials)
-      .do(this.handleAuthentication.bind(this));
+    return this.http.post(`${this.core.api}/authenticate`, credentials).pipe(
+      tap(this.handleAuthentication.bind(this)));
   }
 
   register(user) {

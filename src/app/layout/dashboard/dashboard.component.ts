@@ -1,17 +1,18 @@
+
+import {map, tap} from 'rxjs/operators';
 import { AddOne, DeleteOne } from '../../store/actions/transaction.actions';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { DialogTransactionComponent } from '../../transaction/dialog-transaction/dialog-transaction.component';
 import { State as AppState, getState } from '../../store/accounting.state';
-import { Observable } from 'rxjs/Observable';
+import { Observable ,  BehaviorSubject, Subscription } from 'rxjs';
 import { TransactionService } from '../../transaction/transaction.service';
 import { CoreService } from '../../core/core/core.service';
 import { Component, OnDestroy, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
 
-import 'rxjs/add/operator/map';
+
 
 import { DataStateChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
 import { State, process } from '@progress/kendo-data-query';
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { selectAllTransactionsSelector } from '../../store/reducers/transaction.reducer';
 import { selectAllAccountsSelector } from '../../store/reducers/account.reducer';
 import { Store } from '@ngrx/store';
@@ -149,12 +150,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     const transactions$ = this.store.select(selectAllTransactionsSelector);
     this.settings$ = this.store.select(selectAllSettingsSelector);
     this.transactionFilter$ = this.store.select(filterState => filterState.transactionFilter);
-    this.selectedAccount$ = this.store.select(state2 => state2.accountManage).do(accountManage => {
+    this.selectedAccount$ = this.store.select(state2 => state2.accountManage).pipe(tap(accountManage => {
       if (accountManage.id)
         this.store.dispatch(new TransactionFilterUpdate('account', accountManage.id));
-    });
+    }));
 
-    this.accounts$ = this.store.select(selectAllAccountsSelector).do(accounts => {
+    this.accounts$ = this.store.select(selectAllAccountsSelector).pipe(tap(accounts => {
       accounts.forEach(account => {
         if (account.name === 'Main' && !getState(this.store).transactionFilter.account) {
           if (!account.currency) {
@@ -179,18 +180,18 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.store.dispatch(new Update('amount', account.amount));
         }
       });
-    });
+    }));
 
     this.store.select(state => state.user.token)
       .subscribe(token => {
         if (token) {
           this.commitLoading.next(true);
-          this.commit.all().map((c: any) => {
+          this.commit.all().pipe(map((c: any) => {
             if (c.response && c.response.length > 0) {
               this.commitsCount$.next(c.response[0].Transactions.length);
             }
             return !!c.response.length;
-          }).subscribe(commiting => {
+          })).subscribe(commiting => {
             this.commits$.next(commiting);
             this.commitLoading.next(false);
           });
@@ -199,8 +200,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
     this.subscription.add(
-      transactions$
-        .do(() => setTimeout(() => this.loading.next(false), 300))
+      transactions$.pipe(
+        tap(() => setTimeout(() => this.loading.next(false), 300)))
         .subscribe(transactions => {
 
           // this.store.dispatch(new AccountsDeleteAll());
@@ -265,11 +266,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       this.deposit.next(this.extract('deposit', aggregate));
     }));
 
-    this.subscription.add(this.transactionFilter$.map(filter => {
+    this.subscription.add(this.transactionFilter$.pipe(map(filter => {
       this.loading.next(true);
       this.store.dispatch(new DeleteAll());
       return filter;
-    }).subscribe(filter => {
+    })).subscribe(filter => {
       if (filter.account && filter.from && filter.to) {
         this.loading.next(true);
         this.store.dispatch(new Fetch(filter.from, filter.to, filter.account));
@@ -281,7 +282,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.commitLoading.next(true);
     this.commit.createCommit().subscribe(commit => {
       setTimeout(() => this.commitLoading.next(false), 300);
-      this.commit.all().map((c: any) => !!c.response.length).subscribe(commiting => this.commits$.next(commiting));
+      this.commit.all().pipe(map((c: any) => !!c.response.length)).subscribe(commiting => this.commits$.next(commiting));
     }, () => this.commitLoading.next(false));
   }
 
@@ -289,14 +290,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.commitLoading.next(true);
     this.commit.remove().subscribe(done => {
       setTimeout(() => this.commitLoading.next(false), 300);
-      this.commit.all().map((c: any) => !!c.response.length).subscribe(commiting => this.commits$.next(commiting));
+      this.commit.all().pipe(map((c: any) => !!c.response.length)).subscribe(commiting => this.commits$.next(commiting));
     });
   }
 
   finishCommit() {
     this.commitLoading.next(false);
     this.commit.commit().subscribe(done => {
-      this.commit.all().map((c: any) => !!c.response.length).subscribe(commiting => {
+      this.commit.all().pipe(map((c: any) => !!c.response.length)).subscribe(commiting => {
         this.commits$.next(commiting);
         this.refreshData();
       });
@@ -546,12 +547,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.dispatch(new DeleteAll());
     this.store.dispatch(new Fetch(filter.from, filter.to, filter.account));
     this.commitLoading.next(true);
-    this.commit.all().map((c: any) => {
+    this.commit.all().pipe(map((c: any) => {
       if (c.response && c.response.length > 0) {
         this.commitsCount$.next(c.response[0].Transactions.length);
       }
       return !!c.response.length;
-    }).subscribe(commiting => {
+    })).subscribe(commiting => {
       this.commits$.next(commiting);
       this.commitLoading.next(false);
     });
