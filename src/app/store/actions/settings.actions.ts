@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { Settings } from '../../settings/settings.model';
+import { Setting } from '../../settings/settings.model';
 
 export enum SettingsActionTypes {
   GET_ONE = '[Settings] Get One',
@@ -21,13 +21,13 @@ export class Fetch implements Action {
 export class AddOne implements Action {
   public readonly type: SettingsActionTypes.ADD_ONE = SettingsActionTypes.ADD_ONE;
 
-  constructor( public setting: Settings ) { }
+  constructor( public setting: Setting ) { }
 }
 
 export class AddMany implements Action {
   public readonly type: SettingsActionTypes.ADD_MANY = SettingsActionTypes.ADD_MANY;
 
-  constructor( public settings: Settings[] ) { }
+  constructor( public settings: Setting[] ) { }
 }
 
 export class UpdateOne implements Action {
@@ -35,7 +35,7 @@ export class UpdateOne implements Action {
 
   constructor(
     public id: number,
-    public changes: Partial<Settings>,
+    public changes: Partial<Setting>,
   ) { }
 }
 
@@ -50,7 +50,7 @@ export class DeleteAll implements Action {
 
 export class GetAll implements Action {
   readonly type: SettingsActionTypes.GET_ALL = SettingsActionTypes.GET_ALL;
-  constructor(public settings: Settings[]) { }
+  constructor(public settings: Setting[]) { }
 }
 
 export class GetOne implements Action {
@@ -58,4 +58,4 @@ export class GetOne implements Action {
   constructor(public id: number) { }
 }
 
-export type SettingsActions = AddOne | GetOne | UpdateOne | DeleteOne | GetAll | AddMany | DeleteAll;
+export type SettingsActions = AddOne | GetOne | UpdateOne | DeleteOne | GetAll | AddMany | DeleteAll | Fetch;

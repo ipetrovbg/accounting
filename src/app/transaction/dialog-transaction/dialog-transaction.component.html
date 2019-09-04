@@ -1,6 +1,26 @@
 <form [formGroup]="form" class="form k-form-inline" kendoTooltip>
-  <kendo-splitter style="height: 235px;">
-    <kendo-splitter-pane size="35%" min="30%">
+  <kendo-popup [popupClass]="'category content popup'" [anchor]="anchor" #popup (anchorViewportLeave)="show.next(false)" *ngIf="show | async">
+    <div class="popup-width">
+      <div class="padding">
+        <h4>Create category</h4>
+      </div>
+      <form [formGroup]="categoryForm">
+        <div class="padding">
+          <label class="k-form-field">
+                <span class="k-field-info">Category Name
+                </span>
+            <input type="text" kendoTextBox placeholder="Category Name" formControlName="category">
+          </label>
+        </div>
+        <kendo-buttongroup [width]="'100%'">
+          <button kendoButton (click)="show.next(false)">Cancel</button>
+          <button kendoButton [primary]="true" (click)="createCategory($event)">Save</button>
+        </kendo-buttongroup>
+      </form>
+    </div>
+  </kendo-popup>
+  <kendo-splitter style="height: 320px;">
+    <kendo-splitter-pane size="30%" min="30%" [resizable]="false">
       <div class="padding">
         <div class="flex no-space-betwin padding container"> <!--hover-->
           <div class="full-width float-left category-row">
@@ -23,26 +43,6 @@
           </div>
         </div>
         <div class="clear"></div>
-        <kendo-popup [popupClass]="'content popup'" [anchor]="anchor" #popup (anchorViewportLeave)="show = false" *ngIf="show">
-          <div class="popup-width">
-            <div class="padding">
-              <h4>Create category</h4>
-            </div>
-            <form [formGroup]="categoryForm">
-              <div class="padding">
-                <label class="k-form-field">
-                <span class="k-field-info">Category Name
-                </span>
-                  <input type="text" kendoTextBox placeholder="Category Name" formControlName="category">
-                </label>
-              </div>
-              <kendo-buttongroup [width]="'100%'">
-                <button kendoButton (click)="show = false">Cancel</button>
-                <button kendoButton [primary]="true" (click)="createCategory($event)">Save</button>
-              </kendo-buttongroup>
-            </form>
-          </div>
-        </kendo-popup>
         <label class="k-form-field">
                         <span class="k-field-info">Note
                             <span
@@ -50,12 +50,12 @@
                               title="Add some note for this Transaction"
                             ></span>
                         </span>
-          <textarea kendoTextArea formControlName="comment" style="width: 100%;height: 50px;" rows="1"
+          <textarea kendoTextArea formControlName="comment" style="width: 100%;height: 155px;" rows="1"
                     class=full-width></textarea>
         </label>
       </div>
     </kendo-splitter-pane>
-    <kendo-splitter-pane size="30%" min="30%">
+    <kendo-splitter-pane size="30%" min="30%" [resizable]="false">
       <div class="padding" [formGroup]="currencyForm">
         <label class="k-form-field">
           <span class="k-field-info">Currency from:
@@ -103,7 +103,7 @@
         </label>
       </div>
     </kendo-splitter-pane>
-    <kendo-splitter-pane>
+    <kendo-splitter-pane min="40%">
       <div class="padding">
         <div>
           <div class="float-left half-with">
@@ -162,20 +162,24 @@
                                     formControlName="amount"></kendo-numerictextbox>
             </label>
           </div>
+          <div class="clear"></div>
         </div>
-        <label class="k-form-field">
+        <div>
+          <label class="k-form-field">
                         <span class="full-width k-field-info">Simulation
                             <span
                               class="k-icon k-i-information k-i-info"
-                              title="If it's used for simulation. It's not real Transaction"
+                              title="If it's used for simulation. It's means that it can be deleted."
                             ></span>
                         </span>
-          <kendo-switch
-            formControlName="simulation"
-            onLabel="Yes"
-            offLabel="No"
-          ></kendo-switch>
-        </label>
+            <kendo-switch
+              formControlName="simulation"
+              onLabel="Yes"
+              offLabel="No"
+            ></kendo-switch>
+          </label>
+        </div>
+
       </div>
     </kendo-splitter-pane>
   </kendo-splitter>

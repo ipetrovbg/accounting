@@ -1,0 +1,62 @@
+.image-container{
+  display: flex;
+  flex-direction: row-reverse;
+  &:nth-child(even) {
+    flex-direction: row;
+  }
+}
+
+.centered-image {
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  width: 60vw;
+  height: 500px;
+}
+
+.content {
+  width: 40vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 50px;
+  flex-direction: column;
+  p {
+    text-align: justify;
+  }
+}
+
+.add-edit-account {
+  background-image: url("../../assets/images/edit-account");
+}
+
+.new-transaction {
+  background-image: url("../../assets/images/new-transaction");
+}
+.transaction-graph {
+  background-image: url("../../assets/images/transaction-graph");
+}
+.transfer-transaction {
+  background-image: url("../../assets/images/transfer-transaction");
+}
+.filter-transaction-by-dates {
+  background-image: url("../../assets/images/filter-transaction-by-dates");
+}
+.money-per-day {
+  background-image: url("../../assets/images/money-per-day");
+}
+.header-landing-page {
+  width: 750px;
+  padding: 50px;
+  h1, h3, h4, h6, a {
+    margin: 10px 0;
+  }
+}
+.footer-landing-page {
+  width: 400px;
+  padding: 50px;
+  h3, h4, h6, a {
+    margin: 10px 0;
+  }
+}
+

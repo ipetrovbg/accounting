@@ -2,7 +2,10 @@
 
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 //@import "~@progress/kendo-theme-material/scss/all";
-@import "~@progress/kendo-theme-default/scss/all";
+//@import "~@progress/kendo-theme-default/scss/all";
+
+@import "~@progress/kendo-theme-bootstrap/scss/all";
+@import "~bootstrap/scss/bootstrap";
 
 body, html {
     font-family: 'Roboto', sans-serif;
@@ -127,4 +130,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 kendo-menu {
   z-index: 999;
+}
+.k-popup {
+  &.account, &.category {
+    padding: 0;
+    -webkit-box-shadow: 0px 0px 18px 1px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0px 0px 18px 1px rgba(0,0,0,0.25);
+    box-shadow: 0px 0px 18px 1px rgba(0,0,0,0.25);
+  }
+}
+.k-toolbar {
+  &:before {
+    content: none;
+  }
 }

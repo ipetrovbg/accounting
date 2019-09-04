@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { State } from '../../store/accounting.state';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { Logout } from '../../store/actions/user.actions';
+import {Logout, TokenAuthentication} from '../../store/actions/user.actions';
 import { DeleteAll } from '../../store/actions/transaction.actions';
 import { AccountsDeleteAll } from '../../store/actions/account.actions';
 import { Delete } from '../../store/actions/account-manage.actions';
@@ -32,6 +32,7 @@ constructor(
 }
 
 public ngOnInit() {
+  this.store.dispatch(new TokenAuthentication(localStorage.getItem('token')));
   this.user = this.store.select(state => state.user.name);
 
   this.subscription.add(this.user.subscribe(name => {
@@ -47,7 +48,7 @@ public ngOnInit() {
         text: name,
         path: null,
         items: [
-          { text: 'Settings', path: '/dashboard/settings' },
+          { text: 'Setting', path: '/dashboard/settings' },
           { text: 'Logout', path: '/login' }
         ]
       }
@@ -61,7 +62,9 @@ ngOnDestroy() {
 }
 
 public onSelectUserMenu({ item }) {
-
+  if (!item.path) {
+    return;
+  }
   if (item.text === 'Logout') {
     localStorage.removeItem('token');
     this.store.dispatch(new Logout());
@@ -73,6 +76,7 @@ public onSelectUserMenu({ item }) {
     this.router.navigate([ item.path ]);
     return;
   }
+
 
   this.router.navigate([ item.path ]);
 }

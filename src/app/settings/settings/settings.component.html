@@ -1,1 +1,87 @@
-settings works!
+<div class="row">
+  <div class="col-md-8">
+    <app-tile>
+      <h4 slot="title">Settings</h4>
+      <div slot="body">
+        <div class="row pb-5">
+          <div class="col-md-2">
+            <svg id="user-profile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <path d="M256 48C141.6 48 48 141.6 48 256s93.6 208 208 208 208-93.6 208-208S370.4 48 256 48zm0 62.4c34.3 0 62.4 28.1 62.4 62.4s-28.1 62.4-62.4 62.4-62.4-28.1-62.4-62.4 28.1-62.4 62.4-62.4zm0 300.4c-52 0-97.8-27-124.8-66.6 1-41.6 83.2-64.5 124.8-64.5s123.8 22.9 124.8 64.5c-27 39.5-72.8 66.6-124.8 66.6z"/>
+            </svg>
+          </div>
+          <div class="col-md-3 d-flex flex-column justify-content-center k-form-inline p-0">
+            <h5>{{ (user$ | async)?.name }}</h5>
+            <span class="pt-3 m-0 k-field-info">{{ (user$ | async)?.email }}</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="form" class="form k-form-inline">
+              <div class="row">
+<!--                User Name-->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="name">
+                      <span class="k-field-info m-0">Name:</span>
+                    </label>
+                    <input class="form-control" kendoTextBox id="name" formControlName="name">
+                  </div>
+                </div>
+<!--                User Name-->
+<!--                User Pay Day-->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label [for]="payDay">
+                        <span class="k-field-info m-0">
+                          Date of payment:
+                        </span>
+                    </label>
+                    <kendo-dropdownlist
+                      #payDay
+                      [data]="listDates"
+                      formControlName="payDay"
+                      class="full-width"
+                    >
+                    </kendo-dropdownlist>
+                  </div>
+                </div>
+<!--                User Pay Day-->
+
+              </div>
+
+              <div class="row pt-3">
+                <div class="col-md-2 offset-10">
+                  <button type="button" [disabled]="!form.dirty" (click)="onSaveHandler()" class="btn btn-primary btn-block" kendoButton [primary]="true">Save</button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </app-tile>
+  </div>
+  <div class="col-md-4">
+    <app-tile>
+      <h4 slot="title">
+        Total Balance
+      </h4>
+      <div slot="body">
+        <kendo-chart>
+          <kendo-chart-series>
+            <kendo-chart-series-item
+              type="donut" [data]="balance$ | async" categoryField="name" field="amount">
+              <kendo-chart-series-item-labels
+                [content]="labelBalanceContent"
+                position="outsideEnd"
+                color="color" background="none">
+              </kendo-chart-series-item-labels>
+            </kendo-chart-series-item>
+          </kendo-chart-series>
+          <kendo-chart-legend [visible]="false"></kendo-chart-legend>
+        </kendo-chart>
+      </div>
+    </app-tile>
+  </div>
+</div>
+

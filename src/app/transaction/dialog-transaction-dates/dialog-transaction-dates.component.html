@@ -1,9 +1,9 @@
 
-  <kendo-splitter orientation="vertical">
-    <kendo-splitter-pane>
+  <kendo-splitter orientation="vertical" kendoTooltip>
+    <kendo-splitter-pane [resizable]="false">
       <div class="padding">
 
-        <form class="form k-form-inline" kendoTooltip [formGroup]="form">
+        <form class="form k-form-inline" [formGroup]="form">
           <label class="k-form-field">
                                 <span class="k-field-info">From:
                                 <span
@@ -27,11 +27,12 @@
       </div>
     </kendo-splitter-pane>
     <kendo-splitter-pane size="50%" min="50%">
-      <div>
+      <div class="padding">
         <span
-          class="padding k-icon k-i-information info"
+          class="k-icon k-i-information k-i-info"
           title="Remaining dates to next salary"
         ></span>
+
       </div>
       <div class="padding without-padding top">
 

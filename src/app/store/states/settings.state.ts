@@ -1,4 +1,4 @@
 import { EntityState } from '@ngrx/entity';
-import { Settings } from '../../settings/settings.model';
+import { Setting } from '../../settings/settings.model';
 
-export interface SettingsState extends EntityState<Settings> {}
+export interface SettingsState extends EntityState<Setting> {}

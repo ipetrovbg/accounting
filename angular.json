@@ -28,7 +28,7 @@
             ],
             "styles": [
               {
-                "input": "node_modules/@progress/kendo-theme-default/scss/all.scss"
+                "input": "node_modules/@progress/kendo-theme-bootstrap/scss/all.scss"
               },
               "src/styles.scss"
             ],

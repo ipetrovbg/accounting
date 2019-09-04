@@ -1,4 +1,4 @@
-export interface Settings {
+export interface Setting {
   id: number;
   userId: number;
   settings: any;

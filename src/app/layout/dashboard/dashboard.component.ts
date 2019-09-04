@@ -1,19 +1,19 @@
 
-import {map, tap} from 'rxjs/operators';
+import {map, take, tap} from 'rxjs/operators';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { DialogTransactionComponent } from '../../transaction/dialog-transaction/dialog-transaction.component';
 import { State as AppState, getState } from '../../store/accounting.state';
 import { Observable ,  BehaviorSubject, Subscription } from 'rxjs';
 import { TransactionService } from '../../transaction/transaction.service';
 import { CoreService } from '../../core/core/core.service';
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 
 
 import { DataStateChangeEvent, GridComponent } from '@progress/kendo-angular-grid';
 import { State, process } from '@progress/kendo-data-query';
 import { selectAllTransactionsSelector } from '../../store/reducers/transaction.reducer';
-import { selectAllAccountsSelector } from '../../store/reducers/account.reducer';
+import {Balance, selectAllAccountsSelector, labelBalanceContent, selectTotalAmount} from '../../store/reducers/account.reducer';
 import { Store } from '@ngrx/store';
 import { DeleteAll, Fetch } from '../../store/actions/transaction.actions';
 import { AccountsFetch, AccountsDeleteAll, AccountsCreate } from '../../store/actions/account.actions';
@@ -25,7 +25,7 @@ import { CategoriesService } from '../../categories/categories.service';
 import { Account } from '../../transaction/account.model';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import * as moment from 'moment';
-import {AccountLoad, Delete, Update} from '../../store/actions/account-manage.actions';
+import {AccountLoad, Update} from '../../store/actions/account-manage.actions';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogTransferComponent } from '../../transaction/dialog-transfer/dialog-transfer.component';
 import { Transaction } from '../../transaction/transaction.model';
@@ -33,15 +33,15 @@ import { DialogTransactionDatesComponent } from '../../transaction/dialog-transa
 import { TransactionFilterUpdate } from '../../store/actions/transation-filter.actions';
 import { TransactionFilterState } from '../../store/states/transaction-filter.state';
 import { state } from '@angular/animations';
-import { ComboBoxComponent, DropDownListComponent, PopupComponent } from '@progress/kendo-angular-dropdowns';
+import { DropDownListComponent } from '@progress/kendo-angular-dropdowns';
 import { CommitService } from '../../core/commit/commit.service';
-import { setTime } from '@progress/kendo-angular-dateinputs/dist/es2015/util';
-import {Settings} from '../../settings/settings.model';
+import {Setting} from '../../settings/settings.model';
 import {selectAllSettingsSelector, selectAPayDaySettingsSelector} from '../../store/reducers/settings.reducer';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public daysToNextSalary: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public min: Date = new Date();
   public max: Date = new Date();
-  public showAccount = false;
+  public showAccount: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public accounts$: Observable<Account[]>;
   public selectedAccount$: Observable<Account>;
   public transactionFilter$: Observable<TransactionFilterState>;
@@ -85,9 +85,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public commitLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public isNewTransactionAvailable$: Observable<boolean> = null;
-  public settings$: Observable<Settings[]> = null;
+  public settings$: Observable<Setting[]> = null;
 
   public sparkData: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
+  public balance$: Observable<Balance[]>;
+  public labelBalanceContent = labelBalanceContent;
 
 
   @ViewChild('anchorCategory', { static: false }) public anchorCategory: ElementRef;
@@ -116,17 +118,24 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
               private dialogService: DialogService,
               public intl: IntlService,
               private categories: CategoriesService,
+              private cd: ChangeDetectorRef,
               private fb: FormBuilder) {
   }
 
   ngOnInit() {
     this.loading.next(true);
     this.isNewTransactionAvailable$ = this.store.select(s => !!s.accountManage.currency.id);
+    this.balance$ = this.store.select(selectTotalAmount);
 
     if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
-      this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Settings) => {
-        this.store.dispatch(new TransactionFilterUpdate('from', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay, false).start));
-        this.store.dispatch(new TransactionFilterUpdate('to', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).end));
+      this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Setting) => {
+        this.store
+          .dispatch(
+            new TransactionFilterUpdate('from', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay, false).start)
+          );
+        this.store.dispatch(
+          new TransactionFilterUpdate('to', this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).end)
+        );
       }));
     }
 
@@ -139,7 +148,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
 
-    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Settings) => {
+    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Setting) => {
       this.daysToNextSalary.next(this.core.daysToNextSalary(+setting.settings || this.core.defaultPayDay));
       this.max = this.core.startEndWorkMonth(+setting.settings || this.core.defaultPayDay).end;
     }));
@@ -210,10 +219,12 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.data = [...transactions];
           const sortedTransactions = [...transactions.sort((a: any, b: any) => a.date - b.date)];
 
-          this.sparkData.next(sortedTransactions
-            .map(transaction => {
-              return transaction.type === 'withdrawal' ? transaction.amount - (transaction.amount * 2) : transaction.amount;
-            }));
+          this.sparkData
+            .next(
+              sortedTransactions
+                .map(transaction => transaction.type === 'withdrawal' ? transaction.amount - (transaction.amount * 2) : transaction.amount)
+            );
+
           this.data.map((item: any) => {
             item.category = {
               category: item['category.category'],
@@ -306,7 +317,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.dropDown.open.subscribe(() => {
-      this.showAccount = false;
+      this.showAccount.next(false);
     });
   }
 
@@ -325,8 +336,11 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openCategoryDialog() {
-    this.dropDown.toggle(this.showAccount);
-    setTimeout(() =>  this.showAccount = !this.showAccount, 20);
+    this.dropDown.toggle(this.showAccount.getValue());
+    setTimeout(() =>  {
+      this.cd.detectChanges();
+      this.showAccount.next(!this.showAccount.getValue());
+    });
   }
 
   public accountSelect(e) {
@@ -344,7 +358,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public toggleCat(show?: boolean): void {
-    this.showAccount = show !== undefined ? show : !this.showAccount;
+    this.showAccount.next(show !== undefined ? show : !this.showAccount.getValue());
   }
 
   private extract(type, aggregate): number {
@@ -370,7 +384,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         {text: 'Cancel'},
         {text: 'Apply', primary: true}
       ],
-      width: 360
+      width: 420
     });
 
     const form = dialog.content.instance;
@@ -392,7 +406,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         {text: 'Cancel'},
         {text: 'Save', primary: true}
       ],
-      width: 650,
+      width: 850,
       minWidth: 250
     });
     dialog.result.subscribe(actions => {
@@ -515,7 +529,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         {text: 'Cancel'},
         {text: 'Save', primary: true}
       ],
-      width: 850,
+      width: 1000,
       minWidth: 250
     });
 

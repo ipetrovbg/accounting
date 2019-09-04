@@ -3,11 +3,11 @@ import { createEntityAdapter } from '@ngrx/entity';
 import { State } from '../accounting.state';
 import { SettingsState } from '../states/settings.state';
 import { SettingsActions, SettingsActionTypes } from '../actions/settings.actions';
-import { Settings } from '../../settings/settings.model';
+import { Setting } from '../../settings/settings.model';
 
 
 
-const settingsAdapter = createEntityAdapter<Settings>();
+const settingsAdapter = createEntityAdapter<Setting>();
 
 const initialState: SettingsState = settingsAdapter.getInitialState();
 
@@ -55,8 +55,8 @@ export const selectAllSettingsSelector = createSelector(
 
 export const selectAPayDaySettingsSelector = createSelector(
   selectAllSettingsSelector,
-  (settings: Settings[]) => {
-    const payDay: Settings[] = settings.filter(setting => setting.key === 'payDay');
+  (settings: Setting[]) => {
+    const payDay: Setting[] = settings.filter(setting => setting.key === 'payDay');
     if (payDay.length) {
       return payDay[0];
     }
@@ -64,7 +64,7 @@ export const selectAPayDaySettingsSelector = createSelector(
       id: null,
       key: null,
       userId: null,
-      settings: 1,
+      settings: null,
       createdAt: null,
       updatedAt: null
     };

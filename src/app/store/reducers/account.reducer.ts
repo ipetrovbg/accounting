@@ -5,7 +5,15 @@ import { AccountActions, AccountActionTypes } from '../actions/account.actions';
 import { createEntityAdapter } from '@ngrx/entity';
 import { State } from '../accounting.state';
 
+export interface Balance {
+  amount: number;
+  name: string;
+  color: string;
+}
 
+export function labelBalanceContent(e) {
+  return `${e.category} \n ${Math.floor(e.value * 100) / 100}`;
+}
 const accountAdapter = createEntityAdapter<AccountModelExtended>();
 
 const initialState: AccountState = accountAdapter.getInitialState();
@@ -59,6 +67,39 @@ export const selectAccountState = createFeatureSelector<AccountState>('accounts'
 export const selectAllAccountsSelector = createSelector(
   selectAccountState,
   selectAllAccounts
+);
+
+export const selectAllPositiveAccountsSelector = createSelector(
+  selectAllAccountsSelector,
+  (accounts) => accounts.filter(account => account.amount > 0)
+);
+const successColors = ['#17a2b8', '#007bff', '#17a2b8', '#28a745', '#20c997', '#28a745'];
+const dangerColors = ['#e83e8c', '#dc3545', '#fd7e14', '#dc3545'];
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+export const selectTotalAmount = createSelector(
+  selectAllAccountsSelector,
+  accounts => {
+    const totals = {};
+    const totalAccontsAmount = [];
+    accounts.map(account => {
+
+      if (!account.currency.sign) {
+        return;
+      }
+
+      if (!totals[account.currency.sign]) {
+        totals[account.currency.sign] = 0;
+      }
+      totals[account.currency.sign] += account.amount;
+    });
+    Object.keys(totals).forEach(key => {
+      totalAccontsAmount.push({ name: key, amount: totals[key], color: totals[key] > 0 ? successColors[getRandomInt(6)] : dangerColors[getRandomInt(4)] });
+    });
+    return totalAccontsAmount;
+  }
 );
 
 export const selectTotalAccountSelector = createSelector(

@@ -6,7 +6,7 @@ import { getState, State } from '../../store/accounting.state';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import * as moment from 'moment';
 import { selectAPayDaySettingsSelector } from '../../store/reducers/settings.reducer';
-import { Settings } from '../../settings/settings.model';
+import { Setting } from '../../settings/settings.model';
 
 @Component({
   selector: 'app-dialog-transaction-dates',
@@ -32,7 +32,7 @@ export class DialogTransactionDatesComponent implements OnInit {
       end: dates.to || new Date()
     });
 
-    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Settings) => {
+    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Setting) => {
       this.min.next(this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay, false).start);
       this.max.next(this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).end);
     }));

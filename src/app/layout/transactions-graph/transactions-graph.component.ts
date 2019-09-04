@@ -17,7 +17,7 @@ import { AccountsFetch } from '../../store/actions/account.actions';
 import { selectAllAccountsSelector } from '../../store/reducers/account.reducer';
 import { AccountLoad } from '../../store/actions/account-manage.actions';
 import {selectAPayDaySettingsSelector} from '../../store/reducers/settings.reducer';
-import {Settings} from '../../settings/settings.model';
+import {Setting} from '../../settings/settings.model';
 
 @Component({
   selector: 'app-transactions-graph',
@@ -41,7 +41,7 @@ export class TransactionsGraphComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Settings) => {
+    this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Setting) => {
       this.daysToNextSalary.next(this.core.daysToNextSalary(setting.settings || this.core.defaultPayDay));
       this.max = this.core.startEndWorkMonth(setting.settings || this.core.defaultPayDay).end;
 

@@ -1,10 +1,10 @@
 import { Action } from '@ngrx/store';
-import { AddMany, AddOne, DeleteOne, Fetch, GetAll, GetOne, UpdateOne } from './transaction.actions';
 import { UserState } from '../states/user.state';
 
 export enum UserActionTypes {
   LOGIN = '[User] Login',
   UPDATE = '[User] Update',
+  SERVER_UPDATE = '[User] Server Update',
   LOGOUT = '[User] Logout',
   TOKEN_LOGIN = '[User] Auto Login'
 }
@@ -12,6 +12,11 @@ export enum UserActionTypes {
 export class Login implements Action {
   public readonly type: UserActionTypes.LOGIN = UserActionTypes.LOGIN;
   constructor( public email: string, public password: string ) {}
+}
+
+export class ServerUserUpdate implements Action {
+  public readonly type: UserActionTypes.SERVER_UPDATE = UserActionTypes.SERVER_UPDATE;
+  constructor(public user: Partial<UserState>) {}
 }
 
 export class Update implements Action {
@@ -28,4 +33,4 @@ export class TokenAuthentication implements Action {
   constructor( public token: string, public refreshToken?: string) {}
 }
 
-export type UserActions = Login | Update | Logout | TokenAuthentication;
+export type UserActions = Login | Update | Logout | TokenAuthentication | ServerUserUpdate;

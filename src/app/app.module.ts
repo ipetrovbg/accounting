@@ -21,6 +21,10 @@ import { CategoriesModule } from './categories/categories.module';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { RippleModule } from '@progress/kendo-angular-ripple';
+import { PopupModule } from '@progress/kendo-angular-popup';
+import { ChartsModule } from '@progress/kendo-angular-charts';
+import { LabelModule } from '@progress/kendo-angular-label';
+
 
 
 
@@ -30,7 +34,7 @@ export const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', loadChildren: './layout/layout.module#LayoutModule' },
-  { path: '',   redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
 const config: SocketIoConfig = { url: environment.host, options: {} };
 
@@ -53,7 +57,10 @@ const config: SocketIoConfig = { url: environment.host, options: {} };
     CategoriesModule,
     HttpClientModule,
     SocketIoModule.forRoot(config),
-    RippleModule
+    RippleModule,
+    PopupModule,
+    ChartsModule,
+    LabelModule
   ],
   bootstrap: [AppComponent]
 })

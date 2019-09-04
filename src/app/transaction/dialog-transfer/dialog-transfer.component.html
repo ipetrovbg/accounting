@@ -1,10 +1,10 @@
-<form [formGroup]="form" class="form k-form-inline">
+<form [formGroup]="form" class="form k-form-inline" kendoTooltip>
   <kendo-splitter style="height: 172px;">
-    <kendo-splitter-pane size="49.5%" min="40%">
+    <kendo-splitter-pane size="49.5%" min="49.5%">
       <div class="flex no-space-betwin padding">
         <div class="account-row full-width">
           <label class="k-form-field flex-row">
-            <span class="k-field-info">Account: </span>
+            <span class="k-field-info">From: </span>
             <kendo-dropdownlist
               #withdrawal
               [data]="accounts$ | async"
@@ -24,7 +24,7 @@
             </kendo-dropdownlist>
           </label>
           <label class="k-form-field flex-row">
-            <span class="k-field-info">Account: </span>
+            <span class="k-field-info">To: </span>
             <kendo-dropdownlist
               #deposit
               [data]="accounts$ | async"
@@ -45,7 +45,7 @@
         </div>
       </div>
     </kendo-splitter-pane>
-    <kendo-splitter-pane>
+    <kendo-splitter-pane min="49.5%">
       <div class="flex no-space-betwin padding">
         <div class="account-row full-width">
           <label class="k-form-field flex-row">

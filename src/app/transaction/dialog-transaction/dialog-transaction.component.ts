@@ -2,9 +2,9 @@
 import {debounceTime, map} from 'rxjs/operators';
 import { Update } from './../../store/actions/transaction-manage.action';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { State, getState } from './../../store/accounting.state';
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef, HostListener, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { CategoriesService } from '../../categories/categories.service';
@@ -19,7 +19,8 @@ import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 @Component({
   selector: 'app-dialog-transaction',
   templateUrl: './dialog-transaction.component.html',
-  styleUrls: ['./dialog-transaction.component.scss']
+  styleUrls: ['./dialog-transaction.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DialogTransactionComponent implements OnInit, OnDestroy {
 
@@ -34,7 +35,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   public currencies$: Observable<Currency[]> = null;
   public currencyForm: FormGroup;
   public selectedCategory = { category: '', id: null };
-  public show = false;
+  public show: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   @ViewChild('anchor', { static: false }) public anchor: ElementRef;
   @ViewChild('popup', { read: ElementRef, static: false }) public popup: ElementRef;
@@ -62,7 +63,8 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
     private categories: CategoriesService,
     private transaction: TransactionService,
     private account: AccountService,
-    private currency: CurrencyService
+    private currency: CurrencyService,
+    private cd: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
@@ -256,10 +258,13 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   openCategoryDialog() {
     this.categoryForm.reset();
     this.combo.toggle(false);
-    setTimeout(() => this.show = !this.show, 20);
+    setTimeout(() => {
+      this.cd.detectChanges();
+      this.show.next(!this.show.getValue());
+    });
   }
   public toggle(show?: boolean): void {
-    this.show = show !== undefined ? show : !this.show;
+    this.show.next(show !== undefined ? show : !this.show.getValue());
   }
 
   handleStateChange(e) {
@@ -281,7 +286,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
         .subscribe((response: any) => {
           this.allCategories = this.getCategories();
           this.form.get('category').patchValue(response.response);
-          this.show = false;
+          this.show.next(false);
       });
     }
   }

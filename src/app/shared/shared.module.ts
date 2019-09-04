@@ -17,6 +17,7 @@ import { IntlModule } from '@progress/kendo-angular-intl';
 import { PopupModule } from '@progress/kendo-angular-popup';
 import { UploadModule } from '@progress/kendo-angular-upload';
 import { RippleModule } from '@progress/kendo-angular-ripple';
+import { LabelModule } from '@progress/kendo-angular-label';
 
 import {
   FormsModule,
@@ -26,6 +27,7 @@ import {
 import { DateRangeFilterComponent } from './date-range-filter/date-range-filter.component';
 import { DatePickerModule, DateInputsModule } from '@progress/kendo-angular-dateinputs';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { TileComponent } from './tile/tile.component';
 
 const kendo = [
   ToolBarModule,
@@ -45,7 +47,8 @@ const kendo = [
   UploadModule,
   ExcelModule,
   PDFModule,
-  RippleModule
+  RippleModule,
+  LabelModule
 ];
 const modules = [
   ReactiveFormsModule,
@@ -55,7 +58,8 @@ const modules = [
 const components = [
   AppToolbarComponent,
   DateRangeFilterComponent,
-  ConfirmDialogComponent
+  ConfirmDialogComponent,
+  TileComponent
 ];
 
 const forExports = [

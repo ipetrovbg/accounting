@@ -1,9 +1,15 @@
 
-import {tap} from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
+import {map, tap} from 'rxjs/operators';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Account } from '../../transaction/account.model';
-import { selectAllAccountsSelector } from '../../store/reducers/account.reducer';
+import {
+  Balance,
+  selectAllAccountsSelector,
+  selectAllPositiveAccountsSelector,
+  selectTotalAmount,
+  labelBalanceContent
+} from '../../store/reducers/account.reducer';
 import { Store } from '@ngrx/store';
 import { getState, State as AppState } from '../../store/accounting.state';
 import { AccountsFetch } from '../../store/actions/account.actions';
@@ -17,6 +23,7 @@ import { AccountService } from '../../account/account.service';
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./account.component.scss']
 })
 export class AccountComponent implements OnInit {
@@ -25,6 +32,9 @@ export class AccountComponent implements OnInit {
   public gridData: BehaviorSubject<GridDataResult> = new BehaviorSubject<GridDataResult>({data: [], total: 0 });
   public accounts$: Observable<Account[]>;
   public state: State = {skip: 0, take: 1000};
+  public balance$: Observable<Balance[]>;
+
+  public labelBalanceContent = labelBalanceContent;
 
   constructor(
     private store: Store<AppState>,
@@ -35,11 +45,15 @@ export class AccountComponent implements OnInit {
   ngOnInit() {
     this.store.select(state => state.user.token)
       .subscribe(token => {
-        if (token)
+        if (token) {
           this.refreshData();
+        }
       });
 
-    this.accounts$ = this.store.select(selectAllAccountsSelector).pipe(tap(() => this.loading.next(false)));
+    this.balance$ = this.store.select(selectTotalAmount);
+
+    this.accounts$ = this.store.select(selectAllAccountsSelector).pipe(
+      tap(() => this.loading.next(false)));
 
     this.accounts$.subscribe(accounts => this.gridData.next(process(accounts, this.state)));
   }

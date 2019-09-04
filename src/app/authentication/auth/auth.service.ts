@@ -12,6 +12,7 @@ import { Store } from '@ngrx/store';
 import 'rxjs-compat/add/observable/of';
 import { Update } from '../../store/actions/user.actions';
 import { Fetch } from '../../store/actions/settings.actions';
+import {UserState} from '../../store/states/user.state';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,10 @@ export class AuthService {
 
   register(user) {
     return this.http.post(`${this.core.api}/authenticate/create`, { user });
+  }
+
+  updateUser(user: Partial<UserState>) {
+    return this.http.put(`${this.core.api}/users/update`, { ...user, token: getState(this.store).user.token });
   }
 
   private handleAuthentication(login: any) {
