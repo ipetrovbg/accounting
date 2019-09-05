@@ -113,15 +113,6 @@
           </div>
         </ng-template>
 <!--        <kendo-grid-column field="id" title="#ID" width="100" [filterable]="false" [sortable]="false"></kendo-grid-column>-->
-        <kendo-grid-column field="date" title="Date" format="{0:MMMM d, y}" width="150">
-          <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
-            <app-date-range-filter
-              [field]="column.field"
-              [filter]="filter"
-              [filterService]="filterService">
-            </app-date-range-filter>
-          </ng-template>
-        </kendo-grid-column>
         <kendo-grid-column field="category.category" title="Category" width="150" [sortable]="true"></kendo-grid-column>
         <kendo-grid-column field="comment" title="Comment" [sortable]="false"></kendo-grid-column>
         <kendo-grid-column field="amount" title="Withdrawal" width="120" format="{0:c}" [filterable]="false">
@@ -149,23 +140,34 @@
 <!--            <h5 class="k-text-uppercase">Total: </h5>-->
 <!--          </ng-template>-->
 <!--        </kendo-grid-column>-->
-        <kendo-grid-column field="simulation" title="Simulation" width="110" [filterable]="false">
-          <ng-template kendoGridCellTemplate let-dataItem>
-            <input type="checkbox" [checked]="dataItem.simulation" disabled/>
+<!--        <kendo-grid-column field="simulation" title="Simulation" width="110" [filterable]="false">-->
+<!--          <ng-template kendoGridCellTemplate let-dataItem>-->
+<!--            <input type="checkbox" [checked]="dataItem.simulation" disabled/>-->
+<!--          </ng-template>-->
+<!--         -->
+<!--        </kendo-grid-column>-->
+
+        <kendo-grid-column field="date" title="Date" format="{0:MMM d, y}" width="150">
+          <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
+            <app-date-range-filter
+              [field]="column.field"
+              [filter]="filter"
+              [filterService]="filterService">
+            </app-date-range-filter>
           </ng-template>
           <ng-template kendoGridFooterTemplate>
             <small class="text-uppercase">Total: </small>
           </ng-template>
         </kendo-grid-column>
 
-        <kendo-grid-command-column title="Actions" width="150" >
+        <kendo-grid-command-column title="Actions" width="115" >
           <ng-template kendoGridFooterTemplate>
             <!--<span class="k-required">{{ (deposit | async) - (withdrawal | async) | kendoNumber:'c' }}</span>-->
             <span [class]="(selectedAccount$ | async)?.amount > 0 ? 'k-valid' : 'k-required'">{{ (selectedAccount$ | async)?.amount | kendoNumber:'c' }}</span>
           </ng-template>
           <ng-template kendoGridCellTemplate let-isNew="isNew" let-dataItem>
-            <button kendoGridEditCommand [primary]="true" look="flat" icon="edit" title="Edit" kendoTooltip></button>
-            <button kendoGridRemoveCommand style="color: red;" look="flat" *ngIf="dataItem.simulation" kendoTooltip title="Delete" icon="delete"></button>
+            <button kendoGridEditCommand [primary]="true" look="outline" icon="edit" title="Update" kendoTooltip></button>
+            <button kendoGridRemoveCommand class="btn btn-outline-danger" *ngIf="dataItem.simulation" kendoTooltip title="Delete" icon="delete"></button>
             <button kendoGridSaveCommand [disabled]="formGroup?.invalid">{{ isNew ? 'Add' : 'Update' }}</button>
             <button kendoGridCancelCommand>{{ isNew ? 'Discard changes' : 'Cancel' }}</button>
           </ng-template>

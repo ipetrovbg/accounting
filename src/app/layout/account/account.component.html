@@ -31,14 +31,14 @@
           </div>
         </ng-template>
 <!--        <kendo-grid-column field="id" title="ID" width="30" [filterable]="false" [sortable]="false"></kendo-grid-column>-->
-        <kendo-grid-column field="name" title="Name" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
-        <kendo-grid-column field="currency.currency" title="Currency" width="150" [filterable]="true" [sortable]="true"></kendo-grid-column>
+        <kendo-grid-column field="name" title="Name" width="60" [filterable]="true" [sortable]="true"></kendo-grid-column>
+        <kendo-grid-column field="currency.currency" title="Currency" width="100" [filterable]="true" [sortable]="true"></kendo-grid-column>
         <kendo-grid-column field="currency.sign" title="Abbreviation" width="50" [filterable]="true" [sortable]="true"></kendo-grid-column>
         <kendo-grid-column field="currency.country" title="Country" width="100" [filterable]="true" [sortable]="true"></kendo-grid-column>
-        <kendo-grid-column field="amount" title="Amount" format="{0:c}" width="50" [filterable]="true" [sortable]="true"></kendo-grid-column>
-        <kendo-grid-command-column title="Actions" width="30">
+        <kendo-grid-column field="amount" title="Amount" format="{0:c}" width="100" [filterable]="true" [sortable]="true"></kendo-grid-column>
+        <kendo-grid-command-column title="Actions" width="40">
           <ng-template kendoGridCellTemplate let-isNew="isNew">
-            <button kendoGridEditCommand [primary]="true" look="flat" icon="edit" title="Edit" kendoTooltip></button>
+            <button kendoGridEditCommand [primary]="true" look="outline" icon="edit" title="Update" kendoTooltip></button>
           </ng-template>
         </kendo-grid-command-column>
       </kendo-grid>
