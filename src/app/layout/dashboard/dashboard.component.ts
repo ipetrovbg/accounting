@@ -1,5 +1,5 @@
 
-import {map, skipWhile, take, tap} from 'rxjs/operators';
+import {map, skipWhile, tap} from 'rxjs/operators';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { DialogTransactionComponent } from '../../transaction/dialog-transaction/dialog-transaction.component';
 import { State as AppState, getState } from '../../store/accounting.state';
@@ -32,7 +32,6 @@ import { Transaction } from '../../transaction/transaction.model';
 import { DialogTransactionDatesComponent } from '../../transaction/dialog-transaction-dates/dialog-transaction-dates.component';
 import { TransactionFilterUpdate } from '../../store/actions/transation-filter.actions';
 import { TransactionFilterState } from '../../store/states/transaction-filter.state';
-import { state } from '@angular/animations';
 import { DropDownListComponent } from '@progress/kendo-angular-dropdowns';
 import { CommitService } from '../../core/commit/commit.service';
 import {Setting} from '../../settings/settings.model';
@@ -42,6 +41,7 @@ import {
   selectDefaultAccountSettingsSelector
 } from '../../store/reducers/settings.reducer';
 import {AccountManageState} from '../../store/states/account-manage.state';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -132,25 +132,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isNewTransactionAvailable$ = this.store.select(s => !!s.accountManage.currency.id);
     this.balance$ = this.store.select(selectTotalAmount);
 
-    this.subscription.add(
-      this.store.select(selectDefaultAccountSettingsSelector)
-        .pipe(skipWhile(setting => !setting.id || !+setting.settings || !!getState(this.store).transactionFilter.account))
-        .subscribe(setting => {
-          const account: AccountManageState = {
-            amount: 0,
-            currency: {
-              id: null,
-              sign: null,
-              currency: null,
-              country: null
-            },
-            id: setting.settings,
-            name: ''
-          };
-
-          this.store.dispatch(new AccountLoad(account));
-        }));
-
     if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
       this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Setting) => {
         this.store
@@ -210,6 +191,23 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           return;
         }
         this.store.dispatch(new AccountLoad(mainAccount));
+      }
+    }));
+
+    this.subscription.add(
+    combineLatest(
+      this.accounts$,
+      this.store.select(selectDefaultAccountSettingsSelector)
+    ).pipe(
+      map(([accounts, defaultAccount]) => ({accounts, defaultAccount})),
+      skipWhile(all => !all.accounts.length || !all.defaultAccount.id ||
+        !+all.defaultAccount.settings || !!getState(this.store).transactionFilter.account
+      )).subscribe(({accounts, defaultAccount}) => {
+      if (accounts.length && defaultAccount.id) {
+        const account = accounts.find(a => a.id === +defaultAccount.settings);
+        if (account) {
+          this.store.dispatch(new AccountLoad(account));
+        }
       }
     }));
 
