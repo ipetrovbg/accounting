@@ -169,7 +169,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }));
 
-    this.accounts$ = this.store.select(selectAllAccountsSelector).pipe(tap(accounts => {
+    this.accounts$ = this.store.select(selectAllAccountsSelector)
+      .pipe(tap(accounts => {
 
       accounts.forEach(account => {
         if (account.id === getState(this.store).transactionFilter.account) {
@@ -184,14 +185,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.store.dispatch(new Update('amount', account.amount));
         }
       });
-      if (!getState(this.store).transactionFilter.account && accounts.length) {
-        const mainAccount = accounts.find(account => account.name === 'Main');
-
-        if (!mainAccount.currency) {
-          return;
-        }
-        this.store.dispatch(new AccountLoad(mainAccount));
-      }
     }));
 
     this.subscription.add(
@@ -200,13 +193,19 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
       this.store.select(selectDefaultAccountSettingsSelector)
     ).pipe(
       map(([accounts, defaultAccount]) => ({accounts, defaultAccount})),
-      skipWhile(all => !all.accounts.length || !all.defaultAccount.id ||
-        !+all.defaultAccount.settings || !!getState(this.store).transactionFilter.account
+      skipWhile(all => !all.accounts.length || !!getState(this.store).transactionFilter.account
       )).subscribe(({accounts, defaultAccount}) => {
-      if (accounts.length && defaultAccount.id) {
+      if (accounts.length && !getState(this.store).transactionFilter.account) {
         const account = accounts.find(a => a.id === +defaultAccount.settings);
         if (account) {
           this.store.dispatch(new AccountLoad(account));
+        } else {
+          const mainAccount = accounts.find(a => a.name === 'Main');
+
+          if (!mainAccount || !mainAccount.currency) {
+            return;
+          }
+          this.store.dispatch(new AccountLoad(mainAccount));
         }
       }
     }));
