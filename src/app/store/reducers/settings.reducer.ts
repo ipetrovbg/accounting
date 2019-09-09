@@ -53,6 +53,23 @@ export const selectAllSettingsSelector = createSelector(
   selectAllTransactions
 );
 
+export const selectDefaultAccountSettingsSelector = createSelector(
+  selectAllSettingsSelector,
+  (settings: Setting[]) => {
+    const defaultAccount: Setting[] = settings.filter(setting => setting.key === 'defaultAccount');
+    if (defaultAccount.length) {
+      return defaultAccount[0];
+    }
+    return {
+      id: null,
+      key: null,
+      userId: null,
+      settings: null,
+      createdAt: null,
+      updatedAt: null
+    };
+  });
+
 export const selectAPayDaySettingsSelector = createSelector(
   selectAllSettingsSelector,
   (settings: Setting[]) => {

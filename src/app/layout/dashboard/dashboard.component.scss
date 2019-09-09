@@ -10,6 +10,10 @@
                 max-width: 500px;
                 margin-right: 10px;
                 min-width: 200px;
+                @media screen and (max-width: 1330px) {
+                  display: none;
+                }
+
                 & > span {
                         & > span {
                                 height: 25px;

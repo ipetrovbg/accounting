@@ -3,9 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  host: 'http://localhost:5000',
-  api: 'http://localhost:5000/api/v1'
+  production: true,
+  host: 'https://ancient-fjord-87958.herokuapp.com',
+  api: 'https://ancient-fjord-87958.herokuapp.com/api/v1'
 };
 
 

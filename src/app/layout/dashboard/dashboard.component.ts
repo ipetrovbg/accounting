@@ -1,5 +1,5 @@
 
-import {map, take, tap} from 'rxjs/operators';
+import {map, skipWhile, take, tap} from 'rxjs/operators';
 import { TransactionManageState } from '../../store/states/transaction-manage.state';
 import { DialogTransactionComponent } from '../../transaction/dialog-transaction/dialog-transaction.component';
 import { State as AppState, getState } from '../../store/accounting.state';
@@ -36,7 +36,12 @@ import { state } from '@angular/animations';
 import { DropDownListComponent } from '@progress/kendo-angular-dropdowns';
 import { CommitService } from '../../core/commit/commit.service';
 import {Setting} from '../../settings/settings.model';
-import {selectAllSettingsSelector, selectAPayDaySettingsSelector} from '../../store/reducers/settings.reducer';
+import {
+  selectAllSettingsSelector,
+  selectAPayDaySettingsSelector,
+  selectDefaultAccountSettingsSelector
+} from '../../store/reducers/settings.reducer';
+import {AccountManageState} from '../../store/states/account-manage.state';
 
 @Component({
   selector: 'app-dashboard',
@@ -127,6 +132,25 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isNewTransactionAvailable$ = this.store.select(s => !!s.accountManage.currency.id);
     this.balance$ = this.store.select(selectTotalAmount);
 
+    this.subscription.add(
+      this.store.select(selectDefaultAccountSettingsSelector)
+        .pipe(skipWhile(setting => !setting.id || !+setting.settings || !!getState(this.store).transactionFilter.account))
+        .subscribe(setting => {
+          const account: AccountManageState = {
+            amount: 0,
+            currency: {
+              id: null,
+              sign: null,
+              currency: null,
+              country: null
+            },
+            id: setting.settings,
+            name: ''
+          };
+
+          this.store.dispatch(new AccountLoad(account));
+        }));
+
     if (!getState(this.store).transactionFilter.from && !getState(this.store).transactionFilter.to) {
       this.subscription.add(this.store.select(selectAPayDaySettingsSelector).subscribe((setting: Setting) => {
         this.store
@@ -165,18 +189,8 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     }));
 
     this.accounts$ = this.store.select(selectAllAccountsSelector).pipe(tap(accounts => {
+
       accounts.forEach(account => {
-        if (account.name === 'Main' && !getState(this.store).transactionFilter.account) {
-          if (!account.currency) {
-            account.currency = {
-              currency: '',
-              id: null,
-              sign: '',
-              country: ''
-            };
-          }
-          this.store.dispatch(new AccountLoad(account));
-        }
         if (account.id === getState(this.store).transactionFilter.account) {
           if (!account.currency) {
             account.currency = {
@@ -189,6 +203,14 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.store.dispatch(new Update('amount', account.amount));
         }
       });
+      if (!getState(this.store).transactionFilter.account && accounts.length) {
+        const mainAccount = accounts.find(account => account.name === 'Main');
+
+        if (!mainAccount.currency) {
+          return;
+        }
+        this.store.dispatch(new AccountLoad(mainAccount));
+      }
     }));
 
     this.store.select(s => s.user.token)
@@ -245,7 +267,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           // this.accounts$.subscribe(accounts => {
           //   accounts.forEach(account => {
           //     if (account.id === getState(this.store).transactionFilter.account) {
-          //       debugger;
           //       if (!account.currency) {
           //         account.currency = {
           //           currency: '',
@@ -287,6 +308,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.store.dispatch(new Fetch(filter.from, filter.to, filter.account));
       }
     }));
+  }
+
+  accountDisabled(itemArgs: { dataItem: any, index: number }) {
+    return itemArgs.dataItem && itemArgs.dataItem.currency && !itemArgs.dataItem.currency.id;
   }
 
   startCommit() {

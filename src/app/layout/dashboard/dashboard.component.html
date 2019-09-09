@@ -9,6 +9,7 @@
         [loading]="loading | async"
         [data]="gridData | async"
         [pageSize]="state.take"
+        [columnMenu]="true"
         [skip]="state.skip"
         [sort]="state.sort"
         [filter]="state.filter"
@@ -46,13 +47,14 @@
                     textField="name"
                     valueField="id"
                     [value]="selectedAccount$ | async"
+                    [itemDisabled]="accountDisabled"
                     (selectionChange)="accountSelect($event)"
                   >
                     <ng-template kendoDropDownListValueTemplate let-dataItem>
-                      <span>{{ dataItem?.name }} {{ dataItem?.currency?.id ? ' / ' + dataItem?.currency.sign : '' }}</span>
+                      <span>{{ dataItem?.name }} <span [hidden]="!dataItem?.currency?.id" class="pl-2 font-weight-lighter" style="font-family: sans-serif; font-size: 0.8rem;">{{ dataItem?.currency.sign }}</span></span>
                     </ng-template>
                     <ng-template kendoDropDownListItemTemplate let-dataItem>
-                      <span>{{ dataItem?.name }} {{ dataItem?.currency?.id ? ' / ' + dataItem?.currency.sign : '' }}</span>
+                      <span>{{ dataItem?.name }} <span [hidden]="!dataItem?.currency?.id" class="pl-2 font-weight-lighter" style="font-family: sans-serif; font-size: 0.8rem;">{{ dataItem?.currency.sign }}</span></span>
                     </ng-template>
                     <ng-template kendoDropDownListHeaderTemplate>
                       <button class="visible-on-hover" (click)="openCategoryDialog()" kendoButton icon="plus">Create</button>
