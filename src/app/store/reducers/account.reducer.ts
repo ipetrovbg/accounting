@@ -96,7 +96,9 @@ export const selectTotalAmount = createSelector(
       totals[account.currency.sign] += account.amount;
     });
     Object.keys(totals).forEach(key => {
-      totalAccontsAmount.push({ name: key, amount: totals[key], color: totals[key] > 0 ? successColors[getRandomInt(6)] : dangerColors[getRandomInt(4)] });
+      totalAccontsAmount.push({ name: key, amount: totals[key], color: totals[key] > 0 ?
+          successColors[getRandomInt(6)] :
+          dangerColors[getRandomInt(4)] });
     });
     return totalAccontsAmount;
   }

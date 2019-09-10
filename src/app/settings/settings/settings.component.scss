@@ -1,10 +1,449 @@
 .dates-width {
   width: 100px;
 }
-#user-profile {
+.wrapper {
   width: 100px;
+  height: 100px;
 
-  path {
-    fill: darkgray;
+
+}
+
+$bg-color: #34495e;
+$default-size: 100px;
+$label-font-size: $default-size / 4;
+$label-font-size-redo: $default-size * 4;
+
+// -- mixins
+@mixin size($width, $height) {
+  height: $height;
+  width: $width;
+}
+
+@mixin draw-progress($progress, $color) {
+  .pie {
+    .half-circle {
+      border-color: $color;
+    }
+
+    .left-side {
+      transform: rotate($progress * 3.6deg);
+    }
+
+    @if $progress <= 50 {
+      .right-side {
+        display: none;
+      }
+    } @else {
+      clip: rect(auto, auto, auto, auto);
+
+      .right-side {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+
+.pie-wrapper {
+  @include size($default-size, $default-size);
+  float: left;
+  margin: 15px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:nth-child(3n + 1) {
+    clear: both;
+  }
+
+  .pie {
+    @include size(100%, 100%);
+    clip: rect(0, $default-size, $default-size, $default-size / 2);
+    left: 0;
+    position: absolute;
+    top: 0;
+
+    .half-circle {
+      @include size(100%, 100%);
+      border: ($default-size / 10 - 5) solid #3498db;
+      border-radius: 50%;
+      clip: rect(0, $default-size / 2, $default-size, 0);
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  }
+.completion {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  #user-profile {
+    width: $default-size * 0.3;
+    //border: 5px solid darkgray;
+    border-radius: 50%;
+    display: block;
+
+    path {
+      fill: darkgray;
+    }
+  }
+  .label-completion {
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    small {
+      font-size: .6em;
+      font-weight: 100;
+      font-family: sans-serif;
+    }
+  }
+}
+
+
+  .label {
+    background: $bg-color;
+    border-radius: 50%;
+    //bottom: $label-font-size-redo / 10;
+    color: #ecf0f1;
+    cursor: default;
+    display: block;
+    font-size: $label-font-size;
+    //left: $label-font-size-redo / 10;
+    //line-height: $label-font-size-redo * .70;
+    position: absolute;
+    //right: $label-font-size-redo / 10;
+    text-align: center;
+    //top: $label-font-size-redo / 10;
+
+    .smaller {
+      color: #bdc3c7;
+      font-size: .45em;
+      padding-bottom: 20px;
+      vertical-align: super;
+    }
+  }
+
+  .shadow {
+    @include size(100%, 100%);
+    border: $default-size / 10 - 5 solid #d3d3d340;
+    border-radius: 50%;
+  }
+
+  &.style-outline {
+    .label {
+      background: none;
+      color: #7f8c8d;
+
+      .smaller {
+        color: #bdc3c7;
+      }
+    }
+  }
+  &.progress-0 {
+    @include draw-progress(0, #3498db);
+  }
+  &.progress-1 {
+    @include draw-progress(1, #3498db);
+  }
+  &.progress-2 {
+    @include draw-progress(2, #3498db);
+  }
+  &.progress-3 {
+    @include draw-progress(3, #3498db);
+  }
+  &.progress-4 {
+    @include draw-progress(4, #3498db);
+  }
+  &.progress-5 {
+    @include draw-progress(5, #3498db);
+  }
+  &.progress-6 {
+    @include draw-progress(6, #3498db);
+  }
+  &.progress-7 {
+    @include draw-progress(7, #3498db);
+  }
+  &.progress-8 {
+    @include draw-progress(8, #3498db);
+  }
+  &.progress-9 {
+    @include draw-progress(9, #3498db);
+  }
+  &.progress-10 {
+    @include draw-progress(10, #3498db);
+  }
+  &.progress-11 {
+    @include draw-progress(11, #3498db);
+  }
+  &.progress-12 {
+    @include draw-progress(12, #3498db);
+  }
+  &.progress-13 {
+    @include draw-progress(13, #3498db);
+  }
+  &.progress-14 {
+    @include draw-progress(14, #3498db);
+  }
+  &.progress-15 {
+    @include draw-progress(15, #3498db);
+  }
+  &.progress-16 {
+    @include draw-progress(16, #3498db);
+  }
+  &.progress-17 {
+    @include draw-progress(17, #3498db);
+  }
+  &.progress-18 {
+    @include draw-progress(18, #3498db);
+  }
+  &.progress-19 {
+    @include draw-progress(19, #3498db);
+  }
+  &.progress-20 {
+    @include draw-progress(20, #3498db);
+  }
+  &.progress-21 {
+    @include draw-progress(21, #3498db);
+  }
+  &.progress-22 {
+    @include draw-progress(22, #3498db);
+  }
+  &.progress-23 {
+    @include draw-progress(23, #3498db);
+  }
+  &.progress-24 {
+    @include draw-progress(24, #3498db);
+  }
+  &.progress-25 {
+    @include draw-progress(25, #3498db);
+  }
+  &.progress-26 {
+    @include draw-progress(26, #3498db);
+  }
+  &.progress-27 {
+    @include draw-progress(27, #3498db);
+  }
+  &.progress-28 {
+    @include draw-progress(28, #3498db);
+  }
+  &.progress-29 {
+    @include draw-progress(29, #3498db);
+  }
+  &.progress-30 {
+    @include draw-progress(30, #3498db);
+  }
+  &.progress-31 {
+    @include draw-progress(31, #3498db);
+  }
+  &.progress-32 {
+    @include draw-progress(32, #3498db);
+  }
+  &.progress-33 {
+    @include draw-progress(33, #3498db);
+  }
+  &.progress-34 {
+    @include draw-progress(34, #3498db);
+  }
+  &.progress-35 {
+    @include draw-progress(35, #3498db);
+  }
+  &.progress-36 {
+    @include draw-progress(36, #3498db);
+  }
+  &.progress-37 {
+    @include draw-progress(37, #3498db);
+  }
+  &.progress-38 {
+    @include draw-progress(38, #3498db);
+  }
+  &.progress-39 {
+    @include draw-progress(39, #3498db);
+  }
+  &.progress-40 {
+    @include draw-progress(40, #3498db);
+  }
+  &.progress-41 {
+    @include draw-progress(41, #3498db);
+  }
+  &.progress-42 {
+    @include draw-progress(42, #3498db);
+  }
+  &.progress-43 {
+    @include draw-progress(43, #3498db);
+  }
+  &.progress-44 {
+    @include draw-progress(44, #3498db);
+  }
+  &.progress-45 {
+    @include draw-progress(45, #3498db);
+  }
+  &.progress-46 {
+    @include draw-progress(46, #3498db);
+  }
+  &.progress-47 {
+    @include draw-progress(47, #3498db);
+  }
+  &.progress-48 {
+    @include draw-progress(48, #3498db);
+  }
+  &.progress-49 {
+    @include draw-progress(49, #3498db);
+  }
+  &.progress-50 {
+    @include draw-progress(50, #3498db);
+  }
+  &.progress-51 {
+    @include draw-progress(51, #3498db);
+  }
+  &.progress-52 {
+    @include draw-progress(52, #3498db);
+  }
+  &.progress-53 {
+    @include draw-progress(53, #3498db);
+  }
+  &.progress-54 {
+    @include draw-progress(54, #3498db);
+  }
+  &.progress-55 {
+    @include draw-progress(55, #3498db);
+  }
+  &.progress-56 {
+    @include draw-progress(56, #3498db);
+  }
+  &.progress-57 {
+    @include draw-progress(57, #3498db);
+  }
+  &.progress-58 {
+    @include draw-progress(58, #3498db);
+  }
+  &.progress-59 {
+    @include draw-progress(59, #3498db);
+  }
+  &.progress-60 {
+    @include draw-progress(60, #3498db);
+  }
+  &.progress-61 {
+    @include draw-progress(61, #3498db);
+  }
+  &.progress-62 {
+    @include draw-progress(62, #3498db);
+  }
+  &.progress-63 {
+    @include draw-progress(63, #3498db);
+  }
+  &.progress-64 {
+    @include draw-progress(64, #3498db);
+  }
+  &.progress-65 {
+    @include draw-progress(65, #3498db);
+  }
+  &.progress-66 {
+    @include draw-progress(66, #3498db);
+  }
+  &.progress-67 {
+    @include draw-progress(67, #3498db);
+  }
+  &.progress-68 {
+    @include draw-progress(68, #3498db);
+  }
+  &.progress-69 {
+    @include draw-progress(69, #3498db);
+  }
+  &.progress-70 {
+    @include draw-progress(70, #3498db);
+  }
+  &.progress-71 {
+    @include draw-progress(71, #3498db);
+  }
+  &.progress-72 {
+    @include draw-progress(72, #3498db);
+  }
+  &.progress-73 {
+    @include draw-progress(73, #3498db);
+  }
+  &.progress-74 {
+    @include draw-progress(74, #3498db);
+  }
+  &.progress-75 {
+    @include draw-progress(75, #3498db);
+  }
+  &.progress-76 {
+    @include draw-progress(76, #3498db);
+  }
+  &.progress-77 {
+    @include draw-progress(77, #3498db);
+  }
+  &.progress-78 {
+    @include draw-progress(78, #3498db);
+  }
+  &.progress-79 {
+    @include draw-progress(79, #3498db);
+  }
+  &.progress-80 {
+    @include draw-progress(80, #3498db);
+  }
+  &.progress-81 {
+    @include draw-progress(81, #3498db);
+  }
+  &.progress-82 {
+    @include draw-progress(82, #3498db);
+  }
+  &.progress-83 {
+    @include draw-progress(83, #3498db);
+  }
+  &.progress-84 {
+    @include draw-progress(84, #3498db);
+  }
+  &.progress-85 {
+    @include draw-progress(85, #3498db);
+  }
+  &.progress-86 {
+    @include draw-progress(86, #3498db);
+  }
+  &.progress-87 {
+    @include draw-progress(87, #3498db);
+  }
+  &.progress-88 {
+    @include draw-progress(88, #3498db);
+  }
+  &.progress-89 {
+    @include draw-progress(89, #3498db);
+  }
+  &.progress-90 {
+    @include draw-progress(90, #3498db);
+  }
+  &.progress-91 {
+    @include draw-progress(91, #3498db);
+  }
+  &.progress-92 {
+    @include draw-progress(92, #3498db);
+  }
+  &.progress-93 {
+    @include draw-progress(93, #3498db);
+  }
+  &.progress-94 {
+    @include draw-progress(94, #3498db);
+  }
+  &.progress-95 {
+    @include draw-progress(95, #3498db);
+  }
+  &.progress-96 {
+    @include draw-progress(96, #3498db);
+  }
+  &.progress-97 {
+    @include draw-progress(97, #3498db);
+  }
+  &.progress-98 {
+    @include draw-progress(98, #3498db);
+  }
+  &.progress-99 {
+    @include draw-progress(99, #3498db);
+  }
+  &.progress-100 {
+    @include draw-progress(100, #3498db);
   }
 }

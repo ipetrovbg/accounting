@@ -46,12 +46,9 @@ public ngOnInit() {
     this.userMenu = [
       {
         text: name,
-        path: null,
-        items: [
-          { text: 'Setting', path: '/dashboard/settings' },
-          { text: 'Logout', path: '/login' }
-        ]
-      }
+        path: '/dashboard/settings',
+      },
+      { text: 'Logout', path: '/login' }
     ];
   }));
 
@@ -91,12 +88,8 @@ public onSelect({ item }): void {
 private mapItems(): any[] {
   return [
     { text: 'Home', path: '/home' },
-    { text: 'Dashboard', path: null,
-      items: [
-        { text: 'Dashboard', path: '/dashboard/dashboard' },
-        { text: 'Transactions Graph', path: '/dashboard/transactions-graph' }
-      ]
-    },
+    { text: 'Dashboard', path: '/dashboard/dashboard' },
+    { text: 'Transactions Graph', path: '/dashboard/transactions-graph' },
     { text: 'Accounts', path: '/dashboard/accounts' }
   ];
 }

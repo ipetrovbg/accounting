@@ -1,6 +1,6 @@
 import {Component, OnInit, ChangeDetectionStrategy, OnDestroy} from '@angular/core';
 
-import { Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {Setting} from '../settings.model';
 import {Store} from '@ngrx/store';
 import {getState, State as AppState} from '../../store/accounting.state';
@@ -44,6 +44,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
     id: null
   };
   public defaultItemPayDay = 'Select date of payment';
+  public completedProfileSettings = ['payDay', 'defaultAccount'];
+  public completedProfil: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
   constructor(
     private store: Store<AppState>,
     private settings: SettingsService,
@@ -53,6 +56,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.accounts$ = this.store.select(selectAllAccountsSelector);
+    this.subscription.add(
+      this.store.select(selectAllSettingsSelector)
+      .subscribe(settings => {
+        const percent = Math.round((settings.filter(setting =>
+          this.completedProfileSettings.indexOf(setting.key) > -1).length + 1) / (this.completedProfileSettings.length + 1) * 100);
+        this.completedProfil.next(percent);
+      })
+    );
 
     this.form = this.fb.group({
       payDay: null,
@@ -119,19 +130,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
       settings: this.form.value.payDay || this.listDates[1]
     });
 
-    if (this.form.value.defaultAccount.id) {
+    if (this.form.value.defaultAccount && this.form.value.defaultAccount.id) {
       this.saveSetting(<Setting>{
         key: 'defaultAccount',
         id: this.form.value.defaultAccountID,
         settings: this.form.value.defaultAccount.id
       });
-    } else {
-      this.saveSetting(<Setting>{
-        key: 'defaultAccount',
-        id: this.form.value.defaultAccountID,
-        settings: null
-      });
     }
+    // else {
+    //   this.saveSetting(<Setting>{
+    //     key: 'defaultAccount',
+    //     id: this.form.value.defaultAccountID,
+    //     settings: null
+    //   });
+    // }
   }
 
   ngOnDestroy(): void {
