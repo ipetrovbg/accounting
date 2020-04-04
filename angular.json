@@ -140,5 +140,8 @@
       }
     }
   },
-  "defaultProject": "accounting"
+  "defaultProject": "accounting",
+  "cli": {
+    "analytics": "0a57de62-85a7-4f1c-92af-ae18d62a5368"
+  }
 }
