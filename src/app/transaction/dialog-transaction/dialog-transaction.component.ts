@@ -40,8 +40,8 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   public selectedCategory = { category: '', id: null };
   public show: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  @ViewChild('anchor', { static: false }) public anchor: ElementRef;
-  @ViewChild('popup', { read: ElementRef, static: false }) public popup: ElementRef;
+  @ViewChild('anchor') public anchor: ElementRef;
+  @ViewChild('popup', { read: ElementRef }) public popup: ElementRef;
   @ViewChild(ComboBoxComponent, { static: true }) public combo: ComboBoxComponent;
   public amountLeft: BehaviorSubject<number> = new BehaviorSubject<number>(0);
   public budget: BehaviorSubject<Budget> = new BehaviorSubject<Budget>(null);

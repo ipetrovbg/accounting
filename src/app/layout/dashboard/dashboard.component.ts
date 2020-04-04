@@ -97,10 +97,10 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   public labelBalanceContent = labelBalanceContent;
 
 
-  @ViewChild('anchorCategory', { static: false }) public anchorCategory: ElementRef;
+  @ViewChild('anchorCategory') public anchorCategory: ElementRef;
   @ViewChild(GridComponent, { static: true }) public grid: GridComponent;
-  @ViewChild('popup', { read: ElementRef, static: false }) public popup: ElementRef;
-  @ViewChild(DropDownListComponent, { static: false }) public dropDown: DropDownListComponent;
+  @ViewChild('popup', { read: ElementRef }) public popup: ElementRef;
+  @ViewChild(DropDownListComponent) public dropDown: DropDownListComponent;
 
   @HostListener('keydown', ['$event'])
   public keydown(event: any): void {

@@ -33,7 +33,7 @@ export const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'dashboard', loadChildren: './layout/layout.module#LayoutModule' },
+  { path: 'dashboard', loadChildren: () => import('./layout/layout.module').then(m => m.LayoutModule) },
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
 const config: SocketIoConfig = { url: environment.host, options: {} };

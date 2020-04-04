@@ -19,7 +19,7 @@ import {map, skipWhile, take} from 'rxjs/operators';
 })
 export class BudgetComponent implements OnInit, OnDestroy {
 
-  @ViewChild(GridComponent, {static: false}) private grid: GridComponent;
+  @ViewChild(GridComponent) private grid: GridComponent;
   public view: BehaviorSubject<Budget[]> = new BehaviorSubject<Budget[]>([]);
   public formGroup: FormGroup;
 
