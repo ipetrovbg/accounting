@@ -11,6 +11,7 @@ import { AccountManageState } from './states/account-manage.state';
 import { TransactionFilterState } from './states/transaction-filter.state';
 import { CurrencyManageState } from './states/currency.state';
 import { SettingsState } from './states/settings.state';
+import {BudgetState} from './states/budget.state';
 
 
 export interface State {
@@ -23,10 +24,15 @@ export interface State {
   requests: RequestsState;
   currencies: CurrencyManageState;
   settings: SettingsState;
+  budgets: BudgetState;
 }
 
 export const initialState: State = {
   transactions: {
+    ids: [],
+    entities: null
+  },
+  budgets: {
     ids: [],
     entities: null
   },

@@ -7,6 +7,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { TransactionsGraphComponent } from './transactions-graph/transactions-graph.component';
 import { AccountComponent } from './account/account.component';
 import { SettingsComponent } from '../settings/settings/settings.component';
+import {BudgetComponent} from './budget/budget.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'accounts', component: AccountComponent },
+      { path: 'budget', component: BudgetComponent },
     ],
     // canActivate: [ LayoutGuard ]
   }

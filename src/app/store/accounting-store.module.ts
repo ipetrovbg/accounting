@@ -9,6 +9,7 @@ import { TransactionEffects } from './effects/transaction.effects';
 import { UserEffects } from './effects/user.effects';
 import { AccountEffects } from './effects/account.effects';
 import { SettingsEffects } from './effects/settings.effects';
+import {BudgetEffects} from './effects/budget.effects';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import { SettingsEffects } from './effects/settings.effects';
       TransactionEffects,
       AccountEffects,
       UserEffects,
-      SettingsEffects
+      SettingsEffects,
+      BudgetEffects
     ])
   ],
   declarations: [],

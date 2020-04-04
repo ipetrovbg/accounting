@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-md-12">
+    <app-tile>
+      <h4 slot="title">Budget</h4>
+      <div slot="body">
+        <kendo-grid
+          (add)="addHandler()"
+          [data]="view | async"
+          [selectable]="true"
+          [navigable]="true"
+          id="budget">
+          <ng-template kendoGridToolbarTemplate>
+            <button kendoGridAddCommand icon="plus"></button>
+          </ng-template>
+          <kendo-grid-column field="Name" title="Name"></kendo-grid-column>
+          <kendo-grid-column field="category.category" title="Category"></kendo-grid-column>
+<!--          <kendo-grid-column field="currency.sign" title="Currency"></kendo-grid-column>-->
+          <kendo-grid-column field="GoalAmount" title="Goal Amount" format="{0:c}"></kendo-grid-column>
+          <kendo-grid-column field="RealAmount" title="Real Amount" format="{0:c}"></kendo-grid-column>
+          <kendo-grid-column field="StartDate" title="Start Date" format="{0:MMM d, y}"></kendo-grid-column>
+          <kendo-grid-column field="EndDate" title="End Date" format="{0:MMM d, y}"></kendo-grid-column>
+        </kendo-grid>
+      </div>
+    </app-tile>
+  </div>
+</div>
+
+<div kendoDialogContainer></div>

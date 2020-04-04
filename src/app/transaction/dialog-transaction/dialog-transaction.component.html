@@ -25,11 +25,15 @@
         <div class="flex no-space-betwin padding container"> <!--hover-->
           <div class="full-width float-left category-row">
             <label class="k-form-field no-padding no-margin full-width">
-              <span class="k-field-info">Category
+              <span class="k-field-info d-flex justify-content-between">
+                <span>
+                  Category
                       <span
                         class="k-icon k-i-information k-i-info"
                         title="Select some category. It will be used for reports."
                       ></span>
+                </span>
+                <span style="max-width: 170px;" class="font-italic text-truncate" *ngIf="(budget | async)?.Id && form.get('type').value === 'withdrawal'"><strong [class]="(amountLeft | async) >= 0 ? 'text-primary' : 'text-danger'">{{ amountLeft | async }} {{ (budget | async)?.currency?.sign }}</strong> / {{ (budget | async)?.Name }}</span>
               </span>
               <span *ngIf="!combo.isOpen">
                 <span #anchor></span>

@@ -1,0 +1,98 @@
+<kendo-splitter style="height: 240px;" kendoTooltip [formGroup]="form">
+  <kendo-splitter-pane size="50%" [resizable]="false">
+    <div class="container d-flex flex-column align-items-around justify-content-around" style="height: 240px;">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label" for="budget-name">Name</label>
+            <div class="col-sm-8">
+              <input type="text" class="k-textbox form-control" id="budget-name" formControlName="budgetName"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label" [for]="category">Category</label>
+            <div class="col-sm-8">
+              <kendo-combobox
+                #category
+                class="full-width"
+                [data]="categories$ | async"
+                [valuePrimitive]="false"
+                textField="category"
+                valueField="id"
+                formControlName="category">
+              </kendo-combobox>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label" [for]="startDate">Start</label>
+            <div class="col-sm-8">
+              <kendo-datepicker
+                class="full-width"
+                #startDate
+                formControlName="startDate"
+              ></kendo-datepicker>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </kendo-splitter-pane>
+  <kendo-splitter-pane>
+    <div class="container d-flex flex-column align-items-around justify-content-around" style="height: 240px;">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label" [for]="currency">Currency</label>
+            <div class="col-sm-8">
+              <kendo-combobox
+                  #currency
+                  class="full-width"
+                  [data]="currencies$ | async"
+                  [valuePrimitive]="false"
+                  textField="sign"
+                  valueField="id"
+                  formControlName="currency">
+              </kendo-combobox>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label" [for]="goal">Goal</label>
+            <div class="col-sm-8">
+              <kendo-numerictextbox
+                #goal
+                class="full-width"
+                formControlName="goal" [min]="1">
+              </kendo-numerictextbox>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label" [for]="endDate">End</label>
+            <div class="col-sm-8">
+              <kendo-datepicker
+                class="full-width"
+                #endDate
+                formControlName="endDate"
+              ></kendo-datepicker>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </kendo-splitter-pane>
+</kendo-splitter>

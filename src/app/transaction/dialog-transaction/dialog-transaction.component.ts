@@ -1,5 +1,5 @@
 
-import {debounceTime, map} from 'rxjs/operators';
+import {debounceTime, map, take} from 'rxjs/operators';
 import { Update } from './../../store/actions/transaction-manage.action';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription, BehaviorSubject } from 'rxjs';
@@ -15,6 +15,9 @@ import { Currency } from '../../store/states/currency.state';
 import { selectAllCurrenciesSelector } from '../../store/reducers/currency.reducer';
 import { CurrencyService } from '../../core/currency.service';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
+import {selectAllBudgetsSelector} from '../../store/reducers/budget.reducer';
+import {Fetch} from '../../store/actions/budget.actions';
+import {Budget} from '../../store/states/budget.state';
 
 @Component({
   selector: 'app-dialog-transaction',
@@ -40,6 +43,8 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   @ViewChild('anchor', { static: false }) public anchor: ElementRef;
   @ViewChild('popup', { read: ElementRef, static: false }) public popup: ElementRef;
   @ViewChild(ComboBoxComponent, { static: true }) public combo: ComboBoxComponent;
+  public amountLeft: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public budget: BehaviorSubject<Budget> = new BehaviorSubject<Budget>(null);
 
   private subscription: Subscription = new Subscription();
 
@@ -68,7 +73,7 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-
+    this.store.dispatch(new Fetch(getState(this.store).user.token));
 
     this.currencyManage();
 
@@ -162,6 +167,21 @@ export class DialogTransactionComponent implements OnInit, OnDestroy {
             t.category = cat;
           }
         });
+        this.store.select(selectAllBudgetsSelector)
+          .pipe(take(1))
+          .subscribe(budgets => {
+            if (t.category && t.category.id) {
+              const budgetCategory = budgets.find(b => b.CategoryId === t.category.id);
+              this.budget.next(budgetCategory);
+              if (budgetCategory) {
+                this.amountLeft.next(Math.round(budgetCategory.GoalAmount - budgetCategory.RealAmount));
+              } else {
+                this.budget.next(budgetCategory);
+              }
+            } else {
+              this.budget.next(null);
+            }
+          });
         this.form.patchValue(t, { emitEvent: false, onlySelf: true });
       });
 

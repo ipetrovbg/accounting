@@ -10,6 +10,8 @@ import { TransactionsComponent } from './transactions/transactions.component';
 import { AccountComponent } from './account/account.component';
 import { AccountDialogComponent } from './account/account-dialog/account-dialog.component';
 import { SettingsComponent } from '../settings/settings/settings.component';
+import { BudgetComponent } from './budget/budget.component';
+import { CreateBudgetDialogComponent } from './budget/create-budget-dialog/create-budget-dialog.component';
 
 @NgModule({
   imports: [
@@ -25,10 +27,13 @@ import { SettingsComponent } from '../settings/settings/settings.component';
     TransactionsComponent,
     AccountComponent,
     AccountDialogComponent,
-    SettingsComponent
+    SettingsComponent,
+    BudgetComponent,
+    CreateBudgetDialogComponent
   ],
   entryComponents: [
-    AccountDialogComponent
+    AccountDialogComponent,
+    CreateBudgetDialogComponent
   ]
 })
 export class LayoutModule { }

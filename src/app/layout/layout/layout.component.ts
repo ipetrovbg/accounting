@@ -11,6 +11,7 @@ import { TransactionFilterUpdate } from '../../store/actions/transation-filter.a
 import { CurrencyService } from '../../core/currency.service';
 import { AddMany } from '../../store/actions/currency.actions';
 import { Currency } from '../../store/states/currency.state';
+import {DeleteAllBudgets} from '../../store/actions/budget.actions';
 
 @Component({
   selector: 'app-layout',
@@ -68,6 +69,7 @@ public onSelectUserMenu({ item }) {
     this.store.dispatch(new DeleteAll());
     this.store.dispatch(new AccountsDeleteAll());
     this.store.dispatch(new AccountsDeleteAll());
+    this.store.dispatch(new DeleteAllBudgets());
     this.store.dispatch(new Delete());
     this.store.dispatch(new TransactionFilterUpdate('account', null));
     this.router.navigate([ item.path ]);
@@ -90,7 +92,8 @@ private mapItems(): any[] {
     { text: 'Home', path: '/home' },
     { text: 'Dashboard', path: '/dashboard/dashboard' },
     { text: 'Transactions Graph', path: '/dashboard/transactions-graph' },
-    { text: 'Accounts', path: '/dashboard/accounts' }
+    { text: 'Accounts', path: '/dashboard/accounts' },
+    { text: 'Budgets', path: '/dashboard/budget' },
   ];
 }
 
