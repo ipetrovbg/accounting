@@ -18,6 +18,7 @@ import { PopupModule } from '@progress/kendo-angular-popup';
 import { UploadModule } from '@progress/kendo-angular-upload';
 import { RippleModule } from '@progress/kendo-angular-ripple';
 import { LabelModule } from '@progress/kendo-angular-label';
+import { NotificationModule } from '@progress/kendo-angular-notification';
 
 import {
   FormsModule,
@@ -48,7 +49,8 @@ const kendo = [
   ExcelModule,
   PDFModule,
   RippleModule,
-  LabelModule
+  LabelModule,
+  NotificationModule
 ];
 const modules = [
   ReactiveFormsModule,

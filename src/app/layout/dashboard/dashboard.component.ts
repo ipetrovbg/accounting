@@ -6,7 +6,10 @@ import { State as AppState, getState } from '../../store/accounting.state';
 import { Observable ,  BehaviorSubject, Subscription } from 'rxjs';
 import { TransactionService } from '../../transaction/transaction.service';
 import { CoreService } from '../../core/core/core.service';
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef, HostListener, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component, OnDestroy, OnInit, ViewChild, ElementRef,
+  HostListener, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewContainerRef
+} from '@angular/core';
 
 
 
@@ -42,6 +45,7 @@ import {
 } from '../../store/reducers/settings.reducer';
 import {AccountManageState} from '../../store/states/account-manage.state';
 import { combineLatest } from 'rxjs';
+import { NotificationService } from '@progress/kendo-angular-notification';
 
 @Component({
   selector: 'app-dashboard',
@@ -124,7 +128,9 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
               public intl: IntlService,
               private categories: CategoriesService,
               private cd: ChangeDetectorRef,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private notificationService: NotificationService
+  ) {
   }
 
   ngOnInit() {

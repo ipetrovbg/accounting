@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  host: 'http://localhost:5000',
-  api: 'http://localhost:5000/api/v1'
+  host: 'https://ancient-fjord-87958.herokuapp.com',
+  api: 'https://ancient-fjord-87958.herokuapp.com/api/v1'
 };

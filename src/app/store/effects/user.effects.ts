@@ -40,7 +40,8 @@ export class UserEffects {
     catchError(() => observableOf(new Update(new UserState())))
   );
 
-  @Effect() tokenAuth = this.actions.ofType(UserActionTypes.TOKEN_LOGIN).pipe(
+  @Effect() tokenAuth = this.actions.pipe(
+    ofType(UserActionTypes.TOKEN_LOGIN),
     switchMap((action: TokenAuthentication) => this.auth.tokenAuth(action.token)),
     map((response: any) => {
       if (response.success) {
